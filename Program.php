@@ -59,20 +59,20 @@ class Program
 			
 		wp_enqueue_script(
 			self::JQUERY_DATATABLES_HANDLE,
-			'https://cdn.datatables.net/r/bs/dt-1.10.9/datatables.min.js',
+			 plugins_url('/lib/datatables.min.js', __FILE__ ),
 			array(self::JQUERY_HANDLE));
 		
 		wp_enqueue_script(
 			self::JQUERY_DATATABLES_BOOTSTRAP_HANDLE,
-			'http://cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.js',
+			plugins_url('/lib/dataTables.bootstrap.js', __FILE__ ),
 			array(self::JQUERY_DATATABLES_HANDLE));
 	}
 	
 	public function styles()
 	{		
 		wp_enqueue_style(
-			'datatables.bootstrap.min.css', // Unique identifier
-			'http://cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.css'
+			'datatables.bootstrap.min.css',
+			plugins_url('/lib/dataTables.bootstrap.css', __FILE__ )
 		);			
 	}
 }

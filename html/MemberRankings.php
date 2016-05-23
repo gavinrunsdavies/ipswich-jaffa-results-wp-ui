@@ -4,7 +4,7 @@
 		<form id="formRankCriteria" action="#" title="Select ranking year">	
 			<label for="year">Year</label>
 			<select id="year" name="year" size="1" title="Select year">
-				<option value="0" selected="selected">Optional: Please select...</option>  
+				<option value="0" selected="selected">All Time</option>  
 				<?php
 				for ($y = date("Y"); $y >= 1977; $y--) 
 				{
@@ -15,9 +15,7 @@
 			<label for="distance">Distance</label>
 			<select id="distance" name="distance" size="1" title="Select distance">						
 			</select>				
-			<input id="member-rank-submit" type="button" name="submit" value="Get Rankings"/>	
-			<br/>
-			<small>If you omit the year from the selection criteria the rankings for all results are taken in to calculation</small>			
+			<input id="member-rank-submit" type="button" name="submit" value="Get Rankings"/>				
 		</form>
 	</div>
 	<div id="mens-ranking-results" style="display:none" class="center-panel">		

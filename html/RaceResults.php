@@ -1,89 +1,74 @@
 <div class="section"> 
-	<div class="center-panel">
-		<div class="row">
-			<div class="col-sm-6">Event:</div>
-			<div class="col-sm-6" id="eventName"></div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Race:</div>
-			<div class="col-sm-4"  id="description"></div>
-			<div class="col-sm-2">Date:</div>
-			<div class="col-sm-4" id="date"></div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Venue:</div>
-			<div class="col-sm-4" id="venue"></div>
-			<div class="col-sm-2">Conditions:</div>
-			<div class="col-sm-4" id="conditions"></div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Country:</div>
-			<div class="col-sm-2" id="countryCode"></div>
-			<div class="col-sm-2">County:</div>
-			<div class="col-sm-2" id="county"></div>
-			<div class="col-sm-2">Area:</div>
-			<div class="col-sm-2" id="area"></div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Distance:</div>
-			<div class="col-sm-2" id="distance"></div>
-			<div class="col-sm-2">Grand Prix Race?:</div>
-			<div class="col-sm-2" id="isGrandPrixRace"></div>
-			<div class="col-sm-1">Course Type:</div>
-			<div class="col-sm-1" id="courseType"></div>
-			<div class="col-sm-1">Course:</div>
-			<div class="col-sm-1" id="course"></div>
-		</div>
-		
-		<span style="font-weight:bold; padding: 0.5em">Race Results for </span>		
-		<table id="jaffa-race-results-table" class="table table-striped table-bordered no-wrap">	
-			<thead>
-				<tr>
-					<th>Position</th>					
-					<th>Name</th>
-					<th>Time</th>
-					<th>Personal Best</th>
-					<th>Season Best</th>
-					<th>Category</th>
-					<th>Standard</th>
-					<th>Info</th>		
-					<th>Age Grading</th>			
-				</tr>
-			</thead>
-			<tfoot>
-				<tr>				
-					<th>Position</th>					
-					<th>Name</th>
-					<th>Time</th>
-					<th>Personal Best</th>
-					<th>Season Best</th>
-					<th>Category</th>
-					<th>Standard</th>
-					<th>Info</th>		
-					<th>Age Grading</th>
-				</tr>
-			</tfoot>
-     	</table>
+	<div class="center-panel" id="jaffa-race-results">
 	</div>
 </div>
 <script type="text/javascript">
+	<?php if (isset($_GET['raceId'])): ?>
 	jQuery(document).ready(function ($) {
 
-		$.getJSON(
-		  '<?php echo get_site_url(); ?>/wp-json/ipswich-jaffa-api/v2/races/<?php echo $_GET['raceId']; ?>',
-		  function(data) {
-			for (var key in data) {
-				var element = document.getElementById(key);
-				if (element != null)
-					element.innerHTML = data[key];
-			}
-		  }
-		);
+		// 1. Get race
+		// 2. If meetingId is > 0, get meetingId
+		// 2.1 Get associated races
+		// 3 Get race results (for each race)
 		
-		var tableElement = $('#jaffa-race-results-table');
-
-		var table = tableElement.dataTable({
-				pageLength : 50,
+		// 1.
+		$.ajax(
+			getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/races/<?php echo $_GET['raceId']; ?>'))			
+			.done(function(raceData) {	
+				// 2.
+				if (raceData.meetingId > 0) {
+					getMeeting(raceData.eventId, raceData.meetingId);
+					getMeetingRaces(raceData.eventId, raceData.meetingId);
+				} else {
+					getRaceResult(raceData.id, raceData.eventName, raceData.date);
+				}
+			});
+			
+		function getMeeting(eventId, meetingId) {
+			$.ajax(
+				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/'+ eventId + '/meetings/' + meetingId))					
+				.done(function(meetingData) {
+					if (meetingData.length > 0) {
+						var meetingDates = meetingData[0].fromDate;
+						if (meetingData[0].fromDate != meetingData[0].toDate) {
+							meetingDates += ' - ' + meetingData[0].toDate;
+						}																							
+						var meetingTitle = '<h3>Meeting: '+meetingData[0].name+' ('+meetingDates+')</h3>';
+						$('#jaffa-race-results').prepend(meetingTitle);						
+					}
+			});
+		}
+			
+		function getMeetingRaces(eventId, meetingId) {
+			$.ajax(
+				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/'+ eventId + '/meetings/' + meetingId + '/races'))					
+				.done(function(meetingData) {
+					if (meetingData.length > 0) {
+						for (var i = 0; i < meetingData.length; i++) {	
+							getRaceResult(meetingData[i].id, meetingData[i].description, meetingData[i].date);
+						}
+					}
+			});
+		}
+		
+		function getRaceResult(raceId, description, date) {
+			var tableName = 'jaffa-race-results-table-';
+			var tableHtml = '';
+			var tableRow = '<tr><th>Position</th><th>Name</th><th>Time</th><th>Personal Best</th><th>Season Best</th><th>Category</th><th>Standard</th><th>Info</th><th>Age Grading</th></tr>';
+			tableHtml += '<table class="table table-striped table-bordered no-wrap" id="' + tableName + raceId + '">';
+			tableHtml += '<caption>' + description + ', ' + date + '</caption>';
+			tableHtml += '<thead>';
+			tableHtml += tableRow;
+			tableHtml += '</thead>';
+			//tableHtml += '<tfoot>';
+			//tableHtml += tableRow;
+			//tableHtml += '</tfoot>';
+			tableHtml += '</table>';
+			$('#jaffa-race-results').append(tableHtml);
+			
+			var table = $('#'+tableName + raceId).DataTable({
+				paging : false,
+				searching: false,
 				serverSide : false,
 				columns : [{
 						data : "position"
@@ -127,26 +112,27 @@
 						render : function (data, type, row, meta) {
 							return data > 0 ? data + '%' : '';
 						}
-					},
-
+					}
 				],
 				processing : true,
 				autoWidth : false,
 				scrollX : true,
 				order : [[1, "asc"], [4, "asc"]],
-				ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/race/<?php echo $_GET['raceId']; ?>')
+				ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/race/' + raceId)
 			});
+		}
 
-			function getAjaxRequest(url) {
-				return {
-					//"async": false,
-					"url" : '<?php echo get_site_url(); ?>' + url,
-					"method" : "GET",
-					"headers" : {
-						"cache-control" : "no-cache"
-					},
-					"dataSrc" : ""
-				}
+		function getAjaxRequest(url) {
+			return {
+				//"async": false,
+				"url" : '<?php echo get_site_url(); ?>' + url,
+				"method" : "GET",
+				"headers" : {
+					"cache-control" : "no-cache"
+				},
+				"dataSrc" : ""
 			}
-		});
+		}
+	});
+	<?php endif; ?>
 </script>

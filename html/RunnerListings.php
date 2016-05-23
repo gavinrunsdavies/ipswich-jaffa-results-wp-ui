@@ -59,7 +59,7 @@
 		</form>
 		</div>
 		<div class="col-sm-6">
-		You can now select up to four Ipswich JAFFA members (past and present) to compare race positions head-to-head. Only races where each selected member competited will be compared. Therefore if you get no results back it is likely that the selected members never raced each other all in same race. To add members to the comparison list please click on a row (although not the member name as this links to their profile). To remove a player from the list either click the cross in the comparison list or reclick the row. Hint: the search functionality of the table makes finding members very easy!
+		You can now select up to four Ipswich JAFFA members (past and present) to compare race positions head-to-head. Only races where each selected member competited will be compared. Therefore if you get no results back it is likely that the selected members never raced each other all in same race. To add members to the comparison list please click on the checkboxes. To remove a player from the list either click the cross in the comparison list or untick the checkbox. Hint: the search functionality of the table makes finding members very easy!
 		</div>
 	</div>
 	</div>
@@ -70,12 +70,14 @@
 				<tr>
 					<th>Name</th>
 					<th>Gender</th>
+					<th>Compare</th>
 				</tr>
 			</thead>
 			<tfoot>
 				<tr>
 					<th>Name</th>
 					<th>Gender</th>
+					<th>Compare</th>
 				</tr>
 			</tfoot>
 			<tbody>
@@ -126,11 +128,16 @@
 	          data : "sex",
 	          searchable : false,
 	          sortable : true
-	        }, {
+	        },{
 	          data : "id",
 	          searchable : false,
-	          sortable : false,
-	          visible : false
+	          sortable : true,
+	          visible : true,
+			  render : function (data, type, row, meta) {
+	            var box = '<input type="checkbox" value="' + data + '" class="compare" name="compare"/>';
+
+	            return box;
+	          }
 	        }
 	      ],
 	      rowId : 'id',
@@ -154,23 +161,25 @@
 
 	  var limit = 4;
 	  var chart;
-	  $('#runner-listings-table tbody').on('click', 'tr', function () {
-	    if (runnersTable.rows('.success').data().length >= limit && !$(this).hasClass('success')) {
-	      alert("Maximum of " + limit + " members can be compared. Please deselect one before reselecting your choice.");
+	   $('#runner-listings-table tbody').on('click', 'input.compare', function () {
+	    var row = $(this).closest('tr');
+		if (runnersTable.rows('.success').data().length >= limit && !row.hasClass('success')) {
+			$(this).prop( "checked", false );
+			alert("Maximum of " + limit + " members can be compared. Please deselect one before reselecting your choice.");
 	    } else {
 
-	      var id = runnersTable.row(this).id();
-	      var name = this.children[0].innerText;
+	      var id = runnersTable.row(row).id();
+	      var name = $(row).children()[0].innerText;
 
-	      if ($(this).hasClass('success')) {
+	      if (row.hasClass('success')) {
 	        removeRunnerFromComparisonList(id);
 	      } else {
 	        addRunnerToComparisonList(id, name);
 	      }
 
-	      $(this).toggleClass('success');
+	      row.toggleClass('success');
 	    }
-	  });
+	  });	 
 
 	  function addRunnerToComparisonList(id, name) {
 	    $('.compareRunner').each(function (index, element) {
@@ -199,6 +208,7 @@
 	    removeRunnerFromComparisonList(id);
 
 	    $('#' + id).toggleClass('success');
+		$('#' + id).find('input.compare').prop( "checked", false );
 	  });
 	  
 	  $('#compareRunnersModal').on('hidden.bs.modal', function (e) {
