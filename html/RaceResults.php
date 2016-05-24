@@ -11,7 +11,7 @@
 		// 2. If meetingId is > 0, get meetingId
 		// 2.1 Get associated races
 		// 3 Get race results (for each race)
-		// 4. If no race Id (backwards compatibility) http://test.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v2/events/1319/races then match on date field (array in response)
+		// 4. If no race Id (backwards compatibility) get event races then match on date field (array in response)
 		
 		<?php if (isset($_GET['raceId'])) { ?> 
 			getRace(<?php echo $_GET['raceId']; ?>);
@@ -96,7 +96,7 @@
 					}, {
 						data : "runnerName",
 						render : function (data, type, row, meta) {
-							var html = '<a href="<?php echo $this->memberProfilePageUrl; ?>?runner_id=' + row.runnerId + '">' + data + '</a>';
+							var html = '<a href="<?php echo $memberResultsPageUrl; ?>?runner_id=' + row.runnerId + '">' + data + '</a>';
 							if (row.team > 0) {
 								var tooltip = '';
 								if (row.team == 1)
@@ -150,7 +150,7 @@
 		function getAjaxRequest(url) {
 			return {
 				//"async": false,
-				"url" : '<?php echo get_site_url(); ?>' + url,
+				"url" : '<?php echo esc_url( home_url() ); ?>' + url,
 				"method" : "GET",
 				"headers" : {
 					"cache-control" : "no-cache"

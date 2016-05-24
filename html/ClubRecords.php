@@ -109,7 +109,7 @@
 		function getAjaxRequest(url) {
 			return {
 			  //"async": false,
-			  "url": '<?php echo get_site_url(); ?>' + url,
+			  "url" : '<?php echo esc_url( home_url() ); ?>' + url,
 			  "method": "GET",
 			  "headers": {
 				"cache-control": "no-cache"				
