@@ -94,9 +94,10 @@
 			ajax    : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events')
 		});
 		
+		getCountryNameJson();
+		
 		function getAjaxRequest(url) {
 			return {
-				//"async": false,
 				"url" : '<?php echo esc_url( home_url() ); ?>' + url,
 				"method" : "GET",
 				"headers" : {
@@ -104,6 +105,28 @@
 				},
 				"dataSrc" : ""
 			}
+		}
+		
+		function getCountryNameJson() {			
+			$.getJSON( '<?php echo plugins_url('data/countryCodes.json', dirname(__FILE__)); ?> ')
+				.done(function( data ) {
+					countryNames = data;
+				});
+		}
+		
+		function getCountryName(code) {
+			// Do not translate GB
+			if (code == 'GB' || code == "")
+				return code;	
+			var countryName = "";
+			$.each( countryNames, function( i, item ) {					
+				if ( item.code == code ) {
+				  countryName = item.name;
+				  return false;
+				}
+			});
+			
+		  return countryName;
 		}
 	
 		$('#event-listings-table tbody td img').live( 'click', function () {
@@ -142,7 +165,7 @@
 				.done(function(data) {	
 					var tableName = 'eventTable'+iEventId;					
 					var sOut = '<div>';
-					sOut += 'Toggle column:';
+					sOut += 'Toggle column: ';
 					sOut += '<a class="toggle-vis" data-table="'+tableName+'"data-column="2">Course Type</a> - ';
 					sOut += '<a class="toggle-vis" data-table="'+tableName+'"data-column="3">County</a> - ';
 					sOut += '<a class="toggle-vis" data-table="'+tableName+'"data-column="4">Country</a> - ';
@@ -162,16 +185,16 @@
 						var eventResultsUrl = '<?php echo $eventResultsPageUrl; ?>';
 						var anchor = '<a href="' + eventResultsUrl;
 						if (eventResultsUrl.indexOf("?") >= 0) {
-							anchor += '&eventId=' + data[i].id + '&date=' + data[i].date + '&event=' + sEventName;
+							anchor += '&raceId=' + data[i].id;
 						} else {
-							anchor += '?eventId=' + data[i].id + '&date=' + data[i].date+ '&event=' + sEventName;
+							anchor += '?raceId=' + data[i].id;
 						}
 						anchor += '">' + data[i].date + '</a>';	
 						sOut += '<td>'+ anchor + '</td>';
 						sOut += '<td>' + nullToEmptyString(data[i].description)+ '</td>';
 						sOut += '<td>' + nullToEmptyString(data[i].courseType) + '</td>';
 						sOut += '<td>' + nullToEmptyString(data[i].county) + '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].countryCode) + '</td>';
+						sOut += '<td>' + getCountryName(nullToEmptyString(data[i].countryCode)) + '</td>';
 						sOut += '<td>' + nullToEmptyString(data[i].conditions) + '</td>';
 						sOut += '<td>' + nullToEmptyString(data[i].venue) + '</td>';
 						sOut += '<td>' + nullToEmptyString(data[i].distance) + '</td>';
@@ -188,6 +211,8 @@
 					
 					$('td', nTr).html(sOut);					
 					$('#' + tableName).DataTable({
+						paging : false,
+						searching: false,
 						order: [[ 0, "desc" ]],
 						columnDefs: [
 							{
@@ -208,13 +233,15 @@
 										$.ajax(
 											getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/'+ iEventId + '/meetings/' + meetingId))			
 											.done(function(meetingData) {	
-												var meetingDates = meetingData.fromDate;
-												if (meetingData.fromDate != meetingData.toDate) {
-													meetingDates += ' - ' + meetingData.toDate;
-												}											
-												$(rows).eq( i ).before(
-													'<tr class="group"><td colspan="11">Meeting: '+meetingData.name+' ('+meetingDates+')</td></tr>'
-												);							 											
+												if (meetingData.length > 0) {
+													var meetingDates = meetingData[0].fromDate;
+													if (meetingData[0].fromDate != meetingData[0].toDate) {
+														meetingDates += ' - ' + meetingData[0].toDate;
+													}											
+													$(rows).eq( i ).before(
+														'<tr class="group"><td colspan="11">Meeting: <strong>'+meetingData[0].name+'</strong> ('+meetingDates+')</td></tr>'
+													);							 
+												}												
 											});
 									}
 								}

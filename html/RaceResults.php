@@ -81,9 +81,6 @@
 			tableHtml += '<thead>';
 			tableHtml += tableRow;
 			tableHtml += '</thead>';
-			//tableHtml += '<tfoot>';
-			//tableHtml += tableRow;
-			//tableHtml += '</tfoot>';
 			tableHtml += '</table>';
 			$('#jaffa-race-results').append(tableHtml);
 			
