@@ -242,7 +242,7 @@
 
 	    $.ajax({
 	      type : "POST",
-	      url : '<?php echo get_site_url(); ?>' + '/wp-json/ipswich-jaffa-api/v2/results/runner/compare',
+	      url : '<?php echo esc_url( home_url() ); ?>' + '/wp-json/ipswich-jaffa-api/v2/results/runner/compare',
 	      data : JSON.stringify({
 	        runnerIds : runnerIds
 	      }),

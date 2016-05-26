@@ -145,8 +145,7 @@
 		}
 		
 		function getAjaxRequest(url) {
-			return {
-				//"async": false,
+			return {				
 				"url" : '<?php echo esc_url( home_url() ); ?>' + url,
 				"method" : "GET",
 				"headers" : {
