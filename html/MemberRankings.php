@@ -81,7 +81,7 @@
 	jQuery(document).ready(function($) {	
 	
 		$.getJSON(
-		  '<?php echo get_site_url(); ?>/wp-json/ipswich-jaffa-api/v2/distances',
+		  '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/distances',
 		  function(data) {
 			var name, select, option;
 
@@ -142,7 +142,7 @@
 				{
 					data: "event",
 					render: function ( data, type, row, meta ) {	
-						var resultsUrl = '<?php echo $raceResultsPageUrl; ?>';
+						var resultsUrl = '<?php echo $eventResultsPageUrl; ?>';
 						var anchor = '<a href="' + resultsUrl;						
 						anchor += '?raceId=' + row.raceId;						
 						anchor += '">' + data + '</a>';								
@@ -158,7 +158,7 @@
 				},
 				],
 				ajax    	  : {
-					url : '<?php echo get_site_url(); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/distance/' + $('#distance').val(),			
+					url : '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/distance/' + $('#distance').val(),			
 					data : {
 						"sexId": '3',
 						"year":  $('#year').val()
@@ -206,7 +206,7 @@
 				{
 					data: "event",
 					render: function ( data, type, row, meta ) {	
-						var resultsUrl = '<?php echo $raceResultsPageUrl; ?>';
+						var resultsUrl = '<?php echo $eventResultsPageUrl; ?>';
 						var anchor = '<a href="' + resultsUrl;						
 						anchor += '?raceId=' + row.raceId;						
 						anchor += '">' + data + '</a>';								
@@ -222,7 +222,7 @@
 				},
 				],
 				ajax    	  : {
-					url : '<?php echo get_site_url(); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/distance/' + $('#distance').val(),			
+					url : '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/distance/' + $('#distance').val(),			
 					data : {
 						"sexId": '2',
 						"year":  $('#year').val()

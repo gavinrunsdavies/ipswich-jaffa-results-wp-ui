@@ -2,9 +2,7 @@
 	<div class="center-panel">
 		<form id="formRankCriteria" action="#" title="Select ranking criteria">
 			<label for="distance">Distance</label>
-			<select id="distance" name="distance" size="1" title="Select distance">
-				<option value="0" selected="selected">Optional. Please select...</option>
-			
+			<select id="distance" name="distance" size="1" title="Select distance">			
 			</select>			 
 			<label for="sex">Gender</label>
 			<select id="sex" name="sex" size="1" title="Select gender">
@@ -63,7 +61,7 @@
 	jQuery(document).ready(function($) {	
 	
 		$.getJSON(
-		  '<?php echo get_site_url(); ?>/wp-json/ipswich-jaffa-api/v2/distances',
+		  '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/distances',
 		  function(data) {
 			var name, select, option;
 
@@ -72,7 +70,7 @@
 
 			// Clear the old options
 			select.options.length = 0;
-
+			select.options.add(new Option('Optional. Please select...', 0));
 			// Load the new options
 			for (var i = 0; i < data.length; i++) {
 				select.options.add(new Option(data[i].text, data[i].id));
@@ -135,7 +133,7 @@
 				},
 				],
 				ajax    	  : {
-					url : '<?php echo get_site_url(); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/wma/'			
+					url : '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/wma/',			
 					data : {
 						"distanceId" : $('#distance').val(),
 						"sexId": $('#sex').val(),
