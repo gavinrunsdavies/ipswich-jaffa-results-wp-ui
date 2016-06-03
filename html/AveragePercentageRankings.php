@@ -1,6 +1,7 @@
 <div class="section"> 
 	<div class="center-panel">
-		<p>This form shows the average percentage age grading for male and female members for a given year and sample size. Only individual races where a WMA percentage grading has been calculated have been taken in to consideraton.</p>
+		<p>This form shows the average percentage age grading for male and female members for a given membership year and sample size. Only individual races where a WMA percentage grading has been calculated have been taken in to consideraton.</p>
+		<p>In 2016 the membership year changed from 1st January to 1st March so the 2015 year shows 14 months worth of races. All years from 2016 run for 12 months from 1st March</p>
 		<form id="formRankCriteria" action="#" title="Select ranking year">	
 			<label for="year">Year</label>
 			<select id="year" name="year" size="1" title="Select year">
@@ -57,7 +58,7 @@
 					<th>Rank</th>
 					<th data-hide="always">Runner Id</th>
 					<th>Name</th>								
-					<th>Average Age Grading (best 5)</th>
+					<th>Average Age Grading</th>
 				</tr>
 			</thead>
 			<tfoot>
@@ -65,7 +66,7 @@
 					<th>Rank</th>
 					<th>Runner Id</th>
 					<th>Name</th>				
-					<th>Average Age Grading (best 5)</th>
+					<th>Average Age Grading</th>
 				</tr>
 			</tfoot>
 			<tbody>				
@@ -122,7 +123,7 @@
 				}
 				],
 				ajax    	  : {
-					url : '<?php echo get_site_url(); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/averageWMA',			
+					url : '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/averageWMA',			
 					data : {
 						"sexId": '3',
 						"year":  $('#year').val(),
@@ -173,7 +174,7 @@
 				}
 				],
 				ajax    	  : {
-					url : '<?php echo get_site_url(); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/averageWMA',			
+					url : '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/averageWMA',			
 					data : {
 						"sexId": '2',
 						"year":  $('#year').val(),

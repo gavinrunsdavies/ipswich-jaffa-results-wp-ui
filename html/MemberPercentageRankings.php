@@ -2,7 +2,9 @@
 	<div class="center-panel">
 		<form id="formRankCriteria" action="#" title="Select ranking criteria">
 			<label for="distance">Distance</label>
-			<select id="distance" name="distance" size="1" title="Select distance">			
+			<select id="distance" name="distance" size="1" title="Select distance">
+				<option value="0" selected="selected">Optional. Please select...</option>
+			
 			</select>			 
 			<label for="sex">Gender</label>
 			<select id="sex" name="sex" size="1" title="Select gender">
@@ -21,7 +23,7 @@
 				?>							
 			</select>	
 			<label for="distinct">Distinct runners?</label>
-			<input id="distinct" type="checkbox" name="distinct" value="1"/>			     
+			<input id="distinct" type="checkbox" name="distinct" value="1" checked="checked"/>			     			
 			<input id="wma-rank-submit" type="button" name="submit" value="Get Rankings"/>			     
 		</form>
 	</div>
@@ -70,7 +72,8 @@
 
 			// Clear the old options
 			select.options.length = 0;
-			select.options.add(new Option('Optional. Please select...', 0));
+			select.options.add(new Option('Optional: Please select...', 0));
+
 			// Load the new options
 			for (var i = 0; i < data.length; i++) {
 				select.options.add(new Option(data[i].text, data[i].id));
@@ -85,67 +88,71 @@
 
 			var tableElement = $('#wma-ranking-results-table');
 			
-			if (wmaDt == null) {
-				wmaDt = tableElement.DataTable({
-					pageLength : 50,
-					columns : [
-					{ 
-						data: "rank" 
-					},
-					{
-						data: "runnerId",
-						visible: false  
-					},		
-					{
-					data: "name",
-					render: function ( data, type, row, meta ) {	
-						var resultsUrl = '<?php echo $memberResultsPageUrl; ?>';
-						var anchor = '<a href="' + resultsUrl;						
-						anchor += '?runner_id=' + row.runnerId;						
-						anchor += '">' + data + '</a>';								
-
-						return anchor;
-					}
-				},
-				{
-					data: "eventId",
-					visible: false  
-				},
-				{
-					data: "event",
-					render: function ( data, type, row, meta ) {	
-						var resultsUrl = '<?php echo $raceResultsPageUrl; ?>';
-						var anchor = '<a href="' + resultsUrl;						
-						anchor += '?raceId=' + row.raceId;						
-						anchor += '">' + data + '</a>';								
-
-						return anchor;
-					}
-				},
-				{
-					data: "date"
-				},
-				{
-					data: "result"
-				},
-				{
-					data: "percentageGrading"
-				},
-				],
-				ajax    	  : {
-					url : '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/wma/',			
-					data : {
-						"distanceId" : $('#distance').val(),
-						"sexId": $('#sex').val(),
-						"year":  $('#year').val(),
-						"distinct":  $('#distinct').val()
-					},
-					dataSrc : ""
-				}			
-				});
-			} else {
-				wmaDt.ajax.reload();				
+			if (wmaDt != null) {
+				wmaDt.destroy();
 			}
+			
+			wmaDt = tableElement.DataTable({
+				pageLength : 50,
+				columns : [
+				{ 
+					data: "rank" 
+				},
+				{
+					data: "runnerId",
+					visible: false  
+				},		
+				{
+				data: "name",
+				render: function ( data, type, row, meta ) {	
+					var resultsUrl = '<?php echo $memberResultsPageUrl; ?>';
+					var anchor = '<a href="' + resultsUrl;						
+					anchor += '?runner_id=' + row.runnerId;						
+					anchor += '">' + data + '</a>';								
+
+					return anchor;
+				}
+			},
+			{
+				data: "eventId",
+				visible: false  
+			},
+			{
+				data: "event",
+				render: function ( data, type, row, meta ) {	
+					var resultsUrl = '<?php echo $eventResultsPageUrl; ?>';
+					var anchor = '<a href="' + resultsUrl;						
+					anchor += '?raceId=' + row.raceId;	
+					if (row.race != null) {
+						anchor += '">' + data + ' ' + row.race + '</a>';								
+					} else {
+						anchor += '">' + data + '</a>';								
+					}						
+
+					return anchor;
+				}
+			},
+			{
+				data: "date"
+			},
+			{
+				data: "result"
+			},
+			{
+				data: "percentageGrading"
+			},
+			],
+			ajax    	  : {
+				url : '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/wma/',		
+				data : {
+					"distanceId" : $('#distance').val(),
+					"sexId": $('#sex').val(),
+					"year":  $('#year').val(),
+					"distinct":  $('#distinct').is(':checked') ? 1 : 0 
+				},
+				dataSrc : ""
+			}			
+			});
 			
 			$('#wma-ranking-results').show();
 		});

@@ -47,7 +47,6 @@
 				"class": "center",
 				"searchable": false,
 				"sortable": false,
-				// Member name, add hyperlink to profile
 				"render": function ( data, type, row, meta ) {				
 					return '<img src="<?php echo plugins_url('images/details_open.png', dirname(__FILE__)); ?>" />';
 				}		
