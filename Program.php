@@ -19,6 +19,10 @@ class Program
 	
 	const JQUERY_DATATABLES_BOOTSTRAP_HANDLE = 'datatables.bootstrap';
 	
+	const JQUERY_DATATABLES_BUTTONS_HANDLE = 'dataTables.buttons.min';
+	
+	const JQUERY_DATATABLES_BUTTONS_PRINT_HANDLE = 'buttons.print.min';
+	
 	function __construct() {		
 		add_action('init', array($this, 'registerShortCodes'));
 	}
@@ -66,6 +70,16 @@ class Program
 			self::JQUERY_DATATABLES_BOOTSTRAP_HANDLE,
 			plugins_url('/lib/dataTables.bootstrap.js', __FILE__ ),
 			array(self::JQUERY_DATATABLES_HANDLE));
+		
+		wp_enqueue_script(
+			self::JQUERY_DATATABLES_BUTTONS_HANDLE,
+			plugins_url('/lib/dataTables.buttons.min.js', __FILE__ ),
+			array(self::JQUERY_DATATABLES_HANDLE));	
+
+		wp_enqueue_script(
+			self::JQUERY_DATATABLES_BUTTONS_PRINT_HANDLE,
+			plugins_url('/lib/buttons.print.min.js', __FILE__ ),
+			array(self::JQUERY_DATATABLES_BUTTONS_HANDLE));				
 	}
 	
 	public function styles()
@@ -73,7 +87,12 @@ class Program
 		wp_enqueue_style(
 			'datatables.bootstrap.min.css',
 			plugins_url('/lib/dataTables.bootstrap.css', __FILE__ )
-		);			
+		);	
+
+		wp_enqueue_style(
+			'buttons.dataTables.min.css',
+			plugins_url('/lib/buttons.dataTables.min.css', __FILE__ )
+		);		
 	}
 }
 ?>

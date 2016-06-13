@@ -84,7 +84,11 @@
 			tableHtml += '</table>';
 			$('#jaffa-race-results').append(tableHtml);
 			
-			var table = $('#'+tableName + raceId).DataTable({
+			var table = $('#'+tableName + raceId).DataTable({				
+				dom: 'tBip',
+				buttons: [
+					'print'
+				],
 				paging : false,
 				searching: false,
 				serverSide : false,
