@@ -91,10 +91,10 @@
 				pageLength : 20,
 				destory	   : true,	
 				processing    : true,
-				autoWidth     : false,
 				columns: [
 				{ 
-					data: "rank" 
+					data: "rank",
+					width: "2em"
 				},
 				{
 					data: "runnerId",
@@ -132,7 +132,7 @@
 					dataSrc : ""
 				}				
 			});
-			$('#ladies-average-age-ranking-results').show();
+			$('#ladies-average-age-ranking-results').show();					
 			
 			var mensTableElement = $('#mens-average-age-ranking-results-table');
 			if (mensTableElement.DataTable() != null)
@@ -142,10 +142,10 @@
 				pageLength : 20,
 				destory	   : true,	
 				processing    : true,
-				autoWidth     : false,
 				columns: [
 				{ 
-					data: "rank" 
+					data: "rank",
+					width: "2em"
 				},
 				{
 					data: "runnerId",
@@ -182,7 +182,7 @@
 					},
 					dataSrc : ""
 				}					
-			});
+			});			
 						
 			$('#mens-average-age-ranking-results').show();
 		});
