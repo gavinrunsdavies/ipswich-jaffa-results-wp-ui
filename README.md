@@ -4,12 +4,15 @@ Wordpress Plugin for displaying JAFFA results with shortcodes
 Features included
   * Member listing with head-to-head line graph comparison for up to 4 runners
   * Event listings
-  * Race results, with combined meeting display
-  * Member results
+  * Race results, with combined meeting display  
   * Club Records
   * Member rankings
+  * Member percentage rankings
   * Mean percentage grading
+  * Grand Prix Results
+  * Historic Club Records
   
 To come
   * Statistics
-  * Grand Prix Results
+  * Member Results
+  
