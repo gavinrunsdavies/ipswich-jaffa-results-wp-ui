@@ -114,13 +114,19 @@
 					}, {
 						data : "isPersonalBest",
 						render : function (data, type, row, meta) {
-							return '<input type="checkbox" value="1" disabled="disabled"' + (data == 1 ? ' checked="checked"' : '') + '/>';
+							if (data == 1) {
+								return '<span class="glyphicon glyphicon-ok" aria-hidden="true"><span class="hidden">Yes</span></span>';
+							} 
+							return '';
 						},
 						className : 'text-center'
 					}, {
 						data : "isSeasonBest",
 						render : function (data, type, row, meta) {
-							return '<input type="checkbox" value="1" disabled="disabled"' + (data == 1 ? ' checked="checked"' : '') + '/>';
+							if (data == 1) {
+								return '<span class="glyphicon glyphicon-ok" aria-hidden="true"><span class="hidden">Yes</span></span>';
+							}
+							return '';
 						},
 						className : 'text-center'
 					}, {
