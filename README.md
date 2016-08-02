@@ -8,8 +8,8 @@ Features included
   * Member results
   * Club Records
   * Member rankings
+  * Mean percentage grading
   
 To come
   * Statistics
   * Grand Prix Results
-  * Mean percentage grading
