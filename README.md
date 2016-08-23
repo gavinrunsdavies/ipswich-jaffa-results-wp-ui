@@ -11,8 +11,13 @@ Features included
   * Mean percentage grading
   * Grand Prix Results
   * Historic Club Records
+  * Member Profile
   
 To come
   * Statistics
-  * Member Results
+  * Runner of month
+    * History
+    * Widget
+    * Voting 
+  
   
