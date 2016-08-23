@@ -1,128 +1,16 @@
-<?php
-	//$memberResults = $this->getMemberResults();
-	$distances = array('5km' => 1, '5m' => 2, '10k' => 3, '10m' => 4, 'HM' => 5, '20m' => 7, 'M' => 8);
-	
-	function executeCall($path)
-	{
-		//  Initiate curl
-		$ch = curl_init();
-		// Disable SSL verification
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		// Will return the response, if false it print the response
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		// Set the url
-		$url = get_site_url().$path;
-		curl_setopt($ch, CURLOPT_URL, $url);
-		// Execute
-		$result=curl_exec($ch);
-		// Closing
-		curl_close($ch);
-	}
-	
-	$result = executeCall("/wp-json/ipswich-jaffa-api/v2/results/runner/".$_GET['runnerId']);
-	$runnerResults = json_decode($result, true);
-
-	function getMemberPersonalBestResults()
-	{		
-		if (!isset($runnerResults))
-			return array();
-		
-		$pb = array();		
-		// 0 = result id, 1 = event name, 2 = distance id, 3 = position, 4 = result, 5 = racedate
-		foreach ($runnerResults as $result)
-		{
-			if ($result['distance_id'] != 0)
-			{			
-				// All time PB
-				if (isset($pb['ALL']))
-				{
-					if (isset($pb['ALL'][$result['distance_id']]))
-					{
-						if ($result['time'] < $pb['ALL'][$result['distance_id']]['time'] || 
-							($result['time'] == $pb['ALL'][$result['distance_id']]['time'] && $result['date'] < $pb['ALL'][$result['distance_id']]['date']))
-						{
-							$pb['ALL'][$result['distance_id']] = $result;
-						}
-					}
-					else
-					{
-						$pb['ALL'][$result['distance_id']] = $result;
-					}
-				}
-				else
-				{
-					$pb['ALL'] = array();
-					$pb['ALL'][$result['distance_id']] = $result;
-				}
-				
-				// Annual PB
-				$year = substr($result['date'], 0, 4);
-				if (isset($pb[$year]))
-				{			
-					if (isset($pb[$year][$result['distance_id']]))
-					{
-						if ($result['time'] < $pb[$year][$result['distance_id']]['time'] || 
-							($result['time'] == $pb[$year][$result['distance_id']]['time'] && $result['date'] < $pb[$year][$result['distance_id']]['date']))
-						{
-							$pb[$year][$result['distance_id']] = $result;
-						}
-					}
-					else
-					{
-						$pb[$year][$result['distance_id']] = $result;
-					}
-				}
-				else
-				{
-					$pb[$year] = array();
-					$pb[$year][$result['distance_id']] = $result;
-				}
-			}
-		}
-		
-		// Order results - ALL, year descending
-		ksort($pb);
-		
-		return $pb;
-	}
-	
-	function getMemberRankings($distances, $year = '')
-	{	
-		$results = array();
-
-		return $results;
-	} // end function GetMemberRankings
-	
-	function getStandardCertificates()
-	{
-		return;
-	} // end function GetStandardCertificates
-	
-	function getStandardCertificateUrl($standard, $event, $date, $result)
-	{
-		return sprintf("%s?name=%s&standard=%s&event=%s&date=%s&time=%s&filepath=%s/&",
-			plugins_url('php/standards/printcertificate.php', dirname(__FILE__)),
-			$this->name,
-			$standard,
-			$event,
-			$date,
-			$result,
-			plugin_dir_path(dirname(__FILE__)).'php/standards');
-	} // end functio GetStandardCertificates
-?>
 <div class="section">
 	<div class="jumbotron center-panel">
 		<div class="row">
 			<div class="col-md-3 col-md-offset-3"><strong>Name:</strong></div>
-			<div class="col-md-3"><?php //echo $this->getName(); ?></div>
+			<div class="col-md-3 runnerName"></div>
 		</div>
 		<div class="row">
 			<div class="col-md-3 col-md-offset-3"><strong>Gender:</strong></div>
-			<div class="col-md-3"><?php //echo $this->getGender(); ?></div>
+			<div class="col-md-3 runnerGender"></div>
 		</div>
 		<div class="row">
 			<div class="col-md-3 col-md-offset-3"><strong>Age Group:</strong></div>
-			<div class="col-md-3"><?php //echo $this->getAgeCategory(); ?></div>
+			<div class="col-md-3 runnerAgeCategory"></div>
 		</div>
 		<div class="row">
 			<div class="col-md-3 col-md-offset-3"><strong>Standard Certificates:</strong></div>
@@ -131,9 +19,9 @@
 </button></div>
 		</div>
 	</div>	
-	<div id="member-ranking" class="center-panel">
+	<div class="center-panel">
 		<table class="table table-striped table-bordered" id="member-ranking-table">
-		<caption style="font-weight:bold">Club Rankings for <?php //echo $this->getName(); ?></caption>
+		<caption style="font-weight:bold">Club Rankings for <span class="runnerName"></span></caption>
 			<thead>
 				<tr>
 					<th></th>
@@ -146,8 +34,18 @@
 					<th>M</th>
 				</tr>
 			</thead>
-			<tfoot>
-				<tr>
+			<tbody>
+			</tbody>
+		</table>
+		
+		<p style="font-size: smaller">The above Ipswich JAFFA Running Club rankings show where <span class="runnerName"></span> ranks amongst other Ipswich JAFFA members (past and present). Ranking category: <span class="runnerGender"></span>.</p>
+		<p style="font-size: smaller">Click on an above ranking to find out more information about the result.</p>
+	</div>
+	<div class="center-panel">
+		<table class="table table-striped table-bordered" id="member-race-count-table">
+		<caption style="font-weight:bold">Race distance breakdown for <span class="runnerName"></span></caption>
+			<thead>
+				<tr>			
 					<th></th>
 					<th>5k</th>
 					<th>5m</th>
@@ -156,94 +54,33 @@
 					<th>HM</th>
 					<th>20m</th>
 					<th>M</th>
+					<th>Other</th>
+					<th>Not Measured</th>
+					<th>Total</th>
 				</tr>
-			</tfoot>
+			</thead>
 			<tbody>
-				<?php
-				//$overallRanking = $this->getMemberRankings($distances);
-				printf('<tr>');
-				printf('<td>All Time</td>');
-				foreach ($distances as $distance => $distanceId)
-				{
-					$ranking = $overallRanking[$distanceId];
-					if (count($ranking) > 0)
-					{
-						printf('<td class="rank-result" data-contenttitle="All time ranking for %s" data-contentwrapper="#overallRankInfo%d"><a href="#" class="trigger">%s</a></td>', $distance,$ranking['id'], $ranking['Rank']);
-					}
-					else
-					{
-						printf('<td></td>');
-					}
-				}
-				printf('</tr>');
-				printf('<tr>');
-				printf('<td>%s</td>', date("Y"));
-				//$thisYearsRanking = $this->getMemberRankings($distances, date("Y"));
-				foreach ($distances as $distance => $distanceId)
-				{
-					$ranking = $thisYearsRanking[$distanceId];
-
-					if (count($ranking) > 0)
-					{
-						printf('<td class="rank-result" data-contenttitle="%s ranking for %s" data-contentwrapper="#thisYearsRankInfo%d"><a href="#" class="trigger">%s</a></td>', date("Y"), $distance, $ranking['id'], $ranking['Rank']);
-					}
-					else
-					{
-						printf('<td></td>');
-					}
-				}
-				printf('</tr>');
-				?>
 			</tbody>
 		</table>
-		<?php
-		foreach ($distances as $distance => $distanceId)
-		{
-			$overallDistanceRank = $overallRanking[$distanceId];
-			$yearDistanceRank = $thisYearsRanking[$distanceId];
-
-			printf('<div id="overallRankInfo%s" class="hide">', $overallDistanceRank['id']);
-			print('<div class="row">');
-			print('<div class="col-md-6">Event</div>');
-			printf('<div class="col-md-6">%s</div>', $overallDistanceRank['Event']);
-			print('<div class="col-md-6">Date</div>');
-			printf('<div class="col-md-6">%s</div>', $overallDistanceRank['racedate']);
-			print('<div class="col-md-6">Result</div>');
-			printf('<div class="col-md-6">%s</div>', $overallDistanceRank['result']);
-			print('<div class="col-md-6">Position in Event</div>');
-			printf('<div class="col-md-6">%s</div>', $overallDistanceRank['position']);
-			print('<div class="col-md-6">Rank</div>');
-			printf('<div class="col-md-6">%s</div>', $overallDistanceRank['Rank']);
-			print('</div>');
-			print('</div>');
-			
-			printf('<div id="thisYearsRankInfo%s" class="hide">', $yearDistanceRank['id']);			
-			print('<div class="row">');
-			print('<div class="col-md-6"><strong>Event</strong></div>');
-			printf('<div class="col-md-6">%s</div>', $yearDistanceRank['Event']);
-			print('<div class="col-md-6"><strong>Date</strong></div>');
-			printf('<div class="col-md-6">%s</div>', $yearDistanceRank['racedate']);
-			print('<div class="col-md-6"><strong>Result</strong></div>');
-			printf('<div class="col-md-6">%s</div>', $yearDistanceRank['result']);
-			print('<div class="col-md-6"><strong>Position in Event</strong></div>');
-			if ($yearDistanceRank['position'] > 0) {
-				printf('<div class="col-md-6">%s</div>', $yearDistanceRank['position']);
-			}
-			print('<div class="col-md-6"><strong>Rank</strong></div>');
-			printf('<div class="col-md-6">%s</div>', $yearDistanceRank['Rank']);
-			print('</div>');
-			print('</div>');
-		}
-		?>
-		
-		<p style="font-size: smaller">The above Ipswich JAFFA Running Club rankings show where <?php //echo $this->GetName(); ?> ranks amongst other Ipswich JAFFA members (past and present). Ranking category: <?php //echo $this->GetGender();?>.</p>
-		<p style="font-size: smaller">Click on an above ranking to find out more information about the result.</p>
+		<p style="font-size: smaller">The above totals are only valid for measured race distances (e.g. those that can count towards a personal best).</p>
+		<p style="font-size: smaller">The total distance covered calculation is only approximate and the accuracy of older results is not guaranteed.</p>
 	</div>
-	<div id="member-race-predictions" class="center-panel">
+	<div class="center-panel">
+		<div class="row">
+			<div class="col-md-6">
+				<h3>Race distance summary</h3>
+				<div id="race-distance-chart" style="height: 250px;"></div>
+			</div>
+			<div class="col-md-6">
+				<h3>Course type summary</h3>
+				<div id="course-type-chart" style="height: 250px;"></div>
+			</div>			
+		</div>
+	</div>
+	<div class="center-panel">
 		<div id="member-race-predictions-current">
-			<table class="table table-striped table-bordered" id="member-race-predictions-current-table">
-			<?php // $year = $this->getYearOfLastResult(); ?>
-			<caption style="font-weight:bold">Race predictions based on best known performances for last year of competition (<?php echo $year; ?>)</caption>
+			<table class="table table-striped table-bordered" id="member-race-predictions-current-table">			
+			<caption style="font-weight:bold">Race predictions based on best known performances for last year of competition (<span class="lastYearOfCompetition"></span>)</caption>
 				<thead>
 					<tr>
 						<th></th>
@@ -256,37 +93,7 @@
 						<th>M</th>
 					</tr>
 				</thead>			
-				<tbody>
-					<?php
-					$displayDistances = array('5km' => 1, '5m' => 2, '10k' => 3, '10m' => 4, 'HM' => 5, '20m' => 7, 'M' => 8);
-					//$results = $this->getMemberPersonalBestResults();
-
-					foreach ($displayDistances as $distanceRow => $distanceIdRow)
-					{
-						// Use second record only.
-						printf('<tr>');
-						printf('<td>%s</td>', $distanceRow);
-						foreach ($displayDistances as $distance => $distanceId)
-						{
-							if (isset($results[$year][$distanceId]))
-							{
-								if ($distanceIdRow == $distanceId)
-								{
-									printf('<td class="success"><strong>%s</strong></td>', $results[$year][$distanceId]['time']);
-								}
-								else
-								{
-									// printf('<td>%s</td>', $this->getPredictedTime($distanceId, $results[$year][$distanceId]['time'], $distanceIdRow));
-								}
-							}
-							else
-							{
-								printf('<td>-</td>');
-							}
-						}
-						printf('</tr>');
-					}
-					?>
+				<tbody>		
 				</tbody>
 			</table>
 		</div>
@@ -306,43 +113,15 @@
 					</tr>
 				</thead>				
 				<tbody>
-					<?php
-					foreach ($displayDistances as $distanceRow => $distanceIdRow)
-					{
-						// Use first record only.
-						printf('<tr>');
-						printf('<td>%s</td>', $distanceRow);
-
-						foreach ($displayDistances as $distance => $distanceId)
-						{
-							if (isset($results['ALL'][$distanceId]))
-							{
-								if ($distanceIdRow == $distanceId)
-								{
-									printf('<td class="success"><strong>%s</strong></td>', $results['ALL'][$distanceId]['time']);
-								}
-								else
-								{
-								//	printf('<td>%s</td>', $this->getPredictedTime($distanceId, $results['ALL'][$distanceId]['time'], $distanceIdRow));
-								}
-							}
-							else
-							{
-								printf('<td>-</td>');
-							}
-						}
-						printf('</tr>');
-					}
-					?>
 				</tbody>
 			</table>
 		</div>
 		<p style="font-size: smaller">The above race predictions are based on the known performances and calculated using the formula: T2 = T1 x (D2/D1)^1.06, where D1 is known distance, D2 is target distance, T1 is result for distance D1 and T2 is predicted time for target distance D2. Read predictions in columns not rows. Entries in bold show the achieved time (T1).</p>
 		<br />
 	</div>
-	<div id="member-personal-best-results" class="center-panel">
-		<table class="table table-striped table-bordered" id="member-personal-best-results-table">
-		<caption style="font-weight:bold">The Best Known Performances for <?php //echo $this->GetName(); ?></caption>
+	<div class="center-panel">
+		<table class="table table-striped table-bordered" id="member-seasonal-best-results-table">
+		<caption style="font-weight:bold">The Best Known Performances for <span class="runnerName"></span></caption>
 			<thead>
 				<tr>
 					<th>Year</th>
@@ -368,31 +147,10 @@
 				</tr>
 			</tfoot>
 			<tbody>
-				<?php
-				// foreach ($results as $year => $pb)
-				// {
-					// printf('<tr>');
-					// printf('<td>%s</td>', $year);
-
-					// foreach ($distances as $distance => $distanceId)
-					// {
-						// if (isset($pb[$distanceId]))
-						// {
-							// printf('<td>%s</td>', $pb[$distanceId]['time']);				
-						// }
-						// else
-						// {
-							// printf('<td>-</td>');
-						// }
-					// }
-					// printf('</tr>');
-				// }
-				?>
 			</tbody>
 		</table>
 	</div>	
-	<div id="chartdiv" class="center-panel" style=" width: 100%; height: 500px;"></div>
-	<div id="member-results" class="center-panel">
+	<div class="center-panel">
 		<table class="table table-striped table-bordered" id="member-results-table">
 			<thead>
 				<tr>
@@ -400,7 +158,7 @@
 					<th>Race</th>
 					<th>Date</th>
 					<th>Position</th>
-					<th>Time</th>
+					<th>Result</th>
 					<th>Personal Best</th>
 					<th>Standard</th>
 					<th>Info</th>
@@ -413,7 +171,7 @@
 					<th>Race</th>
 					<th>Date</th>
 					<th>Position</th>
-					<th>Time</th>
+					<th>Result</th>
 					<th>Personal Best</th>
 					<th>Standard</th>
 					<th>Info</th>
@@ -425,15 +183,15 @@
 		</table>
 	</div>
 </div>
-<div class="modal fade" id="standardCertificatesModal" tabindex="-1" role="dialog" aria-labelledby="Standard Certificates" aria-hidden="true">
-  <div class="modal-dialog" style="z-index:10000">
+<div class="modal fade" id="standardCertificatesModal" tabindex="-1" role="dialog" aria-labelledby="Standard Certificates">
+  <div class="modal-dialog modal-lg" style="z-index:10000" role="document">
 	<div class="modal-content">
 	  <div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		<h4 class="modal-title">Standard Certificates achieved by <?php //echo $this->getName(); ?></h4>
+		<h4 class="modal-title">Standard Certificates achieved by <span class="runnerName"></span></h4>
 	  </div>
 	  <div class="modal-body">		
-		<table class="table table-bordered">
+		<table class="table table-bordered" id="member-certificates-table">
 			<thead>
 				<tr>
 					<th>Standard</th>
@@ -441,22 +199,7 @@
 					<th>Certificate</th>
 				</tr>
 			</thead>
-			<tbody>
-			<?php
-			// $certificates = $this->getStandardCertificates();
-			// for ($i = 0; $i < count($certificates); $i++)
-			// {
-				// echo "<tr>";
-				// printf('<td>%s</td>', $certificates[$i]['name']);
-				// printf('<td>%s, on %s. Time %s</td>',
-					// $certificates[$i]['event'],
-					// $certificates[$i]['date'],
-					// $certificates[$i]['result']);
-				// printf('<td><a href="%s" target="_blank">View</a></td>',
-					// $this->getStandardCertificateUrl($certificates[$i]['name'], $certificates[$i]['event'], $certificates[$i]['date'], $certificates[$i]['result']));
-				// echo "</tr>";
-			// }
-			?>
+			<tbody style="width: 100%; height: 500px;">			
 			</tbody>
 		</table>
 	  </div>
@@ -466,100 +209,400 @@
 	</div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
 <!-- amCharts javascript sources -->
 <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
-<script src="https://www.amcharts.com/lib/3/serial.js"></script>
+<script src="https://www.amcharts.com/lib/3/pie.js"></script>
 <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
-<script src="http://www.amcharts.com/lib/3/plugins/dataloader/dataloader.min.js"></script>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {	
-		/*$('#member-ranking-table, #member-race-predictions-current-table, #member-race-predictions-best-table').DataTable({
-			pageLength : 20,
-			serverSide : false,
-			processing : true,
-			paging : false,
-			searching: false,
-			autoWidth : false,
-			ordering: false,
-			scrollX: true			
-		});	
-
-		$('#member-personal-best-results-table').DataTable({
-			pageLength : 20,
-			serverSide : false,
-			processing : true,
-			autoWidth : false,
-			scrollX: true			
-		});	*/
-
-		$('#member-results-table').DataTable({
-			pageLength : 20,
-			serverSide : false,
-			processing : true,
-			autoWidth : false,
-			order: [[ 2, "desc" ]],
-			scrollX: true,
-			columns: [
-				{ 
-					data: "raceId",
-					visible: false  
-				},
-				{
-					data: "raceName",
-					render: function ( data, type, row, meta ) {	
-						var resultsUrl = '<?php echo $raceResultsPageUrl; ?>';
-						var anchor = '<a href="' + resultsUrl;						
-						anchor += '?raceId=' + row.raceId;						
-						anchor += '">' + row.eventName + nullToEmptyString(data) + '</a>';								
-						return anchor;
-					}
-				},
-				{
-					data: "date"					
-				},
-				{
-					data: "position",
-					render : function (data, type, row, meta) {
-						return data > 0 ? data : '';
-					}
-				},
-				{
-					data: "time",
-					render : function (data, type, row, meta) {
-						return data != '00:00:00' ? data : '';
-					}
-				},
-				{
-					data: "isPersonalBest",
-					render : function (data, type, row, meta) {
-							return '<input type="checkbox" value="1" disabled="disabled"' + (data == 1 ? ' checked="checked"' : '') + '/>';
-					},
-					className : 'text-center'
-				},
-				{
-					data: "standard"
-				},
-				{
-					data: "info"
-				},
-				{
-					data: "percentageGrading",
-					render : function (data, type, row, meta) {
-						return data > 0 ? data + '%' : '';
+		
+		var rankings;
+		$.getJSON(
+			'<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/runners/<?php echo $_GET['runner_id']; ?>',
+			function(data) {	
+				// {"id":"116","name":"Gavin Davies","sexId":"2","dateOfBirth":"1980-05-16","isCurrentMember":"1","sex":"Male","certificates": array[], "rankings" : array[]}
+				$('.runnerName').text(data.name);
+				$('.runnerAgeCategory').text(data.ageCategory);
+				$('.runnerGender').text(data.sex);
+				rankings = data.rankings;
+				populateCertificatesTable(data.name, data.certificates);
+				populateRankingsTable(data.rankings);
+			}
+		);			
+					
+		var supportedDistanceIds = [1,2,3,4,5,7,8];
+		var results;
+		var allDistances;
+		$.when(
+			$.getJSON(
+				'<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/distances',
+				function(data) {	
+					allDistances = data;
+				}
+			),
+			$.getJSON(
+				// {"eventId":"89","eventName":"Jaffa Handicap 5","distanceId":"2","id":"82722","date":"2016-07-25","raceName":"","raceId":"3965","position":"22","time":"00:28:07","result":"00:28:07","isPersonalBest":"0","isSeasonBest":"0","standard":"3 Star","info":"","percentageGrading":"77.99"}
+				'<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/runner/<?php echo $_GET['runner_id']; ?>',
+				function(data) {
+					results = data;
+					createResultsDataTable(data);
+				}
+			)
+		).then( function(){			 
+			 processResults(results, allDistances);
+		 });
+				
+		function processResults(data, distances) {	
+			
+			// Get PBs by year. Data returned sorted by date (descending)
+			var seasonalBest = [];
+			var personalBest = [];
+			var raceDistanceCount = [];
+			var courseTypeCount = [];
+			var otherRaceDistanceCount = 0;
+			
+			$.each(data, function(i, result){		
+											
+				var resultYear = result.date.substring(0, 4);
+				if (seasonalBest[resultYear] === undefined) {
+					seasonalBest[resultYear] = [];					
+					seasonalBest[resultYear][result.distanceId] = result;											
+				} else {
+					if (seasonalBest[resultYear][result.distanceId] === undefined || (result.result < seasonalBest[resultYear][result.distanceId].result || 
+							(result.result == seasonalBest[resultYear][result.distanceId].result && result.date < seasonalBest[resultYear][result.distanceId].date))) {
+						seasonalBest[resultYear][result.distanceId] = result;					
 					}
 				}
-				],
-				ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/runner/<?php echo $_GET['runnerId']; ?>')			
-		});
+									
+				if (result.isPersonalBest == 1) {
+					if (personalBest[result.distanceId] === undefined || personalBest[result.distanceId].result > result.result) {
+						personalBest[result.distanceId] = result;	
+					}
+				}
+				
+				var distanceId = result.distanceId;
+				if (distanceId == null)
+					distanceId = 0;
+				else 
+					distanceId = parseInt(distanceId);
+					
+				if (supportedDistanceIds.indexOf(distanceId) == -1 && distanceId != 0) {
+					otherRaceDistanceCount++;
+				}
+				
+				if (raceDistanceCount[distanceId] === undefined)
+					raceDistanceCount[distanceId] = 0;
+				raceDistanceCount[distanceId] += 1;
+				
+				var courseTypeId = result.courseTypeId;
+				if (courseTypeId == null)
+					courseTypeId = 0;
+				if (courseTypeCount[courseTypeId] === undefined)
+					courseTypeCount[courseTypeId] = 0;
+				courseTypeCount[courseTypeId] += 1;
+			});
+							
+			populateRaceCountTable(raceDistanceCount, otherRaceDistanceCount);
+			populateSeaonalBestTable(seasonalBest);
+			populateLatestRacePredictorTable(seasonalBest, data[0].date.substring(0, 4));
+			populateAllTimeRacePredictorTable(personalBest);
+			createRaceDistancePieChart(raceDistanceCount, otherRaceDistanceCount);
+			createCourseTypePieChart(courseTypeCount);
+		}
+		
+		function getDistance(distanceId) {
+			for (var i = 0; i < allDistances.length; i++) {
+				if (parseInt(allDistances[i].id) === distanceId) {
+				  return allDistances[i];
+				}
+			}
+			
+			return null;
+		}
+		
+				
+		function populateRankingsTable(rankings) {
+			var tableBody = $('#member-ranking-table tbody');
+				
+			var rows = '';				
+			rows += '<tr>';						
+			rows += '<td>All Time</td>';
+			$.each(supportedDistanceIds, function(i, distanceId) {										
+				$.each(rankings, function(j, rank) {		
+					if (distanceId == rank.distanceId) {
+						rows += '<td ><a tabindex="0" role="button" class="rank-result" data-contenttitle="All time ranking" data-overallrankid="' + rank.resultId + '">' + rank.rank + '</a></td>';		
+						return;
+					}
+				});
+			});
+			rows += '</tr>';	
+			
+			tableBody.append(rows);		
+		}
+		
+		function populateLatestRacePredictorTable(data, year) {
+			var tableId = '#member-race-predictions-current-table';
+			var tableBody = $(tableId + ' tbody');
+				
+			var rows = '';
+					
+			$.each(supportedDistanceIds, function(k, distanceId) {
+				rows += '<tr>';	
+				var distance = getDistance(distanceId);
+				if (distance != null) {
+					rows += '<td>' +distance.text+ '</td>';				
+					$.each(supportedDistanceIds, function(k2, distanceId2) {							
+						if (data[year][distanceId] !== undefined) {
+							if (distanceId == distanceId2) {
+								rows += '<td class="success"><strong>' + data[year][distanceId].result + '</strong></td>';
+							} else {
+								rows += '<td>'+ getPredictedTime(distanceId, data[year][distanceId].result, distanceId2) +'</td>';
+							}
+						} else {
+							rows += '<td></td>';
+						}					
+					});	
+					rows += '</tr>';	
+				}
+			});			
+			
+			tableBody.append(rows);
+			$('.lastYearOfCompetition').text(year);
+		}
+		
+		function populateAllTimeRacePredictorTable(data) {
+			var tableId = '#member-race-predictions-best-table';
+			var tableBody = $(tableId + ' tbody');
+			
+			var rows = '';
+						
+			$.each(supportedDistanceIds, function(k, distanceId) {
+				var distance = getDistance(distanceId);
+				if (distance != null) {
+					rows += '<tr>';	
+					rows += '<td>' +distance.text+ '</td>';				
+					$.each(supportedDistanceIds, function(k2, distanceId2) {							
+						if (data[distanceId] !== undefined) {
+							if (distanceId == distanceId2) {
+								rows += '<td class="success"><strong>' + data[distanceId].result + '</strong></td>';
+							} else {
+								rows += '<td>'+ getPredictedTime(distanceId, data[distanceId].result, distanceId2) +'</td>';
+							}
+						} else {
+							rows += '<td></td>';
+						}					
+					});	
+					rows += '</tr>';
+				}
+			});			
+			
+			tableBody.append(rows);
+		}
+		
+		function populateSeaonalBestTable(data) {
+			var tableId = '#member-seasonal-best-results-table'
+			var tableBody = $(tableId + ' tbody');
+				
+			var rows = '';
+						
+			for (var i = data.length - 1; i > 0; i--) {
+				var year = i;	
+				if (data[year] === undefined)
+					continue;
+				
+				rows += '<tr>';
+				rows += '<td>' + year + '</td>';
+				
+				$.each(supportedDistanceIds, function(k, distanceId) {
+					if (data[year][distanceId] !== undefined) {
+						rows += '<td>' + data[year][distanceId].time + '</td>';
+					} else {
+						rows += '<td></td>';
+					}
+				});
+					
+				rows += '</tr>';
+			}
+			
+			tableBody.append(rows);
+		}
+		
+		function populateCertificatesTable(name, data) {
+			if (data === null)
+				return;
+			var tableBody = $( '#member-certificates-table tbody');
+			
+			var rows = '';
+					
+			$.each(data, function(i, cert) {
+				rows += '<tr>';	
+				rows += '<td>' + cert.name+ '</td>';
+				rows += '<td>' + cert.event + ', on ' + cert.date +'. Time ' + cert.result + '</td>';
+				rows += '<td><a href="' + getStandardCertificatesUrl(name, cert) +'" target="_blank">View</a></td>';				
+				rows += '</tr>';	
+			});
+			
+			tableBody.append(rows);
+		}
+		
+		function populateRaceCountTable(data, otherRaceDistanceCount) {
+			var tableId = '#member-race-count-table';
+			var tableBody = $(tableId + ' tbody');
+						
+			var sum  = data.reduce(function(a, b) { return a + b; }, 0);
+			var rows = '<tr>';				
+			rows += '<td>Count</td>';
+			for(var i = 0; i < supportedDistanceIds.length; i++) {
+				var count = data[supportedDistanceIds[i]] === undefined ? 0 : data[supportedDistanceIds[i]];
+				rows += '<td>' + count + '</td>';
+			}
+						
+			rows += '<td>' + otherRaceDistanceCount + '</td>';
+			// Not measured			
+			rows += '<td>' + (data[0] === undefined ? 0 : data[0]) + '</td>';
+			rows += '<td>' + sum + '</td>';					
+			rows += '</tr>';	
+						
+			rows += '<tr>';	
+			rows += '<td>Distance (miles)</td>';
+			for(var i = 0; i < supportedDistanceIds.length; i++) {
+				var miles;
+				if (data[supportedDistanceIds[i]] === undefined)
+					miles = 0;
+				else
+					miles = getTotalRaceDistanceInMiles(supportedDistanceIds[i], data[supportedDistanceIds[i]]).toFixed(2);
+				rows += '<td>' + miles + '</td>';
+			}		
+
+			var otherDistanceMilesSum = 0;
+			for (var distanceId in data) {
+				distanceId = parseInt(distanceId);
+				if (supportedDistanceIds.indexOf(distanceId) == -1 && distanceId != 0) {
+					otherDistanceMilesSum += getTotalRaceDistanceInMiles(distanceId, data[distanceId]);
+				}
+			}
+			
+			rows += '<td>' + otherDistanceMilesSum.toFixed(2) + '</td>';
+			rows += '<td></td>';
+			var totalDistance = data.reduce(function(total, currentValue, currentIndex) { return getTotalRaceDistanceInMiles(currentIndex, currentValue) + total; }, 0);
+			rows += '<td>' + totalDistance.toFixed(2) + '</td>';					
+			rows += '</tr>';
+			tableBody.append(rows);
+		}
+		
+		function getTotalRaceDistanceInMiles(distanceId, number) {
+			var distance = getDistance(distanceId);
+			if (distance != null) {
+				return (distance.miles * number);
+			}
+						
+			return 0;					
+		}
+		
+		function getStandardCertificatesUrl(name, cert) {
+			 		
+			return '<?php echo plugins_url('php/standards/printcertificate.php', dirname(__FILE__)); ?>' +
+			'?name=' + name +
+			'&standard=' + cert.name +
+			'&event=' + cert.event +
+			'&date=' + cert.date +
+			'&time=' + cert.result +
+			'&filepath=<? echo plugin_dir_path(dirname(__FILE__)); ?>php/standards/';
+		}
+		
+		function getPredictedTime(actualDistanceId, actualTime, targetDistanceId) {
+
+			var actualDistance = getDistance(actualDistanceId);
+			var targetDistance = getDistance(targetDistanceId);
+			var timeComponents = actualTime.split(':');
+			var actualTotalMinutes = (parseInt(timeComponents[0]) * 60) + parseInt(timeComponents[1]) + (parseInt(timeComponents[2]) / 60);
+			
+			var targetTotalMinutes = actualTotalMinutes * (Math.pow((targetDistance.miles / actualDistance.miles), 1.06));
+			
+			var hours = Math.floor(targetTotalMinutes / 60);
+		
+			var minutes = Math.floor(targetTotalMinutes % 60);
+			
+			var seconds =  Math.floor(((targetTotalMinutes % 60) - minutes) * 60).toString();
+		
+			var targetTime = hours + ':' + minutes + ':' + seconds.substring(0, 2 - seconds.length) + seconds;
+		
+			return targetTime;
+		}
+
+		function createResultsDataTable(data) {
+			$('#member-results-table').DataTable({
+				pageLength : 20,
+				serverSide : false,
+				processing : true,
+				autoWidth : false,
+				order: [[ 2, "desc" ]],
+				scrollX: true,
+				data: data,
+				columns: [
+					{ 
+						data: "raceId",
+						visible: false  
+					},
+					{
+						data: "raceName",
+						render: function ( data, type, row, meta ) {	
+							var resultsUrl = '<?php echo $raceResultsPageUrl; ?>';
+							var anchor = '<a href="' + resultsUrl;						
+							anchor += '?raceId=' + row.raceId;						
+							anchor += '">' + row.eventName + nullToEmptyString(data) + '</a>';								
+							return anchor;
+						}
+					},
+					{
+						data: "date"					
+					},
+					{
+						data: "position",
+						render : function (data, type, row, meta) {
+							return data > 0 ? data : '';
+						}
+					},
+					{
+						data: "result",
+						render : function (data, type, row, meta) {
+							return data != '00:00:00' ? data : '';
+						}
+					},
+					{
+						data: "isPersonalBest",
+						render : function (data, type, row, meta) {							
+							if (data == 1) {
+								return '<span class="glyphicon glyphicon-ok" aria-hidden="true"><span class="hidden">Yes</span></span>';
+							} 
+							return '';
+						},
+						className : 'text-center'
+					},
+					{
+						data: "standard"
+					},
+					{
+						data: "info"
+					},
+					{
+						data: "percentageGrading",
+						render : function (data, type, row, meta) {
+							return data > 0 ? data + '%' : '';
+						}
+					}
+					]
+			});
+		}
 		
 		function nullToEmptyString(value) {
-			return (value == null) ? "" : + " - " + value;
+			return (value == null || value == "") ? "" : " - " + value;
 		}
 		
 		function getAjaxRequest(url) {
 			return {
-				//"async": false,
-				"url" : '<?php echo get_site_url(); ?>' + url,
+				"url" : '<?php echo esc_url( home_url() ); ?>' + url,
 				"method" : "GET",
 				"headers" : {
 					"cache-control" : "no-cache"
@@ -568,113 +611,133 @@
 			}
 		}
 
-		$('.rank-result > .trigger').popover({
-			html: true,
-			placement: 'top',
-			container: 'body',
-			title: function(){
-				return $(this).parent().data('contenttitle');
-			},
-			content: function(){
-				return $($(this).parent().data('contentwrapper')).html();
-			}
+		$('.rank-result').live( 'click', function () {
+			var popover = $(this).popover({
+				html: true,
+				placement: 'top',
+				container: 'body',
+				title: function(){
+					return $(this).data('contenttitle');
+				},
+				content: function(){
+					var resultId = $(this).data('overallrankid');
+					var ranking = getRanking(resultId);
+					var html = '';
+					if (ranking != null) {
+						html = '<div><div class="row"><div class="col-md-6">Event</div><div class="col-md-6">'+ranking.event+'</div>';
+						html += '<div class="col-md-6">Date</div><div class="col-md-6">'+ranking.date+'</div>';
+						html += '<div class="col-md-6">Result</div><div class="col-md-6">'+ranking.result+'</div>';
+						html += '<div class="col-md-6">Position in Event</div><div class="col-md-6">'+ranking.position+'</div>';
+						html += '<div class="col-md-6">Rank</div><div class="col-md-6">'+ranking.rank+'</div></div></div>';			
+					}
+					return html;
+				}
+			}).popover('show');
 		});
 		
-		var chart = AmCharts.makeChart("chartdiv", {
-  "type": "serial",
-  "theme": "light",
-  "marginRight": 40,
-  "marginLeft": 40,
-  "autoMarginOffset": 20,
-  "dataDateFormat": "YYYY-MM-DD",
-  "valueAxes": [{
-    "id": "v1",
-    "axisAlpha": 0,
-    "position": "left",
-    "ignoreAxisWidth": true
-  }],
-  "balloon": {
-    "borderThickness": 1,
-    "shadowAlpha": 0
-  },
-  "graphs": [{
-    "id": "g1",
-    "balloon": {
-      "drop": false,
-      "adjustBorderColor": false,
-      "color": "#ffffff"
-    },
-    "bullet": "round",
-    "bulletBorderAlpha": 1,
-    "bulletColor": "#FFFFFF",
-    /*"bulletSize": 2,*/
-    "hideBulletsCount": 50,
-    "lineThickness": 2,
-    "title": "red line",
-    "useLineColorForBulletBorder": true,
-    "valueField": "percentageGrading",
-    "balloonText": "<span style='font-size:14px;'>[[eventName]]<br />[[time]], [[value]]%</span>"
-  }],
-  "chartScrollbar": {
-    "graph": "g1",
-    "oppositeAxis": false,
-    "offset": 30,
-    "scrollbarHeight": 80,
-    "backgroundAlpha": 0,
-    "selectedBackgroundAlpha": 0.1,
-    "selectedBackgroundColor": "#888888",
-    "graphFillAlpha": 0,
-    "graphLineAlpha": 0.5,
-    "selectedGraphFillAlpha": 0,
-    "selectedGraphLineAlpha": 1,
-    "autoGridCount": true,
-    "color": "#AAAAAA"
-  },
-  "chartCursor": {
-    "pan": true,
-    "valueLineEnabled": true,
-    "valueLineBalloonEnabled": true,
-    "cursorAlpha": 1,
-    "cursorColor": "#258cbb",
-    "limitToGraph": "g1",
-    "valueLineAlpha": 0.2
-  },
-  "valueScrollbar": {
-    "oppositeAxis": false,
-    "offset": 50,
-    "scrollbarHeight": 10
-  },
-  "categoryField": "date",
-  "categoryAxis": {
-    "parseDates": true,
-    "dashLength": 1,
-    "minorGridEnabled": true
-  },
- "dataLoader": {
-	"url": "http://test.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v2/results/runner/<?php echo $_GET['runnerId']; ?>",
-	"format": "json",
-	"postProcess" : removeZeroResults
-  }
-});
-
-chart.addListener("rendered", zoomChart);
-
-zoomChart();
-var dataCount = 0;
-function removeZeroResults(data) {
- var parsedData = [];
- for (var i = 0; i < data.length; i++) {
-	if (data[i].percentageGrading != "0.00") {	
-		parsedData.unshift(data[i]);
-	}
- }
- dataCount = parsedData.length;
- return parsedData;
-}
-
-function zoomChart() {
-  chart.zoomToIndexes(dataCount - 40, dataCount - 1);
-}
+		function getRanking(resultId) {
+			for (var i = 0; i < rankings.length; i++) {
+				if (parseInt(rankings[i].resultId) === resultId) {
+				  return rankings[i];
+				}
+			}
+			
+			return null;
+		}
+		
+		function createRaceDistancePieChart(distances, otherRaceDistanceCount) {
+				
+			var chart = AmCharts.makeChart("race-distance-chart", {
+				"type": "pie",
+				"theme": "light",    
+				"innerRadius": "40%",
+				"gradientRatio": [-0.4, -0.4, -0.4, -0.4, -0.4, -0.4, 0, 0.1, 0.2, 0.1, 0, -0.2, -0.5],
+				"dataProvider": [{
+					"distance": "5km",
+					"count": distances[1]
+				}, {
+					"distance": "5mi",
+					"count": distances[2]
+				}, {
+					"distance": "10km",
+					"count": distances[3]
+				}, {
+					"distance": "10mi",
+					"count": distances[4]
+				}, {
+					"distance": "Half Marathon",
+					"count": distances[5]
+				}, {
+					"distance": "20mi",
+					"count": distances[7]
+				}, {
+					"distance": "Marathon",
+					"count": distances[8]
+				}, {
+					"distance": "Other",
+					"count": otherRaceDistanceCount
+				}, {
+					"distance": "Unclassified",
+					"count": distances[0]
+				}],
+				"balloonText": "[[value]]",
+				"valueField": "count",
+				"titleField": "distance",
+				"balloon": {
+					"drop": true,
+					"adjustBorderColor": false,
+					"color": "#FFFFFF",
+					"fontSize": 16
+				}
+			});
+		}
+		
+		function createCourseTypePieChart(courses) {
+				
+			var chart = AmCharts.makeChart("course-type-chart", {
+				"type": "pie",
+				"theme": "light",    
+				"innerRadius": "40%",
+				"gradientRatio": [-0.4, -0.4, -0.4, -0.4, -0.4, -0.4, 0, 0.1, 0.2, 0.1, 0, -0.2, -0.5],
+				"dataProvider": [{
+					"course": "Road",
+					"count": courses[1]
+				}, {
+					"course": "Multi-Terrain",
+					"count": courses[2]
+				}, {
+					"course": "Track",
+					"count": courses[3]
+				}, {
+					"course": "Fell",
+					"count": courses[4]
+				}, {
+					"course": "Cross Country",
+					"count": courses[5]
+				}, {
+					"course": "Indoor",
+					"count": courses[6]
+				}, {
+					"course": "Park",
+					"count": courses[7]
+				}, {
+					"course": "Field",
+					"count": courses[8]
+				}, {
+					"course": "Unclassified",
+					"count": courses[0]
+				}],
+				"balloonText": "[[value]]",
+				"valueField": "count",
+				"titleField": "course",
+				"balloon": {
+					"drop": true,
+					"adjustBorderColor": false,
+					"color": "#FFFFFF",
+					"fontSize": 16
+				}
+			});
+		}
 
 	});
 </script>
