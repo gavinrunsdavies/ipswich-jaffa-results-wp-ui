@@ -115,7 +115,6 @@
 <script type="text/javascript" src="http://www.amcharts.com/lib/3/ammap.js"></script>
 <script type="text/javascript" src="http://www.amcharts.com/lib/3/maps/js/worldLow.js"></script>
 <script type="text/javascript" src="http://www.amcharts.com/lib/3/themes/none.js"></script>
-<!--<script type="text/javascript" src="http://www.amcharts.com/lib/3/maps/js/unitedKingdomLow.js"></script>-->
 <script type="text/javascript">
 	jQuery(document).ready(function($) {	
 					
@@ -132,7 +131,7 @@
 			lengthChange : false,
 			processing    : true,	
 			searching : false,
-			ajax    	  : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/statistics?typeId=3')					
+			ajax    	  : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/statistics/type/3')					
 		});
 		
 		var pbYearTable = $('#personal-best-year-table');	
@@ -148,7 +147,7 @@
 			lengthChange : false,
 			processing    : true,				
 			searching : false,
-			ajax    	  : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/statistics?typeId=5')					
+			ajax    	  : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/statistics/type/5')					
 		});
 		
 		var pbTable = $('#personal-best-total-table');	
@@ -179,10 +178,11 @@
 				}
 				
 			],
-			paging: false,
+			displayLength : 10,
+			lengthChange : false,
 			processing    : true,				
 			searching : false,
-			ajax    	  : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/statistics?typeId=4')					
+			ajax    	  : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/statistics/type/4')					
 		});
 		
 		var topJaffaRaceTable = $('#top-jaffa-attended-races-table');	
@@ -190,7 +190,7 @@
 		topJaffaRaceTable.DataTable({			
 			  "columns": [
              { data: "name" },
-             { data: "racedate" },
+             { data: "date" },
              { data: "count" }          
          ],
 		    order: [[ 2, "desc" ]],
@@ -201,9 +201,9 @@
 						var eventResultsUrl = '<?php echo $eventResultsPageUrl; ?>';
 						var anchor = '<a href="' + eventResultsUrl;
 						if (eventResultsUrl.indexOf("?") >= 0) {
-							anchor += '&eventId=' + row.eventId + '&date=' + row.racedate + '&event=' + data;
+							anchor += '&eventId=' + row.eventId + '&date=' + row.date + '&event=' + data;
 						} else {
-							anchor += '?eventId=' + row.eventId + '&date=' + row.racedate+ '&event=' + data;
+							anchor += '?eventId=' + row.eventId + '&date=' + row.date+ '&event=' + data;
 						}
 						anchor += '">' + data + '</a>';								
 
@@ -211,10 +211,11 @@
 					}
 				}				
 			],
-			paging: false,
+			displayLength : 10,
+			lengthChange : false,
 			processing    : true,				
 			searching : false,
-			ajax    	  : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/statistics?typeId=6')					
+			ajax    	  : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/statistics/type/6')					
 		});
 		
 		var topMemberResultsTable = $('#top-member-results-table');	
@@ -242,10 +243,11 @@
 					}
 				}				
 			],
-			paging: false,
+			displayLength : 10,
+			lengthChange : false,
 			processing    : true,				
 			searching : false,
-			ajax    	  : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/statistics?typeId=7')					
+			ajax    	  : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/statistics/type/7')					
 		});
 			
 		var startYear = 1977;
@@ -273,7 +275,7 @@
 			"theme" : "none",
 			"pathToImages" : "http://www.amcharts.com/lib/3/images/",
 			"dataProvider" : {
-				"mapURL" : "<?php echo plugin_dir_url(__FILE__); ?>ukCounties.svg",
+				"mapURL" : "<?php echo plugin_dir_url(__FILE__); ?>ukCounties.svg",				
 				"getAreasFromMap" : true
 			},
 			"areasSettings" : {
@@ -286,7 +288,7 @@
 				
 		var countries = {};
 		var worldMapData;
-		$.ajax(getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/statistics?typeId=2'))
+		$.ajax(getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/statistics/type/2'))
 			.done(function(data) {
 				worldMapData = data;
 				
@@ -304,7 +306,7 @@
 			
 		var counties = {};
 		var ukCountyMapData;
-		$.ajax(getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/statistics?typeId=1'))
+		$.ajax(getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/statistics/type/1'))
 			.done(function(data) {
 				ukCountyMapData = data;
 				
