@@ -599,17 +599,6 @@
 		function nullToEmptyString(value) {
 			return (value == null || value == "") ? "" : " - " + value;
 		}
-		
-		function getAjaxRequest(url) {
-			return {
-				"url" : '<?php echo esc_url( home_url() ); ?>' + url,
-				"method" : "GET",
-				"headers" : {
-					"cache-control" : "no-cache"
-				},
-				"dataSrc" : ""
-			}
-		}
 
 		$('.rank-result').live( 'click', function () {
 			var popover = $(this).popover({
