@@ -5,15 +5,14 @@
 			<select id="year" name="year" size="1" title="Select year">
 				<option value="0" selected="selected">Please select...</option>  
 				<?php
-				for ($y = date("Y"); $y >= 1977; $y--) 
+				for ($y = date("Y"); $y >= 2015; $y--) 
 				{
 					printf('<option value="%d">%d</option>', $y, $y);              
 				}
 				?>							
 			</select>		     			
-			<input id="grand-prix-submit" type="button" name="submit" value="Get Rankings"/>			     
+			<input id="grand-prix-submit" type="button" name="submit" value="Get Scores"/>			     
 		</form>
-		<p><small>The accuracy of Grand Prix result for years prior to 2016 is not guaranteed.</small></p>		
 	</div>
 	<div id="men-grand-prix-results" style="display:none" class="center-panel">		
 		<div class="row">
@@ -142,8 +141,11 @@
 			});				
 	
 			var table = $('#' + tableId);
-			if (table.DataTable() != null)
-				table.DataTable().destroy();
+			if (table.DataTable() != null) {
+				table.DataTable().clear();
+				table.DataTable().destroy();				
+			}
+				
 			
 			tableBody.append(rows);
 			
@@ -152,7 +154,7 @@
 				paging : true,
 				destory	   : true,	
 				searching: 	true,
-				order: 		[[ 3, "desc" ]]
+				order: 		[[ 3, "desc" ], [ 2, "desc" ]]
 			} );
 		}
 		
@@ -246,7 +248,7 @@
 				$.each(runner.races, function(k, race){
 					if (raceDetail.id == race.id) {
 						
-						var anchor = '<a href="' + eventResultsUrl;
+						var anchor = eventResultsUrl;
 						if (eventResultsUrl.indexOf("?") >= 0) {
 							anchor += '&raceId=' + raceDetail.id;
 						} else {

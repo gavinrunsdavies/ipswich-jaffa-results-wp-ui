@@ -12,7 +12,7 @@ if (!class_exists("StandardsCertificatePdf")) {
     
     // Class properties
     //var $standardSecretary = 'Gavin Davies';
-    var $chairman = 'Kate Wooldridge';
+    var $chairman = 'Alison Beech';
     
     var $title='Ipswich JAFFA Running Club Standards Certificate';
     var $documentAuthor = "Gavin Davies";

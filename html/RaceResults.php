@@ -2,6 +2,16 @@
 	<h2 id="jaffa-event-title"></h2>
 	<div class="center-panel" id="jaffa-race-results">
 	</div>
+	<div class="center-panel">
+	    <br />
+		<form class="form-inline">
+		  <div class="form-group">
+			<label for="jaffa-other-race-results">Other race results</label>			
+			  <select onchange="if (this.value) window.location.href=this.value" class="form-control" id="jaffa-other-race-results">
+			  </select>
+		  </div>
+		</form>
+	</div>
 </div>
 <script type="text/javascript">
 	<?php if (isset($_GET['raceId']) || (isset($_GET['eventId']) && isset($_GET['date']))): ?>
@@ -44,6 +54,7 @@
 					} else {
 						getRaceResult(raceData.id, raceData.eventName, raceData.date);
 					}
+					getEventRaces(raceData.eventId);
 				});
 		}
 			
@@ -72,6 +83,21 @@
 			});
 		}
 		
+		function getEventRaces(eventId) {
+			$.ajax(
+				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/'+ eventId + '/races'))					
+				.done(function(raceData) {	
+					var raceResultsUrl = '<?php echo $eventResultsPageUrl; ?>';
+					var url = raceResultsUrl + '?raceId=';						
+					var dateOptions = '<option>Please select...</option>';
+					for (var i = 0; i < raceData.length; i++) {							
+						dateOptions += '<option value="' + url + raceData[i].id + '">' + raceData[i].date + ' (' + raceData[i].count + ' results) </option>';
+					}					
+					
+					$('#jaffa-other-race-results').append(dateOptions);
+			});
+		}
+		
 		function getRaceResult(raceId, description, date) {
 			var tableName = 'jaffa-race-results-table-';
 			var tableHtml = '';
@@ -86,9 +112,14 @@
 			
 			var table = $('#'+tableName + raceId).DataTable({				
 				dom: 'tBip',
-				buttons: [
-					'print'
-				],
+				buttons: {
+					buttons: [{
+					  extend: 'print',
+					  text: '<i class="fa fa-print"></i> Print',
+					  title: $('#jaffa-event-title').text() + ': ' + $('#' +tableName + raceId + ' caption').text(),
+					  footer: true					  
+					}]
+				},
 				paging : false,
 				searching: false,
 				serverSide : false,
