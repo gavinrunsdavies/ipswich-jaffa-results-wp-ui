@@ -510,6 +510,12 @@
 			'&time=' + cert.result +
 			'&filepath=<? echo plugin_dir_path(dirname(__FILE__)); ?>php/standards/';
 		}
+    
+    function addPadding(number, size) {
+      var s = String(number);
+      while (s.length < (size || 2)) {s = "0" + s;}
+      return s;
+    }
 		
 		function getPredictedTime(actualDistanceId, actualTime, targetDistanceId) {
 
@@ -526,7 +532,7 @@
 			
 			var seconds =  Math.floor(((targetTotalMinutes % 60) - minutes) * 60).toString();
 		
-			var targetTime = hours + ':' + minutes + ':' + seconds.substring(0, 2 - seconds.length) + seconds;
+			var targetTime = hours + ':' + minutes + ':' + addPadding(seconds, 2);
 		
 			return targetTime;
 		}
