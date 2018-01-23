@@ -112,9 +112,9 @@
 	</div>
 </div>
 <!-- amCharts javascript sources -->
-<script type="text/javascript" src="http://www.amcharts.com/lib/3/ammap.js"></script>
-<script type="text/javascript" src="http://www.amcharts.com/lib/3/maps/js/worldLow.js"></script>
-<script type="text/javascript" src="http://www.amcharts.com/lib/3/themes/none.js"></script>
+<script type="text/javascript" src="https://www.amcharts.com/lib/3/ammap.js"></script>
+<script type="text/javascript" src="https://www.amcharts.com/lib/3/maps/js/worldLow.js"></script>
+<script type="text/javascript" src="https://www.amcharts.com/lib/3/themes/none.js"></script>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {	
 					
