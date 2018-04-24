@@ -139,20 +139,22 @@
                 <tr>
                     <th>Year</th>
                     <th>Month</th>
-					<th></th>
+                    <th></th>
                     <th>Men</th>
                     <th>Ladies</th>
-                    <th>Junior</th>
+                    <th>Boys</th>
+                    <th>Girls</th>
                 </tr>
             </thead>
             <tfoot>
                 <tr>
                     <th>Year</th>
                     <th>Month</th>
-					<th></th>
+                    <th></th>
                     <th>Men</th>
                     <th>Ladies</th>
-                    <th>Junior</th>
+                    <th>Boys</th>
+                    <th>Girls</th>
                 </tr>
             </tfoot>
             <tbody></tbody>
@@ -212,7 +214,20 @@
 			  defaultContent: "<i>None set</i>",
 	          render : function (data, type, row) {
 				for(var i = 0; i < data.length; i++) {
-					if (data[i].category == 'Juniors') {
+					if (data[i].category == 'Boys') {
+						return getRunnerAnchorHtml(data[i].id, data[i].name);
+					}
+				}
+	            
+	            return;
+	          }
+	        }, 
+			{
+	          data : "winners",
+			  defaultContent: "<i>None set</i>",
+	          render : function (data, type, row) {
+				for(var i = 0; i < data.length; i++) {
+					if (data[i].category == 'Girls') {
 						return getRunnerAnchorHtml(data[i].id, data[i].name);
 					}
 				}
