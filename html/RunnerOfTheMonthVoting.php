@@ -1,4 +1,4 @@
-<p>Current members of Ipswich JAFFA Running Club can use this form to cast their votes for their runner of the month. Each vote counts and the adult mens and adult ladies with the the most votes at the next months committee meeting (first Tuesday of every month) wins. From September 2016 you can now vote for more than one member in each category in the month, although you may only vote for the same member once.</p>
+<p>Current members of Ipswich JAFFA Running Club can use this form to cast their votes for their runner of the month. Each vote counts and the adult mens and adult ladies with the the most votes at the next months committee meeting (second Tuesday of every month) wins. From September 2016 you can now vote for more than one member in each category in the month, although you may only vote for the same member once.</p>
 <p>Please cast your vote for your John Jarrold Runner of the Month. At the start of the next month all votes will be reset.</p>
 <p>To help certify genuine votes and exclude fraudent votes your name and date of birth will now be requested. These are only used for authentication purposes and to prevent multi voting for the same person.</p>
 <div class="section">
@@ -34,6 +34,43 @@
                 <span class="help-block" id="yourDateOfBirthHelpBlock">Please provide your date of birth. This is required for authentication purposes.</span>
             </div>
         </div>
+        <?php
+        if (date("j") <= 5) 
+        {
+        ?>
+        <div class="form-group">
+            <label class="col-sm-4 control-label" for="voteMonthAndYear">Month</label>
+            <div class="col-sm-8">
+                <select
+                    name="month"
+                    aria-describedby="monthHelpBlock"
+                    class="form-control"
+                    id="voteMonthAndYear">
+                    <?php
+                    $monthWithZeroes = date("m");
+                    printf('<option value="'.date("Y-n").'">'.date('F', strtotime("2000-$monthWithZeroes-01")).'</option>');
+                    if (date("n") == 1) {
+                      $year = date("Y") - 1;
+                      $month = 1;
+                      printf('<option value="'.$year.'-'.$month.'">December</option>');
+                    } else {
+                      $year = date("Y");
+                      $month = date("n") - 1;
+                      $monthWithZeroes = date("m") - 1;
+                      printf('<option value="'.$year.'-'.$month.'">'.date('F', strtotime("2012-$monthWithZeroes-01")).'</option>');
+                    }
+                    ?>
+                </select>
+                <span class="help-block" id="monthHelpBlock">Please choose which month.</span>
+            </div>
+        </div>
+        <?php        
+        }
+        else
+        {
+          printf('<input id="voteMonthAndYear" type="hidden" value="'.date("Y-n").'" name="monthAndYear"/>');
+        }
+        ?>
         <div class="form-group">
             <label class="col-sm-4 control-label" for="menVote">Adult Men</label>
             <div class="col-sm-8">
@@ -386,6 +423,11 @@
 			$('#menVoteReason').parents('div.form-group').first().addClass( "has-error" );
 			success = false;
 		}
+    
+    if ($('#voteMonthAndYear') != undefined && $('#voteMonthAndYear').val() == '') {
+      $('#voteMonthAndYear').parents('div.form-group').first().addClass( "has-error" );
+			success = false;
+    }
 		
 		return success;
 	}
@@ -399,10 +441,13 @@
 		
 		if (!success)
 			return;
-			
+
+    var date = $('#voteMonthAndYear').val().split('-');
 		var votes = { 				
 			voterId: voterId,
-			voterDateOfBirth: $('#yourDob').val()
+			voterDateOfBirth: $('#yourDob').val(),
+      month: date[1],
+      year: date[0]
 		};
 		
 		if (maleNominationId > 0) {
@@ -418,6 +463,7 @@
 				reason: $('#ladiesVoteReason').val()
 			}
 		}
+    
 		var jqxhr = $.post(
 			'<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/runnerofthemonth/vote', 
 			votes,
