@@ -30,7 +30,6 @@
     </div>
   </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
     const cookieName = 'runnerOfTheMonthAuth';
