@@ -86,7 +86,7 @@ class Program
 		wp_enqueue_script(
 			self::JQUERY_COOKIE_HANDLE,
 			plugins_url('/lib/jquery.cookie.min.js', __FILE__ ),
-			array(self::JQUERY_COOKIE_HANDLE));		
+			array(self::JQUERY_HANDLE));		
 	}
 	
 	public function styles()
