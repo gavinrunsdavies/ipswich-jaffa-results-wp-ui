@@ -23,7 +23,7 @@ class Program
 	
 	const JQUERY_DATATABLES_BUTTONS_PRINT_HANDLE = 'buttons.print.min';
 
-	const JQUERY_COOKIE_HANDLE = 'jquery.cookie.min';
+	const JS_COOKIE_HANDLE = 'js.cookie.min';
 	
 	function __construct() {		
 		add_action('init', array($this, 'registerShortCodes'));
@@ -84,9 +84,8 @@ class Program
 			array(self::JQUERY_DATATABLES_BUTTONS_HANDLE));		
 		
 		wp_enqueue_script(
-			self::JQUERY_COOKIE_HANDLE,
-			plugins_url('/lib/jquery.cookie.min.js', __FILE__ ),
-			array(self::JQUERY_HANDLE));		
+			self::JS_COOKIE_HANDLE,
+			plugins_url('/lib/js.cookie.min.js', __FILE__ ));		
 	}
 	
 	public function styles()

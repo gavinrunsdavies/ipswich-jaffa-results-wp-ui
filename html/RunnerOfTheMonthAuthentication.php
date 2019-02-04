@@ -7,6 +7,7 @@
 <li  id="2"><span class="result">Vote Result 2</span></li>
 <li  id="3"><span class="result">Vote Result 3</span></li>
 </ol>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="runnerOfTheMonthAuthModal" tabindex="-1" role="dialog" aria-labelledby="runnerOfTheMonthAuthModalTitle" aria-hidden="true">
@@ -27,7 +28,7 @@
             <label for="UKA-number" class="col-form-label">UKA Number:</label>
             <input type="text" class="form-control" id="UKA-number">
           </div>     
-          div class="form-group">
+          <div class="form-group">
             <label for="lastName" class="col-form-label">Last Name:</label>
             <input type="text" class="form-control" id="lastName">
           </div>                
@@ -43,21 +44,20 @@
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
     const cookieName = 'runnerOfTheMonthAuth';
-
+    var resultId = 0;
     $(".result").click(function(e) {
 		  e.preventDefault();
       // Get #id of result clicked
-      var resultId = $(this).parent().attr('id');
+      resultId = $(this).parent().attr('id');
 
-      var runnerOfTheMonthAuthCookie = $.cookie(cookieName);
-      if (typeof runnerOfTheMonthAuthCookie === 'undefined') {
+      var runnerOfTheMonthAuthCookie = Cookies.getJSON(cookieName);
+      if (runnerOfTheMonthAuthCookie === undefined) {
         $('#runnerOfTheMonthAuthModal').modal('show');
       } else {
         // Read cookie to get last name and URN
-        var cookieValue = JSON.parse(runnerOfTheMonthAuthCookie);        
-        castVote(resultId, cookieValue.ukaNumber, cookieValue.lastName);
+        castVote(resultId, runnerOfTheMonthAuthCookie.ukaNumber, runnerOfTheMonthAuthCookie.lastName);
       }
-    }
+    });
 
     $("#authenticateUser").click(function(e) {
       e.preventDefault();
@@ -68,7 +68,7 @@
 			  return;
 
       setAuthenticateCookieAndVote();
-    }
+    });
 
     function validateRequest() {
       var success = true;    
@@ -97,7 +97,7 @@
       var ukaNumber = $('#UKA-number').val();
       var lastName = $('#lastName').val();
       var cookieValue = createCookieValue(ukaNumber, lastName);
-      $.cookie(cookieName, cookieValue, { expires: null, path: '/' });
+      Cookies.set(cookieName, cookieValue, { expires: null, path: '/' });
       castVote(resultId, ukaNumber, lastName);
     } 
 
