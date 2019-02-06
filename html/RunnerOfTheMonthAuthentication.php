@@ -1,13 +1,8 @@
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#runnerOfTheMonthAuthModal">
-  Launch demo modal
-</button>
-<div>
 <ol>
-<li  id="1"><span class="result">Vote Result 1</span></li>
-<li  id="2"><span class="result">Vote Result 2</span></li>
-<li  id="3"><span class="result">Vote Result 3</span></li>
+<li>Result 1: <a id="1" href="#"><span class="result glyphicon glyphicon-thumbs-up" aria-hidden="true"><span class="hidden">Vote</span></span></a></li>
+<li>Result 2: <a id="2" href="#"><span class="result glyphicon glyphicon-thumbs-up" aria-hidden="true"><span class="hidden">Vote</span></span></a></li>
+<li>Result 3: <a id="3" href="#"><span class="result glyphicon glyphicon-thumbs-up" aria-hidden="true"><span class="hidden">Vote</span></span></a></li>
 </ol>
-</div>
 
 <!-- Modal -->
 <div class="modal fade" id="runnerOfTheMonthAuthModal" tabindex="-1" role="dialog" aria-labelledby="runnerOfTheMonthAuthModalTitle" aria-hidden="true">
@@ -27,17 +22,45 @@
           <div class="form-group">
             <label for="UKA-number" class="col-form-label">UKA Number:</label>
             <input type="text" class="form-control" id="UKA-number">
+            <span class="help-block" id="ukaNumberHelpBlock">Please enter your UK Athletics membership number.</span>
           </div>     
           <div class="form-group">
             <label for="lastName" class="col-form-label">Last Name:</label>
             <input type="text" class="form-control" id="lastName">
-          </div>                
+            <span class="help-block" id="lastNameHelpBlock">Please enter your last name as recorded with UK Athletics.</span>
+          </div> 
+          <div class="alert alert-danger alert-dismissible fade in" id="alertAuthenticationFailed" role="alert" style="display: none">
+            <button aria-label="Close" class="close" data-hide="alert" type="button">
+                <span aria-hidden="true">×</span>
+            </button>
+            <h4>UKA Athentication Failed</h4>
+            <p class="message"></p>
+        </div>                 
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-primary" id="authenticateUser">Authenticate</button>
       </div>
 	  </form>
+    </div>
+  </div>
+</div>
+<!-- Error Modal for when Cookie exists -->
+<div class="modal fade" id="runnerOfTheMonthErrorModal" tabindex="-1" role="dialog" aria-labelledby="runnerOfTheMonthAuthModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="runnerOfTheMonthAuthModalTitle">Result Voting Failed</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">	    
+        <p class="message"></p>         
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
     </div>
   </div>
 </div>
@@ -55,19 +78,26 @@
         $('#runnerOfTheMonthAuthModal').modal('show');
       } else {
         // Read cookie to get last name and URN
-        castVote(resultId, runnerOfTheMonthAuthCookie.ukaNumber, runnerOfTheMonthAuthCookie.lastName);
+        castVote(resultId, runnerOfTheMonthAuthCookie.ukaNumber, runnerOfTheMonthAuthCookie.lastName, false);
       }
+
+      $(this).css("color", "#ef922e");
     });
 
     $("#authenticateUser").click(function(e) {
       e.preventDefault();
+
+      $('#runnerOfTheMonthAuthModal .has-error').removeClass('has-error');	
 
       var success = validateRequest();
 		
 		  if (!success)
 			  return;
 
-      setAuthenticateCookieAndVote();
+      var ukaNumber = $('#UKA-number').val();
+      var lastName = $('#lastName').val();
+    
+      castVote(resultId, ukaNumber, lastName, true); 
     });
 
     function validateRequest() {
@@ -93,15 +123,7 @@
       };
     }
 
-    function setAuthenticateCookieAndVote() {
-      var ukaNumber = $('#UKA-number').val();
-      var lastName = $('#lastName').val();
-      var cookieValue = createCookieValue(ukaNumber, lastName);
-      Cookies.set(cookieName, cookieValue, { expires: null, path: '/' });
-      castVote(resultId, ukaNumber, lastName);
-    } 
-
-    function castVote(resultId, ukaNumber, lastName) {
+    function castVote(resultId, ukaNumber, lastName, isAuthentciationModalShown) {
       var votes = { 				
         voterId: ukaNumber,
         lastName: lastName
@@ -113,21 +135,30 @@
         // Success - HTTP 200
         function(data) 
         {					
-          // TODO change vote icon to a tick or such  like						
-          $('#alert-ok').removeClass('hidden');
+          var cookieValue = createCookieValue(ukaNumber, lastName);
+          Cookies.set(cookieName, cookieValue, { expires: null, path: '/' });
+          $('#runnerOfTheMonthAuthModal').modal('hide');
         },
         "json"
       );
 
       jqxhr.error(function(xhr) {
         if (xhr.status == 401) {								
-          $('#alert-authentication-failed').removeClass('hidden');
+          $('#alertAuthenticationFailed .message, #runnerOfTheMonthErrorModal .message').text(xhr.responseJSON.message)
         } else {
-          alert("Unknown error");
+          $('#alertAuthenticationFailed .message, #runnerOfTheMonthErrorModal .message').text("Unknown error. Please try again.")
+        }       
+
+        if (!isAuthentciationModalShown)
+          $('#runnerOfTheMonthErrorModal').modal('show');
+        else {
+          $('#alertAuthenticationFailed').show();
         }
       });
-    }  
+    }
 
-    // Failure		
+     $("[data-hide]").on("click", function(){
+        $("." + $(this).attr("data-hide")).hide()
+    });  		
 	});
 </script>
