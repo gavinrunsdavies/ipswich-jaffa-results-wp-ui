@@ -48,6 +48,7 @@
                     id="voteMonthAndYear">
                     <?php
                     $monthWithZeroes = date("m");
+                    printf('<option value="">Please Select...</option>');
                     printf('<option value="'.date("Y-n").'">'.date('F', strtotime("2000-$monthWithZeroes-01")).'</option>');
                     if (date("n") == 1) {
                       $year = date("Y") - 1;
