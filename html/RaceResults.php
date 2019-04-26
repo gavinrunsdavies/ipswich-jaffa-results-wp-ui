@@ -146,7 +146,18 @@
 						data : "isPersonalBest",
 						render : function (data, type, row, meta) {
 							if (data == 1) {
-								return '<span class="glyphicon glyphicon-ok" aria-hidden="true"><span class="hidden">Yes</span></span>';
+                var improvementHtml = '';                
+                if (row.previousPersonalBestResult != undefined) {
+                  var improvement = getResultImprovement(row.previousPersonalBestResult, row.time);
+                  improvementHtml = '<span style="font-size:smaller; vertical-align: middle; font-family: Courier New; font-style: italic;"> -';
+                  if (improvement.length > 1)
+                    improvementHtml += improvement[0] + '\'' + improvement[1] + '\'\'';
+                  else if (improvement.length > 0)
+                    improvementHtml += improvement[0] + '\'\'';
+                  improvementHtml += '</span>';
+                }                
+                
+								return '<span class="glyphicon glyphicon-ok" aria-hidden="true"><span class="hidden">Yes</span>' + improvementHtml + '</span>';                
 							} 
 							return '';
 						},
@@ -184,6 +195,42 @@
 		function formatDate(date) {
 			return (new Date(date)).toDateString();
 		}
+    
+    function getResultImprovement(previousTime, newTime) {
+      var previousTimeUnits = previousTime.split(":");
+      var newTimeUnits = newTime.split(":");
+      
+      var previousTotalSeconds = 0;
+      var newTotalSeconds = 0;
+      
+      if (previousTimeUnits.length > 2) {
+        previousTotalSeconds = (3600 * parseInt(previousTimeUnits[0], 10)) + (60 * parseInt(previousTimeUnits[1])) + parseInt(previousTimeUnits[2]);
+      } else if (previousTimeUnits.length > 1) {
+        previousTotalSeconds = (60 * parseInt(previousTimeUnits[0], 10)) + parseInt(previousTimeUnits[1]);  
+      } else {
+        previousTotalSeconds = previousTimeUnits[0]; 
+      }
+      
+      if (newTimeUnits.length > 2) {
+        newTotalSeconds = (3600 * parseInt(newTimeUnits[0], 10)) + (60 * parseInt(newTimeUnits[1])) + parseInt(newTimeUnits[2]);
+      } else if (newTimeUnits.length > 1) {
+        newTotalSeconds = (60 * parseInt(newTimeUnits[0], 10)) + parseInt(newTimeUnits[1]);  
+      } else {
+        newTotalSeconds = newTimeUnits[0]; 
+      }
+      
+      var secondsImprovment = previousTotalSeconds - newTotalSeconds;
+      
+      var result = [];
+      if (secondsImprovment > 60) {
+        result.push(Math.floor(secondsImprovment / 60));
+        result.push(secondsImprovment % 60);
+      } else {
+        result.push(secondsImprovment);
+      }
+      
+      return result;
+    }
 		
 		function getAjaxRequest(url) {
 			return {				
