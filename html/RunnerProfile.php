@@ -261,19 +261,23 @@
 			var raceDistanceCount = [];
 			var courseTypeCount = [];
 			var otherRaceDistanceCount = 0;
+      var validCourseTypeIds = ["1","3","6","8"];
 			
 			$.each(data, function(i, result){		
-											
-				var resultYear = result.date.substring(0, 4);
-				if (seasonalBest[resultYear] === undefined) {
-					seasonalBest[resultYear] = [];					
-					seasonalBest[resultYear][result.distanceId] = result;											
-				} else {
-					if (seasonalBest[resultYear][result.distanceId] === undefined || (result.result < seasonalBest[resultYear][result.distanceId].result || 
-							(result.result == seasonalBest[resultYear][result.distanceId].result && result.date < seasonalBest[resultYear][result.distanceId].date))) {
-						seasonalBest[resultYear][result.distanceId] = result;					
-					}
-				}
+
+        // isSeasonalBest can't be trusted.
+        if (validCourseTypeIds.indexOf(result.courseTypeId) !== -1) { 
+          var resultYear = result.date.substring(0, 4);
+          if (seasonalBest[resultYear] === undefined) {
+            seasonalBest[resultYear] = [];					
+            seasonalBest[resultYear][result.distanceId] = result;											
+          } else {
+            if (seasonalBest[resultYear][result.distanceId] === undefined || (result.result < seasonalBest[resultYear][result.distanceId].result || 
+                (result.result == seasonalBest[resultYear][result.distanceId].result && result.date < seasonalBest[resultYear][result.distanceId].date))) {
+              seasonalBest[resultYear][result.distanceId] = result;					
+            }
+          }
+        }
 									
 				if (result.isPersonalBest == 1) {
 					if (personalBest[result.distanceId] === undefined || personalBest[result.distanceId].result > result.result) {
@@ -347,24 +351,24 @@
 				
 			var rows = '';
 					
-			$.each(supportedDistanceIds, function(k, distanceId) {
-				rows += '<tr>';	
-				var distance = getDistance(distanceId);
-				if (distance != null) {
-					rows += '<td>' +distance.text+ '</td>';				
-					$.each(supportedDistanceIds, function(k2, distanceId2) {							
-						if (data[year][distanceId] !== undefined) {
-							if (distanceId == distanceId2) {
-								rows += '<td class="success"><strong>' + data[year][distanceId].result + '</strong></td>';
-							} else {
-								rows += '<td>'+ getPredictedTime(distanceId, data[year][distanceId].result, distanceId2) +'</td>';
-							}
-						} else {
-							rows += '<td></td>';
-						}					
-					});	
-					rows += '</tr>';	
-				}
+			$.each(supportedDistanceIds, function(k, distanceId) {        
+          rows += '<tr>';	
+          var distance = getDistance(distanceId);
+          if (distance != null) {
+            rows += '<td>' +distance.text+ '</td>';				
+            $.each(supportedDistanceIds, function(k2, distanceId2) {							
+              if (data[year][distanceId] !== undefined) {
+                if (distanceId == distanceId2) {
+                  rows += '<td class="success"><strong>' + data[year][distanceId].result + '</strong></td>';
+                } else {
+                  rows += '<td>'+ getPredictedTime(distanceId, data[year][distanceId].result, distanceId2) +'</td>';
+                }
+              } else {
+                rows += '<td></td>';
+              }					
+            });	
+            rows += '</tr>';	
+          }        
 			});			
 			
 			tableBody.append(rows);
