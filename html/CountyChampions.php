@@ -9,11 +9,11 @@
 		getCountyChampionResults();
 		
 		function getCountyChampionResults() {
+      var groupColumn = 0;
 			var tableName = 'jaffa-race-county-results-table';
 			var tableHtml = '';
-			var tableRow = '<tr><th>Position</th><th>Name</th><th>Time</th><th>Personal Best</th><th>Season Best</th><th>Category</th><th>Standard</th><th>Info</th><th>Age Grading</th></tr>';
+			var tableRow = '<tr><th>Year</th><th>Distance</th><th>Name</th><th>Category</th><th>Result</th><th>Event</th></tr>';
 			tableHtml += '<table class="table table-striped table-bordered no-wrap" id="' + tableName + '">';
-			tableHtml += '<caption style="text-align:center;font-weight:bold;font-size:1.5em">' + description + ', ' + formatDate(date) + '</caption>';
 			tableHtml += '<thead>';
 			tableHtml += tableRow;
 			tableHtml += '</thead>';
@@ -21,7 +21,7 @@
 			$('#jaffa-race-results').append(tableHtml);
 			
 			var table = $('#'+tableName).DataTable({				
-				dom: 'tBip',
+				dom: 'ftBip',
 				buttons: {
 					buttons: [{
 					  extend: 'print',
@@ -31,15 +31,23 @@
 					}]
 				},
 				paging : false,
-				searching: false,
+				searching: true,
 				serverSide : false,
+        columnDefs: [
+            { "visible": false, "targets": groupColumn }
+        ],
+        order: [[ groupColumn, 'desc' ]],
 				columns : [{
 						data : "date",
 						render : function (data, type, row, meta) {
 							return data.substring(0, 4);
 						}
+					},  {
+						data : "distance",
+            searchable: true
 					}, {
 						data : "runnerName",
+            searchable: true,
 						render : function (data, type, row, meta) {
 							var html = '<a href="<?php echo $memberResultsPageUrl; ?>?runner_id=' + row.runnerId + '">' + data + '</a>';
 							if (row.team > 0) {
@@ -54,21 +62,45 @@
 							return html;
 						}
 					}, {
-						data : "categoryCode"
+						data : "categoryCode",
+            searchable: true
 					}, {
-						data : "result"
+						data : "result",
+            searchable: false
+					}, {
+					data: "eventName",
+          searchable: true,
+					render: function ( data, type, row, meta ) {	
+						var resultsUrl = '<?php echo $raceResultsPageUrl; ?>';
+						var anchor = '<a href="' + resultsUrl;
+						anchor += '?raceId=' + row.raceId;					
+						anchor += '">' + data + ' (' + row.date + ') </a>';								
+
+						return anchor;
 					}
+				 }
 				],
 				processing : true,
 				autoWidth : false,
-				scrollX : true,
-				order : [[0, "asc"], [2, "asc"]],
-				ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/county')
-			});
-		}
+				scrollX : true,				
+				ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/county'),
+        drawCallback: function ( settings ) {
+          var api = this.api();
+          var rows = api.rows( {page:'current'} ).nodes();
+          var last=null;
 
-		function formatDate(date) {
-			return (new Date(date)).toDateString();
+          api.column(groupColumn, {page:'current'} ).data().each( function ( group, i ) {
+              var year = group.substring(0, 4);
+              if ( last !== year ) {
+                  $(rows).eq( i ).before(
+                      '<tr class="group"><th colspan="5">'+year+'</th></tr>'
+                  );
+
+                  last = year;
+              }
+          } );
+        }
+			});
 		}
     
     function getAjaxRequest(url) {
@@ -82,5 +114,4 @@
 			}
 		}
 	});
-	<?php endif; ?>
 </script>
