@@ -8,6 +8,7 @@
 					<th>League</th>
 					<th>Starting Year</th>
 					<th>Total Number of Races</th>
+					<th>Final Position</th>
 				</tr>
 			</thead>
 			<tfoot>
@@ -17,6 +18,7 @@
 					<th>League</th>
 					<th>Starting Year</th>
 					<th>Total Number of Races</th>
+					<th>Final Position</th>
 				</tr>
 			</tfoot>
 			<tbody>
@@ -62,6 +64,11 @@
 				data: "numberOfRaces",				 
 				searchable: false,
 				sortable: false 
+			 },
+			 {
+				data: "finalPosition",				 
+				searchable: false,
+				sortable: true 
 			 }
 			],
 			processing    : true,
