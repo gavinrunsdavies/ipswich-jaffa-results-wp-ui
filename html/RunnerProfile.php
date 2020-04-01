@@ -357,6 +357,7 @@
           if (distance != null) {
             rows += '<td>' +distance.text+ '</td>';				
             $.each(supportedDistanceIds, function(k2, distanceId2) {							
+              if (data[year] !== undefined) {
               if (data[year][distanceId] !== undefined) {
                 if (distanceId == distanceId2) {
                   rows += '<td class="success"><strong>' + data[year][distanceId].result + '</strong></td>';
@@ -365,7 +366,10 @@
                 }
               } else {
                 rows += '<td></td>';
-              }					
+              }
+			  } else {
+                rows += '<td></td>';
+              }	  					
             });	
             rows += '</tr>';	
           }        
