@@ -49,8 +49,7 @@
 				.done(function(raceData) {	
 					setEventName(raceData.eventName);
 					if (raceData.meetingId > 0) {
-						getMeeting(raceData.eventId, raceData.meetingId);
-						getMeetingRaces(raceData.eventId, raceData.meetingId);
+						getMeeting(raceData.meetingId);
 					} else {
 						getRaceResult(raceData.id, raceData.eventName, raceData.date);
 					}
@@ -58,29 +57,81 @@
 				});
 		}
 			
-		function getMeeting(eventId, meetingId) {
+		function getMeeting(meetingId) {
 			$.ajax(
-				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/'+ eventId + '/meetings/' + meetingId))					
-				.done(function(meetingData) {
-					if (meetingData.length > 0) {
-						var meetingDates = meetingData[0].fromDate;
-						if (meetingData[0].fromDate != meetingData[0].toDate) {
-							meetingDates += ' - ' + meetingData[0].toDate;
-						}																							
-						var meetingTitle = '<h3>Meeting: '+meetingData[0].name+' ('+meetingDates+')</h3>';
+				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/meetings/' + meetingId))					
+				.done(function(response) {
+					if (response.meeting != null) {
+						var meetingDates = response.meeting.fromDate;
+						if (response.meeting.fromDate != response.meeting.toDate) {
+							meetingDates += ' - ' + response.meeting.toDate;
+						}		
+
+						var meetingTitle = '<h3>Meeting: '+response.meeting.name+' ('+meetingDates+')</h3>';
 						$('#jaffa-race-results').prepend(meetingTitle);						
+					}
+
+					if (response.races != null) {
+						for (var i = 0; i < response.races.length; i++) {	
+							getRaceResult(response.races[i].id, response.races[i].description, response.races[i].date);
+						}		
+					}
+
+					if (response.teams != null) {
+						setTeamResults(response.teams);					
 					}
 			});
 		}
+
+		function setTeamResults(teams) {
+
+			var maxResults = 0;
+			for (var i = 0; i < teams.length; i++) {
+				if (teams[i].results.length > maxResults) {
+					maxResults = teams[i].results.length;
+				}
+			}
+
+			var tableHeaderRow = '<tr><th>Team</th><th>Position</th><th>Result</th>';
+			tableHeaderRow += '<th colspan="'+maxResults+'">Runners</th>';
+			tableHeaderRow += '</tr>';
 			
-		function getMeetingRaces(eventId, meetingId) {
-			$.ajax(
-				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/'+ eventId + '/meetings/' + meetingId + '/races'))					
-				.done(function(meetingData) {					
-					for (var i = 0; i < meetingData.length; i++) {	
-						getRaceResult(meetingData[i].id, meetingData[i].description, meetingData[i].date);
-					}					
-			});
+			var tableHtml = '<table class="table table-striped table-bordered no-wrap" id="jaffa-team-results-table">';
+			tableHtml += '<caption style="text-align:center;font-weight:bold;font-size:1.5em">Team Results</caption>';
+			
+			tableHtml += '<thead>';
+			tableHtml += tableHeaderRow;
+			tableHtml += '</thead>';
+			tableHtml += '<tbody>';
+			for (var i = 0; i < teams.length; i++) {
+				tableHtml += '<tr>';
+				tableHtml += '<th>';
+				tableHtml += teams[i].teamName;
+				tableHtml += '</th>';
+				tableHtml += '<td>';
+				tableHtml += teams[i].teamPosition;
+				tableHtml += '</td>';
+				tableHtml += '<td>';
+				tableHtml += teams[i].teamResult;
+				tableHtml += '</td>';
+				for (var j = 0, runnerCount = 1; j < teams[i].results.length; j++, runnerCount++) {
+					if (runnerCount != teams[i].results[j].teamOrder) {
+						tableHtml += '<td></td>';
+						runnerCount++;
+					}
+					tableHtml += '<td><a href="<?php echo $memberResultsPageUrl; ?>?runner_id=' + teams[i].results[j].runnerId + '">';
+					tableHtml += teams[i].results[j].runnerName;
+					if (teams[i].results[j].runnerResult != '00:00:00') {
+						tableHtml += ' (' + teams[i].results[j].runnerResult + ')';	
+					}
+					tableHtml += '</a></td>';
+				}
+				tableHtml += '</tr>';
+			}
+			tableHtml += '</tbody>';
+			tableHtml += '</table>';
+
+			$('#jaffa-race-results').append(tableHtml);
 		}
 		
 		function getEventRaces(eventId) {
@@ -100,9 +151,8 @@
 		
 		function getRaceResult(raceId, description, date) {
 			var tableName = 'jaffa-race-results-table-';
-			var tableHtml = '';
 			var tableRow = '<tr><th>Position</th><th>Name</th><th>Time</th><th>Personal Best</th><th>Season Best</th><th>Category</th><th>Standard</th><th>Info</th><th>Age Grading</th></tr>';
-			tableHtml += '<table class="table table-striped table-bordered no-wrap" id="' + tableName + raceId + '">';
+			var tableHtml = '<table class="table table-striped table-bordered no-wrap" id="' + tableName + raceId + '">';
 			tableHtml += '<caption style="text-align:center;font-weight:bold;font-size:1.5em">' + description + ', ' + formatDate(date) + '</caption>';
 			tableHtml += '<thead>';
 			tableHtml += tableRow;
