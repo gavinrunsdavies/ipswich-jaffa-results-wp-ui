@@ -92,7 +92,7 @@
 				}
 			}
 
-			var tableHeaderRow = '<tr><th>Team</th><th>Position</th><th>Result</th>';
+			var tableHeaderRow = '<tr><th>Team</th><th>Category</th><th>Position</th><th>Result</th>';
 			tableHeaderRow += '<th colspan="'+maxResults+'">Runners</th>';
 			tableHeaderRow += '</tr>';
 			
@@ -107,6 +107,9 @@
 				tableHtml += '<tr>';
 				tableHtml += '<th>';
 				tableHtml += teams[i].teamName;
+				tableHtml += '</th>';
+				tableHtml += '<th>';
+				tableHtml += teams[i].teamCategory;
 				tableHtml += '</th>';
 				tableHtml += '<td>';
 				tableHtml += teams[i].teamPosition;
