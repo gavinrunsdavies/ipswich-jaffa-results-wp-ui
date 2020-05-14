@@ -51,7 +51,7 @@
 					if (raceData.meetingId > 0) {
 						getMeeting(raceData.meetingId);
 					} else {
-						getRaceResult(raceData.id, raceData.eventName, raceData.date);
+						getRaceResult(raceData, raceData.eventName, raceData.date);
 					}
 					getEventRaces(raceData.eventId);
 				});
@@ -73,7 +73,7 @@
 
 					if (response.races != null) {
 						for (var i = 0; i < response.races.length; i++) {	
-							getRaceResult(response.races[i].id, response.races[i].description, response.races[i].date);
+							getRaceResult(response.races[i], response.races[i].description, response.races[i].date);
 						}		
 					}
 
@@ -144,18 +144,27 @@
 					var raceResultsUrl = '<?php echo $eventResultsPageUrl; ?>';
 					var url = raceResultsUrl + '?raceId=';						
 					var dateOptions = '<option>Please select...</option>';
-					for (var i = 0; i < raceData.length; i++) {							
-						dateOptions += '<option value="' + url + raceData[i].id + '">' + raceData[i].date + ' (' + raceData[i].count + ' results) </option>';
+					var meetingId = 0;
+					for (var i = 0; i < raceData.length; i++) {	
+						if (raceData[i].meetingId > 0) {
+							if (meetingId != raceData[i].meetingId) {
+								meetingId = raceData[i].meetingId;
+								dateOptions += '<option value="' + url + raceData[i].id + '">' + raceData[i].date + ' (meeting) </option>';
+							}
+						} else {
+							dateOptions += '<option value="' + url + raceData[i].id + '">' + raceData[i].date + ' (' + raceData[i].count + ' results) </option>';
+						}
 					}					
 					
 					$('#jaffa-other-race-results').append(dateOptions);
 			});
 		}
 		
-		function getRaceResult(raceId, description, date) {
+		function getRaceResult(race, description, date) {
+			var courseTypeIdsToDisplayImprovements = ["1", "3", "6"];
 			var tableName = 'jaffa-race-results-table-';
 			var tableRow = '<tr><th>Position</th><th>Name</th><th>Time</th><th>Personal Best</th><th>Season Best</th><th>Category</th><th>Standard</th><th>Info</th><th>Age Grading</th></tr>';
-			var tableHtml = '<table class="table table-striped table-bordered no-wrap" id="' + tableName + raceId + '">';
+			var tableHtml = '<table class="table table-striped table-bordered no-wrap" id="' + tableName + race.id + '">';
 			tableHtml += '<caption style="text-align:center;font-weight:bold;font-size:1.5em">' + description + ', ' + formatDate(date) + '</caption>';
 			tableHtml += '<thead>';
 			tableHtml += tableRow;
@@ -163,13 +172,13 @@
 			tableHtml += '</table>';
 			$('#jaffa-race-results').append(tableHtml);
 			
-			var table = $('#'+tableName + raceId).DataTable({				
+			var table = $('#'+tableName + race.id).DataTable({				
 				dom: 'tBip',
 				buttons: {
 					buttons: [{
 					  extend: 'print',
 					  text: '<i class="fa fa-print"></i> Print',
-					  title: $('#jaffa-event-title').text() + ': ' + $('#' +tableName + raceId + ' caption').text(),
+					  title: $('#jaffa-event-title').text() + ': ' + $('#' +tableName + race.id + ' caption').text(),
 					  footer: true					  
 					}]
 				},
@@ -197,6 +206,7 @@
 						data : "time"
 					}, {
 						data : "isPersonalBest",
+						visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
 						render : function (data, type, row, meta) {
 							if (data == 1) {
                 var improvementHtml = '';                
@@ -217,6 +227,7 @@
 						className : 'text-center'
 					}, {
 						data : "isSeasonBest",
+						visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
 						render : function (data, type, row, meta) {
 							if (data == 1) {
 								return '<span class="glyphicon glyphicon-ok" aria-hidden="true"><span class="hidden">Yes</span></span>';
@@ -227,11 +238,13 @@
 					}, {
 						data : "categoryCode"
 					}, {
-						data : "standardType"
+						data : "standardType",
+						visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false
 					}, {
 						data : "info"
 					}, {
 						data : "percentageGrading",
+						visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
 						render : function (data, type, row, meta) {
 							return data > 0 ? data + '%' : '';
 						}
@@ -241,7 +254,7 @@
 				autoWidth : false,
 				scrollX : true,
 				order : [[0, "asc"], [2, "asc"]],
-				ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/race/' + raceId)
+				ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/race/' + race.id)
 			});
 		}
 
