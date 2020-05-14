@@ -20,6 +20,14 @@
 		</div>
 	</div>	
 	<div class="center-panel">
+		<div class="row">
+			<div class="col-md-12">
+				<h3>Age Grading Performances</h3>
+				<div id="age-grading-chart" style="height: 350px;"></div>
+			</div>				
+		</div>
+	</div>
+	<div class="center-panel">
 		<table class="table table-striped table-bordered" id="member-ranking-table">
 		<caption style="font-weight:bold">Club Rankings for <span class="runnerName"></span></caption>
 			<thead>
@@ -211,9 +219,10 @@
 </div><!-- /.modal -->
 
 <!-- amCharts javascript sources -->
-<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
-<script src="https://www.amcharts.com/lib/3/pie.js"></script>
-<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/material.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {	
 		
@@ -261,23 +270,24 @@
 			var raceDistanceCount = [];
 			var courseTypeCount = [];
 			var otherRaceDistanceCount = 0;
-      var validCourseTypeIds = ["1","3","6","8"];
+      		var validCourseTypeIds = ["1","3","6","8"];
+			var percentageGradingData = [];
 			
 			$.each(data, function(i, result){		
 
-        // isSeasonalBest can't be trusted.
-        if (validCourseTypeIds.indexOf(result.courseTypeId) !== -1) { 
-          var resultYear = result.date.substring(0, 4);
-          if (seasonalBest[resultYear] === undefined) {
-            seasonalBest[resultYear] = [];					
-            seasonalBest[resultYear][result.distanceId] = result;											
-          } else {
-            if (seasonalBest[resultYear][result.distanceId] === undefined || (result.result < seasonalBest[resultYear][result.distanceId].result || 
-                (result.result == seasonalBest[resultYear][result.distanceId].result && result.date < seasonalBest[resultYear][result.distanceId].date))) {
-              seasonalBest[resultYear][result.distanceId] = result;					
-            }
-          }
-        }
+				// isSeasonalBest can't be trusted.
+				if (validCourseTypeIds.indexOf(result.courseTypeId) !== -1) { 
+					var resultYear = result.date.substring(0, 4);
+					if (seasonalBest[resultYear] === undefined) {
+						seasonalBest[resultYear] = [];					
+						seasonalBest[resultYear][result.distanceId] = result;											
+					} else {
+						if (seasonalBest[resultYear][result.distanceId] === undefined || (result.result < seasonalBest[resultYear][result.distanceId].result || 
+							(result.result == seasonalBest[resultYear][result.distanceId].result && result.date < seasonalBest[resultYear][result.distanceId].date))) {
+						seasonalBest[resultYear][result.distanceId] = result;					
+						}
+					}
+				}
 									
 				if (result.isPersonalBest == 1) {
 					if (personalBest[result.distanceId] === undefined || personalBest[result.distanceId].result > result.result) {
@@ -305,6 +315,11 @@
 				if (courseTypeCount[courseTypeId] === undefined)
 					courseTypeCount[courseTypeId] = 0;
 				courseTypeCount[courseTypeId] += 1;
+
+				// Create Percentage grading data
+				if (result.percentageGrading > 0) {
+					percentageGradingData.push(result);
+				}
 			});
 							
 			populateRaceCountTable(raceDistanceCount, otherRaceDistanceCount);
@@ -313,6 +328,7 @@
 			populateAllTimeRacePredictorTable(personalBest);
 			createRaceDistancePieChart(raceDistanceCount, otherRaceDistanceCount);
 			createCourseTypePieChart(courseTypeCount);
+			createPercentageGradingChart(percentageGradingData.reverse());
 		}
 		
 		function getDistance(distanceId) {
@@ -649,13 +665,13 @@
 		}
 		
 		function createRaceDistancePieChart(distances, otherRaceDistanceCount) {
-				
-			var chart = AmCharts.makeChart("race-distance-chart", {
-				"type": "pie",
-				"theme": "light",    
-				"innerRadius": "40%",
-				"gradientRatio": [-0.4, -0.4, -0.4, -0.4, -0.4, -0.4, 0, 0.1, 0.2, 0.1, 0, -0.2, -0.5],
-				"dataProvider": [{
+			am4core.ready(function() {
+				am4core.useTheme(am4themes_material);
+				am4core.useTheme(am4themes_animated);
+
+				var chart = am4core.create("race-distance-chart", am4charts.PieChart);
+
+				chart.data = [{
 					"distance": "5km",
 					"count": distances[1]
 				}, {
@@ -682,27 +698,31 @@
 				}, {
 					"distance": "Unclassified",
 					"count": distances[0]
-				}],
-				"balloonText": "[[value]]",
-				"valueField": "count",
-				"titleField": "distance",
-				"balloon": {
-					"drop": true,
-					"adjustBorderColor": false,
-					"color": "#FFFFFF",
-					"fontSize": 16
-				}
+				}];
+
+				// Add and configure Series
+				var pieSeries = chart.series.push(new am4charts.PieSeries());
+				pieSeries.dataFields.value = "count";
+				pieSeries.dataFields.category = "distance";
+				pieSeries.innerRadius = am4core.percent(40);
+
+				var rgm = new am4core.RadialGradientModifier();
+				rgm.brightnesses.push(-0.8, -0.8, -0.5, 0, - 0.5);
+				pieSeries.slices.template.fillModifier = rgm;
+				pieSeries.slices.template.strokeModifier = rgm;
+				pieSeries.slices.template.strokeOpacity = 0.4;
+				pieSeries.slices.template.strokeWidth = 0;			
 			});
 		}
 		
 		function createCourseTypePieChart(courses) {
-				
-			var chart = AmCharts.makeChart("course-type-chart", {
-				"type": "pie",
-				"theme": "light",    
-				"innerRadius": "40%",
-				"gradientRatio": [-0.4, -0.4, -0.4, -0.4, -0.4, -0.4, 0, 0.1, 0.2, 0.1, 0, -0.2, -0.5],
-				"dataProvider": [{
+			am4core.ready(function() {
+				am4core.useTheme(am4themes_material);
+				am4core.useTheme(am4themes_animated);
+
+				var chart = am4core.create("course-type-chart", am4charts.PieChart);
+
+				chart.data = [{
 					"course": "Road",
 					"count": courses[1]
 				}, {
@@ -729,18 +749,66 @@
 				}, {
 					"course": "Unclassified",
 					"count": courses[0]
-				}],
-				"balloonText": "[[value]]",
-				"valueField": "count",
-				"titleField": "course",
-				"balloon": {
-					"drop": true,
-					"adjustBorderColor": false,
-					"color": "#FFFFFF",
-					"fontSize": 16
-				}
+				}];
+
+				// Add and configure Series
+				var pieSeries = chart.series.push(new am4charts.PieSeries());
+				pieSeries.dataFields.value = "count";
+				pieSeries.dataFields.category = "course";
+				pieSeries.innerRadius = am4core.percent(40);
+
+				var rgm = new am4core.RadialGradientModifier();
+				rgm.brightnesses.push(-0.8, -0.8, -0.5, 0, - 0.5);
+				pieSeries.slices.template.fillModifier = rgm;
+				pieSeries.slices.template.strokeModifier = rgm;
+				pieSeries.slices.template.strokeOpacity = 0.4;
+				pieSeries.slices.template.strokeWidth = 0;			
 			});
 		}
+
+		function createPercentageGradingChart(results) {
+			am4core.ready(function() {
+				// Themes begin
+				am4core.useTheme(am4themes_material);
+				am4core.useTheme(am4themes_animated);
+				// Themes end
+
+				// Create chart instance
+				var chart = am4core.create("age-grading-chart", am4charts.XYChart);
+				chart.data = results;
+				chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
+
+				// Create axes
+				var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+				dateAxis.renderer.grid.template.location = 0;
+				dateAxis.renderer.minGridDistance = 50;
+
+				var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+				valueAxis.title.text = "Percentage Grading";
+
+				// Create series
+				var series = chart.series.push(new am4charts.LineSeries());
+				series.dataFields.valueY = "percentageGrading";
+				series.dataFields.dateX = "date";
+				series.strokeWidth = 3;
+				series.fillOpacity = 0.5;
+				series.tooltipText = "{valueY}% {eventName}: {result}";
+				series.tooltip.pointerOrientation = "vertical";
+				series.tooltip.background.fillOpacity = 0.5;	
+
+				// Add cursor
+				chart.cursor = new am4charts.XYCursor();
+				chart.cursor.behavior = "panXY";
+				chart.cursor.lineX.disabled = true;
+				chart.cursor.xAxis = dateAxis;
+				chart.cursor.snapToSeries = series;
+
+				// Add horizontal scrollbar
+				chart.scrollbarX = new am4core.Scrollbar();				
+				chart.scrollbarX.parent = chart.bottomAxesContainer;		
+			});
+		}
+
 
 	});
 </script>
