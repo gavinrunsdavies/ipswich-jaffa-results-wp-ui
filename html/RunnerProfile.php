@@ -617,9 +617,13 @@
 						data: "info"
 					},
 					{
-						data: "percentageGrading",
+						data : "percentageGrading",
 						render : function (data, type, row, meta) {
-							return data > 0 ? data + '%' : '';
+							var html = data > 0 ? data + '%' : '';
+							if (row.percentageGradingBest == 1) {
+								html += ' <span style="color: #e88112;" class="glyphicon glyphicon-star" aria-hidden="true" title="New percenatge grading personal best"></span>'
+							}
+							return html;
 						}
 					}
 					]
