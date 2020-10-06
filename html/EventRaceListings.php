@@ -129,7 +129,7 @@
 		  return countryName;
 		}
 	
-		$('#event-listings-table tbody td img').live( 'click', function () {
+		$(document).on("click", '#event-listings-table tbody td img', function () {
 			var nTr = this.parentNode.parentNode;
 			if ( this.src.match('details_close') )
 			{
