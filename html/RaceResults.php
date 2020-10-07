@@ -51,7 +51,7 @@
 					if (raceData.meetingId > 0) {
 						getMeeting(raceData.meetingId);
 					} else {
-						getRaceResult(raceData, raceData.eventName, raceData.date);
+						getRaceResult(raceData, raceData.eventName, raceData.date, raceData.resultMeasurementUnitTypeId);
 					}
 					getEventRaces(raceData.eventId);
 				});
@@ -73,7 +73,7 @@
 
 					if (response.races != null) {
 						for (var i = 0; i < response.races.length; i++) {
-							getRaceResult(response.races[i], response.races[i].description, response.races[i].date);
+							getRaceResult(response.races[i], response.races[i].description, response.races[i].date, response.races[i].resultMeasurementUnitTypeId);
 						}
 					}
 
@@ -160,12 +160,30 @@
 			});
 		}
 
-		function getRaceResult(race, description, date) {
+		function getRaceResult(race, description, date, measurementUnitType) {
 			var courseTypeIdsToDisplayImprovements = ["1", "3", "6"];
+			var resultColumnTitle;
 			var tableName = 'jaffa-race-results-table-';
+			switch (Number(measurementUnitType)) {
+				case 2:
+					resultColumnTitle = 'Seconds';
+					break;
+				case 3:
+					resultColumnTitle = 'Metres';
+				break;
+				case 4:
+					resultColumnTitle = 'Kilometres';
+				break;
+				case 5:
+					resultColumnTitle = 'Miles';
+				break;
+				default:
+					resultColumnTitle = 'Time';
+					break;
+			}
 			var title = description != null ? description + ', ' : '';
 			title += formatDate(date);
-			var tableRow = '<tr><th>Position</th><th>Name</th><th>Time</th><th>Personal Best</th><th>Season Best</th><th>Category</th><th>Standard</th><th>Info</th><th>Age Grading</th></tr>';
+			var tableRow = '<tr><th>Position</th><th>Name</th><th>' + resultColumnTitle + '</th><th>Personal Best</th><th>Season Best</th><th>Category</th><th>Standard</th><th>Info</th><th>Age Grading</th></tr>';
 			var tableHtml = '<table class="table table-striped table-bordered no-wrap" id="' + tableName + race.id + '">';
 			tableHtml += '<caption style="text-align:center;font-weight:bold;font-size:1.5em">' + title + '</caption>';
 			tableHtml += '<thead>';
@@ -205,7 +223,14 @@
 							return html;
 						}
 					}, {
-						data : "time"
+						data : "result",
+						render : function(data, type, row, meta) {
+							if (measurementUnitType != 1) {
+								return Number(data).toLocaleString();
+							}
+
+							return data;
+						}
 					}, {
 						data : "isPersonalBest",
 						visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
