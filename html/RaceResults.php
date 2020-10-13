@@ -225,7 +225,7 @@
 					}, {
 						data : "result",
 						render : function(data, type, row, meta) {
-							if (measurementUnitType != 1) {
+							if (measurementUnitType != 1 && measurementUnitType != "1" && measurementUnitType != undefined) {
 								return Number(data).toLocaleString();
 							}
 
