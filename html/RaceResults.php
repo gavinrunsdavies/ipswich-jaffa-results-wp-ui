@@ -91,9 +91,11 @@
 					maxResults = teams[i].results.length;
 				}
 			}
-
+			var dataSet = [];
 			var tableHeaderRow = '<tr><th>Team</th><th>Category</th><th>Position</th><th>Result</th>';
-			tableHeaderRow += '<th colspan="'+maxResults+'">Runners</th>';
+			for (var i = 0; i < maxResults; i++) {
+				tableHeaderRow += '<th></th>';
+			}
 			tableHeaderRow += '</tr>';
 
 			var tableHtml = '<table class="table table-striped table-bordered no-wrap" id="jaffa-team-results-table">';
@@ -104,37 +106,44 @@
 			tableHtml += '</thead>';
 			tableHtml += '<tbody>';
 			for (var i = 0; i < teams.length; i++) {
-				tableHtml += '<tr>';
-				tableHtml += '<th>';
-				tableHtml += teams[i].teamName;
-				tableHtml += '</th>';
-				tableHtml += '<th>';
-				tableHtml += teams[i].teamCategory;
-				tableHtml += '</th>';
-				tableHtml += '<td>';
-				tableHtml += teams[i].teamPosition;
-				tableHtml += '</td>';
-				tableHtml += '<td>';
-				tableHtml += teams[i].teamResult;
-				tableHtml += '</td>';
-				for (var j = 0, runnerCount = 1; j < teams[i].results.length; j++, runnerCount++) {
+				var dataRow = [];
+				dataRow.push(teams[i].teamName);
+				dataRow.push(teams[i].teamCategory);
+				dataRow.push(teams[i].teamPosition);
+				dataRow.push(teams[i].teamResult);
+				var runnerCount = 1;
+				for (var j = 0; j < teams[i].results.length; j++, runnerCount++) {
 					if (runnerCount != teams[i].results[j].teamOrder) {
-						tableHtml += '<td></td>';
+						dataRow.push('-');
 						runnerCount++;
 					}
-					tableHtml += '<td><a href="<?php echo $memberResultsPageUrl; ?>?runner_id=' + teams[i].results[j].runnerId + '">';
-					tableHtml += teams[i].results[j].runnerName;
+					
+					var runnerTime = '<a href="<?php echo $memberResultsPageUrl; ?>?runner_id=' + teams[i].results[j].runnerId + '">';
+					runnerTime += teams[i].results[j].runnerName;
 					if (teams[i].results[j].runnerResult != '00:00:00') {
-						tableHtml += ' (' + teams[i].results[j].runnerResult + ')';
+						runnerTime += ' (' + teams[i].results[j].runnerResult + ')';
 					}
-					tableHtml += '</a></td>';
+					runnerTime += '</a>';
+					dataRow.push(runnerTime);					
 				}
-				tableHtml += '</tr>';
+				// cells for missing runners
+				for (; runnerCount <= maxResults; runnerCount++) {
+					dataRow.push('-');
+				}
+
+				dataSet.push(dataRow);				
 			}
 			tableHtml += '</tbody>';
 			tableHtml += '</table>';
 
 			$('#jaffa-race-results').append(tableHtml);
+
+			$('#jaffa-team-results-table').DataTable({
+				paging : false,
+				searching: false,
+				order: [[ 3, "asc" ]],
+				data: dataSet
+			});
 		}
 
 		function getEventRaces(eventId) {
@@ -236,16 +245,16 @@
 						visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
 						render : function (data, type, row, meta) {
 							if (data == 1) {
-                var improvementHtml = '';
-                if (row.previousPersonalBestResult != undefined) {
-                  var improvement = getResultImprovement(row.previousPersonalBestResult, row.time);
-                  improvementHtml = '<span style="font-size:smaller; vertical-align: middle; font-family: Courier New; font-style: italic;"> -';
-                  if (improvement.length > 1)
-                    improvementHtml += improvement[0] + '\'' + improvement[1] + '\'\'';
-                  else if (improvement.length > 0)
-                    improvementHtml += improvement[0] + '\'\'';
-                  improvementHtml += '</span>';
-                }
+								var improvementHtml = '';
+							if (row.previousPersonalBestResult != undefined) {
+								var improvement = getResultImprovement(row.previousPersonalBestResult, row.time);
+								improvementHtml = '<span style="font-size:smaller; vertical-align: middle; font-family: Courier New; font-style: italic;"> -';
+								if (improvement.length > 1)
+									improvementHtml += improvement[0] + '\'' + improvement[1] + '\'\'';
+								else if (improvement.length > 0)
+									improvementHtml += improvement[0] + '\'\'';
+								improvementHtml += '</span>';
+							}
 
 								return '<span class="glyphicon glyphicon-ok" aria-hidden="true"><span class="hidden">Yes</span>' + improvementHtml + '</span>';
 							}
