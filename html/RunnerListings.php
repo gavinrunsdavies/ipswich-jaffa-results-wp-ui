@@ -212,7 +212,9 @@
 	  });
 	  
 	  $('#compareRunnersModal').on('hidden.bs.modal', function (e) {
-		chart.clear();
+		if (chart) {
+			chart.clear();
+		}
 	  });
 
 	  $('#compareRunnersButton').click(function () {
@@ -331,10 +333,10 @@
 	  }
 
 	  function createGraphBalloon() {
-		 var balloon = new AmCharts.AmBalloon();
-	  balloon.drop = false;
-	  balloon.adjustBorderColor = false;
-	  balloon.color = "#ffffff";
+		var balloon = new AmCharts.AmBalloon();
+		balloon.drop = false;
+		balloon.adjustBorderColor = false;
+		balloon.color = "#ffffff";
 	  
 		return balloon;
 	  }

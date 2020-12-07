@@ -3,7 +3,7 @@
 Plugin Name: Ipswich JAFFA Running Club Results
 Plugin URI:
 Description: The new Ipswich JAFFA RC Results plugin. Requires bootstrap to be part of the theme.
-Version: 2.0
+Version: 2.1
 Author: Gavin Davies
 Author URI: https://github.com/gavinrunsdavies/
 */
@@ -30,11 +30,7 @@ class Program
 	}
 		
 	public function registerShortCodes()	{				
-
 		add_shortcode('ipswich-jaffa-running-club-results', array( $this, 'processShortCode' ));
-		
-		add_action('wp_print_styles', array($this, 'styles'));
-		add_action('wp_print_scripts', array($this, 'scripts'));
 	}	
 		
 	public function processShortCode($attr, $content = "") {
@@ -51,6 +47,8 @@ class Program
 		$feature = $atts['feature'];		
 		
 		if ($feature != '') {			
+			$this->scripts();
+			$this->styles();
 			
 			ob_start();
 			require_once "html/$feature.php";
@@ -60,39 +58,55 @@ class Program
 		return $content;
 	}
 		
-	public function scripts() {
+	private function scripts() {
 		wp_enqueue_script(self::JQUERY_HANDLE);
 			
 		wp_enqueue_script(
 			self::JQUERY_DATATABLES_HANDLE,
 			 plugins_url('/lib/datatables.min.js', __FILE__ ),
-			array(self::JQUERY_HANDLE));
+			array(self::JQUERY_HANDLE),
+			null,
+			true
+		);
 		
 		wp_enqueue_script(
 			self::JQUERY_DATATABLES_BOOTSTRAP_HANDLE,
-			plugins_url('/lib/dataTables.bootstrap.js', __FILE__ ),
-			array(self::JQUERY_DATATABLES_HANDLE));
+			plugins_url('/lib/dataTables.bootstrap.min.js', __FILE__ ),
+			array(self::JQUERY_DATATABLES_HANDLE),
+			null,
+			true
+		);
 		
 		wp_enqueue_script(
 			self::JQUERY_DATATABLES_BUTTONS_HANDLE,
 			plugins_url('/lib/dataTables.buttons.min.js', __FILE__ ),
-			array(self::JQUERY_DATATABLES_HANDLE));	
+			array(self::JQUERY_DATATABLES_HANDLE),
+			null,
+			true
+		);	
 
 		wp_enqueue_script(
 			self::JQUERY_DATATABLES_BUTTONS_PRINT_HANDLE,
 			plugins_url('/lib/buttons.print.min.js', __FILE__ ),
-			array(self::JQUERY_DATATABLES_BUTTONS_HANDLE));		
+			array(self::JQUERY_DATATABLES_BUTTONS_HANDLE),
+			null,
+			true
+		);		
 		
 		wp_enqueue_script(
 			self::JS_COOKIE_HANDLE,
-			plugins_url('/lib/js.cookie.min.js', __FILE__ ));		
+			plugins_url('/lib/js.cookie.min.js', __FILE__ ),
+			array(),
+			null,
+			true
+		);		
 	}
 	
-	public function styles()
+	private function styles()
 	{		
 		wp_enqueue_style(
 			'datatables.bootstrap.min.css',
-			plugins_url('/lib/dataTables.bootstrap.css', __FILE__ )
+			plugins_url('/lib/dataTables.bootstrap.min.css', __FILE__ )
 		);	
 
 		wp_enqueue_style(

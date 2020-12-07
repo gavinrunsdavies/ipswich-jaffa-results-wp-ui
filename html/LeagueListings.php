@@ -26,7 +26,14 @@
 		</table>
 	</div>
 </div>
-
+<style>
+.close {
+  color: red;
+}
+.open {
+  color: green;
+}
+</style>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {	
 
@@ -37,20 +44,18 @@
 			columns:[
 			 {
 				data: "id",
-				"visible" : false,
-				"searchable": false,
-				"sortable": false 
+				visible : false,
+				searchable: false,
+				sortable: false 
 			 },
 			 {
-				// Open / Close image
 				data: "name",
-				"class": "center",
-				"searchable": false,
-				"sortable": false,
-				// Member name, add hyperlink to profile
-				"render": function ( data, type, row, meta ) {				
-					return '<img src="<?php echo plugins_url('images/details_open.png', dirname(__FILE__)); ?>" />';
-				}		
+				class: "center",
+				searchable: false,
+				sortable: false,	
+				render: function ( data, type, row, meta ) {				
+					return '<span class="glyphicon glyphicon-chevron-down open"></span>';
+				}	
 			 },
              {
 				data: "name"
@@ -80,32 +85,34 @@
 		
 		function getAjaxRequest(url) {
 			return {
-				"url" : '<?php echo esc_url( home_url() ); ?>' + url,
-				"method" : "GET",
-				"headers" : {
+				url : '<?php echo esc_url( home_url() ); ?>' + url,
+				method : "GET",
+				headers : {
 					"cache-control" : "no-cache"
 				},
-				"dataSrc" : ""
+				dataSrc : ""
 			}
 		}
-	
-		$('#league-listings-table tbody td img').live( 'click', function () {
+
+		$(document).on("click", '#league-listings-table tbody td span.glyphicon-chevron-down', function () {
+			$(this).addClass("glyphicon-chevron-up");
+			$(this).addClass("close");
+			$(this).removeClass("glyphicon-chevron-down");
+			$(this).removeClass("open");
 			var nTr = this.parentNode.parentNode;
-			if ( this.src.match('details_close') )
-			{
-				/* This row is already open - close it */
-				this.src = '<?php echo plugins_url('images/details_open.png', dirname(__FILE__)); ?> ';
-				leagueTable.fnClose( nTr );
-			}
-			else
-			{
-				/* Open this row */
-				this.src = '<?php echo plugins_url('images/details_close.png', dirname(__FILE__)); ?> ';
-				var newTr = leagueTable.fnOpen( nTr, 'Loading races...', 'details' );
-				var aData = leagueTable.fnGetData( nTr );
-				fnSetEventDetails(leagueTable, newTr, aData.id, aData.eventName);
-			}
-		} );
+			var newTr = leagueTable.fnOpen( nTr, 'Loading data...', 'details' );
+			var aData = leagueTable.fnGetData( nTr );
+			fnSetEventDetails(leagueTable, newTr, aData.id, aData.eventName);
+		});
+
+		$(document).on("click", '#league-listings-table tbody td span.glyphicon-chevron-up', function () {
+			$(this).addClass("glyphicon-chevron-down");
+			$(this).addClass("open");
+			$(this).removeClass("glyphicon-chevron-up");
+			$(this).removeClass("close");
+			var nTr = this.parentNode.parentNode;
+			leagueTable.fnClose( nTr );
+		});
 		
 		/* Formating function for row details */
 		function fnSetEventDetails ( oTable, nTr, iLeagueId, sLeagueName)

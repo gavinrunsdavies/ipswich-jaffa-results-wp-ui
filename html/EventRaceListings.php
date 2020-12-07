@@ -26,7 +26,14 @@
 		</table>
 	</div>
 </div>
-
+<style>
+.close {
+  color: red;
+}
+.open {
+  color: green;
+}
+</style>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {	
 
@@ -37,19 +44,18 @@
 			columns:[
 			 {
 				data: "id",
-				"visible" : false,
-				"searchable": false,
-				"sortable": false 
+				visible : false,
+				searchable: false,
+				sortable: false 
 			 },
 			 {
-				// Open / Close image
 				data: "name",
-				"class": "center",
-				"searchable": false,
-				"sortable": false,
+				class: "center",
+				searchable: false,
+				sortable: false,
 				// Member name, add hyperlink to profile
-				"render": function ( data, type, row, meta ) {				
-					return '<img src="<?php echo plugins_url('images/details_open.png', dirname(__FILE__)); ?>" />';
+				render: function ( data, type, row, meta ) {				
+					return '<span class="glyphicon glyphicon-chevron-down open"></span>';
 				}		
 			 },
 			 {
@@ -57,9 +63,9 @@
 			 },
 			 {
 				data: "website",
-				"class": "left",
-				"searchable": false,
-				"render": function ( data, type, row, meta ) {		
+				class: "left",
+				searchable: false,
+				render: function ( data, type, row, meta ) {		
 					var sLink = "";
 					var sAddress = row.website;
 					if (sAddress != "" && sAddress != null && sAddress != "null")
@@ -98,12 +104,12 @@
 		
 		function getAjaxRequest(url) {
 			return {
-				"url" : '<?php echo esc_url( home_url() ); ?>' + url,
-				"method" : "GET",
-				"headers" : {
+				url : '<?php echo esc_url( home_url() ); ?>' + url,
+				method : "GET",
+				headers : {
 					"cache-control" : "no-cache"
 				},
-				"dataSrc" : ""
+				dataSrc : ""
 			}
 		}
 		
@@ -129,23 +135,25 @@
 		  return countryName;
 		}
 	
-		$(document).on("click", '#event-listings-table tbody td img', function () {
+		$(document).on("click", '#event-listings-table tbody td span.glyphicon-chevron-down', function () {
+			$(this).addClass("glyphicon-chevron-up");
+			$(this).addClass("close");
+			$(this).removeClass("glyphicon-chevron-down");
+			$(this).removeClass("open");
 			var nTr = this.parentNode.parentNode;
-			if ( this.src.match('details_close') )
-			{
-				/* This row is already open - close it */
-				this.src = '<?php echo plugins_url('images/details_open.png', dirname(__FILE__)); ?> ';
-				eventTable.fnClose( nTr );
-			}
-			else
-			{
-				/* Open this row */
-				this.src = '<?php echo plugins_url('images/details_close.png', dirname(__FILE__)); ?> ';
-				var newTr = eventTable.fnOpen( nTr, 'Loading data...', 'details' );
-				var aData = eventTable.fnGetData( nTr );
-				fnSetEventDetails(eventTable, newTr, aData.id, aData.eventName);
-			}
-		} );
+			var newTr = eventTable.fnOpen( nTr, 'Loading data...', 'details' );
+			var aData = eventTable.fnGetData( nTr );
+			fnSetEventDetails(eventTable, newTr, aData.id, aData.eventName);
+		});
+
+		$(document).on("click", '#event-listings-table tbody td span.glyphicon-chevron-up', function () {
+			$(this).addClass("glyphicon-chevron-down");
+			$(this).addClass("open");
+			$(this).removeClass("glyphicon-chevron-up");
+			$(this).removeClass("close");
+			var nTr = this.parentNode.parentNode;
+			eventTable.fnClose( nTr );
+		});
 		
 		$(document).on('click', 'a.toggle-vis', function(){
 			var tableName = $(this).attr('data-table');
