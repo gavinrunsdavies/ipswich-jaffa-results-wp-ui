@@ -192,9 +192,14 @@
 			}
 			var title = description != null ? description + ', ' : '';
 			title += formatDate(date);
+			var tableCaption = '<h3 style="text-align:center;font-weight:bold;font-size:1.5em">' + title + '</h3>';
+			$('#jaffa-race-results').append(tableCaption);
+			if (race.report != null) {
+				var raceReport = '<p>' + race.report + '</p>';
+				$('#jaffa-race-results').append(raceReport);
+			}
 			var tableRow = '<tr><th>Position</th><th>Name</th><th>' + resultColumnTitle + '</th><th>Personal Best</th><th>Season Best</th><th>Category</th><th>Standard</th><th>Info</th><th>Age Grading</th></tr>';
 			var tableHtml = '<table class="table table-striped table-bordered no-wrap" id="' + tableName + race.id + '">';
-			tableHtml += '<caption style="text-align:center;font-weight:bold;font-size:1.5em">' + title + '</caption>';
 			tableHtml += '<thead>';
 			tableHtml += tableRow;
 			tableHtml += '</thead>';
