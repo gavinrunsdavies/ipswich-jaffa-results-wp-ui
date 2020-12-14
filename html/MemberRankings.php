@@ -98,20 +98,15 @@
 		  }
 		);
 			
-		var ladiesDt, mensDt = null;
 		$('#member-rank-submit').click(function () {
 		
 			$('#ladies-ranking-results', '#mens-ranking-results').hide();
 
 			var ladiesTableElement = $('#ladies-ranking-results-table');			
-			
-			if (ladiesTableElement.DataTable() != null)
-				ladiesTableElement.DataTable().destroy();
-			
 			ladiesTableElement.DataTable({				
 				pageLength : 20,
 				paging : true,
-				destory	   : true,	
+				destroy	   : true,	
 				processing    : true,
 				searching: true,
 				autoWidth     : false,
@@ -168,14 +163,11 @@
 			});
 			$('#ladies-ranking-results').show();
 			
-			var mensTableElement = $('#mens-ranking-results-table');
-			if (mensTableElement.DataTable() != null)
-				mensTableElement.DataTable().destroy();
-			
+			var mensTableElement = $('#mens-ranking-results-table');			
 			mensTableElement.DataTable({
 				pageLength : 20,
 				paging : true,
-				destory	   : true,	
+				destroy	   : true,	
 				processing    : true,
 				searching: true,
 				autoWidth     : false,
