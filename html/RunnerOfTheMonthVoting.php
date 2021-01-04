@@ -1,6 +1,6 @@
-<p>Current members of Ipswich JAFFA Running Club can use this form to cast their votes for their runner of the month. Each vote counts and the adult mens and adult ladies with the the most votes at the next months committee meeting (second Tuesday of every month) wins. From September 2016 you can now vote for more than one member in each category in the month, although you may only vote for the same member once.</p>
-<p>Please cast your vote for your John Jarrold Runner of the Month. At the start of the next month all votes will be reset.</p>
-<p>To help certify genuine votes and exclude fraudent votes your name and date of birth will now be requested. These are only used for authentication purposes and to prevent multi voting for the same person.</p>
+<p>Current members of Ipswich JAFFA Running Club can use this form to cast their votes for their runner of the month. Each vote counts and the adult mens and adult ladies with the the most votes wins. You can now vote for more than one member in each category in the month, although you may only vote for the same member once.</p>
+<p>Please cast your vote for your John Jarrold Runner of the Month and be sure to select the correct month. At the start of the next month all votes will be reset.</p>
+<p>To help certify genuine votes and exclude fraudent votes your name and date of birth will be requested. These are only used for authentication purposes and to prevent multi voting for the same person.</p>
 <div class="section">
     <form id="runnerOfTheMonthVote" class="form-horizontal">
         <div class="form-group">
