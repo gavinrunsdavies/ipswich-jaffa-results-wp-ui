@@ -1,7 +1,13 @@
 <div class="section"> 
 	<div class="center-panel">
 		<p>This form shows the average percentage age grading for male and female members for a given membership year and sample size. Only individual races where a WMA percentage grading has been calculated have been taken in to consideraton.</p>
-		<p>In 2016 the membership year changed from 1st January to 1st March so the 2015 year shows 14 months worth of races. All years from 2016 run for 12 months from 1st March</p>
+		<ul>
+			<li>If no year specificed the query is across all years.</li>
+          	<li>Prior to 2015 it is for calendar year results</li>
+        	<li>In 2016 the membership year changed to be from 1st March, so the 2015 year shows 14 months worth of race results</li>
+         	<li>In 2021 the membership year changed to be from 1st April, so the 2020 year shows 13 months worth of race results</li>
+			<li>From 2021 results will be 12 months from 1st April</li>
+		</ul>
 		<form id="formRankCriteria" action="#" title="Select ranking year">	
 			<label for="year">Year</label>
 			<select id="year" name="year" size="1" title="Select year">
