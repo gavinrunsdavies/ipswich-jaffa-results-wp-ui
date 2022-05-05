@@ -1,205 +1,65 @@
-<div class="section">
-	<div class="jumbotron center-panel">
-		<div class="row">
-			<div class="col-md-3 col-md-offset-3"><strong>Name:</strong></div>
-			<div class="col-md-3 runnerName"></div>
-		</div>
-		<div class="row">
-			<div class="col-md-3 col-md-offset-3"><strong>Gender:</strong></div>
-			<div class="col-md-3 runnerGender"></div>
-		</div>
-		<div class="row">
-			<div class="col-md-3 col-md-offset-3"><strong>Age Group:</strong></div>
-			<div class="col-md-3 runnerAgeCategory"></div>
-		</div>
-		<div class="row">
-			<div class="col-md-3 col-md-offset-3"><strong>Standard Certificates:</strong></div>
-			<div class="col-md-3"><button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#standardCertificatesModal">
-  Show certificates
-</button></div>
-		</div>
-	</div>	
-	<div class="center-panel">
-		<div class="row">
-			<div class="col-md-12">
-				<h3>Age Grading Performances</h3>
-				<div id="age-grading-chart" style="height: 350px;"></div>
-			</div>				
-		</div>
-	</div>
-	<div class="center-panel">
-		<table class="table table-striped table-bordered" id="member-ranking-table">
-		<caption style="font-weight:bold">Club Rankings for <span class="runnerName"></span></caption>
-			<thead>
-				<tr>
-					<th></th>
-					<th>5k</th>
-					<th>5m</th>
-					<th>10k</th>
-					<th>10m</th>
-					<th>HM</th>
-					<th>20m</th>
-					<th>M</th>
-				</tr>
-			</thead>
-			<tbody>
-			</tbody>
-		</table>
-		
-		<p style="font-size: smaller">The above Ipswich JAFFA Running Club rankings show where <span class="runnerName"></span> ranks amongst other Ipswich JAFFA members (past and present). Ranking category: <span class="runnerGender"></span>.</p>
-		<p style="font-size: smaller">Click on an above ranking to find out more information about the result.</p>
-	</div>
-	<div class="center-panel">
-		<table class="table table-striped table-bordered" id="member-race-count-table">
-		<caption style="font-weight:bold">Race distance breakdown for <span class="runnerName"></span></caption>
-			<thead>
-				<tr>			
-					<th></th>
-					<th>5k</th>
-					<th>5m</th>
-					<th>10k</th>
-					<th>10m</th>
-					<th>HM</th>
-					<th>20m</th>
-					<th>M</th>
-					<th>Other</th>
-					<th>Not Measured</th>
-					<th>Total</th>
-				</tr>
-			</thead>
-			<tbody>
-			</tbody>
-		</table>
-		<p style="font-size: smaller">The above totals are only valid for measured race distances (e.g. those that can count towards a personal best).</p>
-		<p style="font-size: smaller">The total distance covered calculation is only approximate and the accuracy of older results is not guaranteed.</p>
-	</div>
-	<div class="center-panel">
-		<div class="row">
-			<div class="col-md-6">
-				<h3>Race distance summary</h3>
-				<div id="race-distance-chart" style="height: 250px;"></div>
-			</div>
-			<div class="col-md-6">
-				<h3>Course type summary</h3>
-				<div id="course-type-chart" style="height: 250px;"></div>
-			</div>			
-		</div>
-	</div>
-	<div class="center-panel">
-		<div id="member-race-predictions-current">
-			<table class="table table-striped table-bordered" id="member-race-predictions-current-table">			
-			<caption style="font-weight:bold">Race predictions based on best known performances for last year of competition (<span class="lastYearOfCompetition"></span>)</caption>
-				<thead>
-					<tr>
-						<th></th>
-						<th>5k</th>
-						<th>5m</th>
-						<th>10k</th>
-						<th>10m</th>
-						<th>HM</th>
-						<th>20m</th>
-						<th>M</th>
-					</tr>
-				</thead>			
-				<tbody>		
-				</tbody>
-			</table>
-		</div>
-		<div id="member-race-predictions-best">
-			<table class="table table-striped table-bordered" id="member-race-predictions-best-table">
-			<caption style="font-weight:bold">Race predictions based on best known performances.</caption>
-				<thead>
-					<tr>
-						<th></th>
-						<th>5k</th>
-						<th>5m</th>
-						<th>10k</th>
-						<th>10m</th>
-						<th>HM</th>
-						<th>20m</th>
-						<th>M</th>
-					</tr>
-				</thead>				
-				<tbody>
-				</tbody>
-			</table>
-		</div>
-		<p style="font-size: smaller">The above race predictions are based on the known performances and calculated using the formula: T2 = T1 x (D2/D1)^1.06, where D1 is known distance, D2 is target distance, T1 is result for distance D1 and T2 is predicted time for target distance D2. Read predictions in columns not rows. Entries in bold show the achieved time (T1).</p>
-		<br />
-	</div>
-	<div class="center-panel">
-		<table class="table table-striped table-bordered" id="member-seasonal-best-results-table">
-		<caption style="font-weight:bold">The Best Known Performances for <span class="runnerName"></span></caption>
-			<thead>
-				<tr>
-					<th>Year</th>
-					<th>5k</th>
-					<th>5m</th>
-					<th>10k</th>
-					<th>10m</th>
-					<th>HM</th>
-					<th>20m</th>
-					<th>M</th>
-				</tr>
-			</thead>
-			<tfoot>
-				<tr>
-					<th>Year</th>
-					<th>5k</th>
-					<th>5m</th>
-					<th>10k</th>
-					<th>10m</th>
-					<th>HM</th>
-					<th>20m</th>
-					<th>M</th>
-				</tr>
-			</tfoot>
-			<tbody>
-			</tbody>
-		</table>
-	</div>	
-	<div class="center-panel">
-		<table class="table table-striped table-bordered" id="member-results-table">
-			<thead>
-				<tr>
-					<th data-hide="always">Race Id</th>	
-					<th>Race</th>
-					<th>Date</th>
-					<th>Position</th>
-					<th>Result</th>
-					<th>Personal Best</th>
-					<th>Standard</th>
-					<th>Info</th>
-					<th>Age Grading</th>
-				</tr>
-			</thead>
-			<tfoot>
-				<tr>
-					<th data-hide="always">Race Id</th>	
-					<th>Race</th>
-					<th>Date</th>
-					<th>Position</th>
-					<th>Result</th>
-					<th>Personal Best</th>
-					<th>Standard</th>
-					<th>Info</th>
-					<th>Age Grading</th>
-				</tr>
-			</tfoot>
-			<tbody>			
-			</tbody>
-		</table>
-	</div>
+<style>
+.row * {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that floats next to each other */
+.col-50 {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.center-panel {
+	text-align: center;
+}
+
+.togglePanelTrigger {
+  padding: 10px;
+  text-align: center;
+  border: solid 1px var(--primary-color);
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.togglePanel {
+   display: none;
+}
+
+.section, .center-panel  {
+   margin-bottom: 1em;
+	clear: both;
+}
+
+table.display th {
+	text-align: left;
+}
+</style>
+<div class="center-panel">
+	<h2 class="runnerName"></h2>
+	<h5 class="runnerAgeCategory"></h5>
+	<h4><a href="#age-grading-chart">Age Grading Performances</a> | <a href="#certificates-panel">Certificates</a> | <a href="#insights-distance-panel">Runner Insights</a> | <a href="#member-ranking-table">Club rankings</a> | <a href="#member-race-count-table">Race distance breakdown</a> | <a href="#member-race-and-course-summary">Race & course summary</a> | <a href="#member-race-predictions-current">Race predictions</a> | <a href="#age-grading-chart">Best known performances</a> | <a href="#member-results-table">All Results</a></h4>
 </div>
-<div class="modal fade" id="standardCertificatesModal" tabindex="-1" role="dialog" aria-labelledby="Standard Certificates">
-  <div class="modal-dialog modal-lg" style="z-index:10000" role="document">
-	<div class="modal-content">
-	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		<h4 class="modal-title">Standard Certificates achieved by <span class="runnerName"></span></h4>
-	  </div>
-	  <div class="modal-body">		
-		<table class="table table-bordered" id="member-certificates-table">
+<div class="center-panel">
+	<h3>Age Grading Performances</h3>
+	<div id="age-grading-chart" style="height: 350px;"></div>
+	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+</div>
+<div class="section">
+	<div id="certificates-panel">
+		<table class="display" id="member-certificates-table">
+			<caption>Standard certificates achieved by <span class="runnerName"></span></caption>
 			<thead>
 				<tr>
 					<th>Standard</th>
@@ -207,22 +67,167 @@
 					<th>Certificate</th>
 				</tr>
 			</thead>
-			<tbody style="width: 100%; height: 500px;">			
+			<tbody>			
+			</tbody>
+		</table>	  
+	</div>
+	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+</div>
+<div class="center-panel">
+	<div id="insights-distance-panel">
+		<h3>Runner Insights: Race distance <span id="runner-insights-race-distance-text"></span></h3>
+		<select id="insights-race-distance-selection" style="font-size: 10px; float: right;"></select>			
+		<div id="insights-race-distance-chart" style="height: 350px;clear: both;"></div>
+	</div>
+	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+</div>
+<div class="section">
+	<table class="display" id="member-ranking-table">
+		<caption>Club rankings for <span class="runnerName"></span></caption>
+		<thead>
+			<tr>
+				<th></th>
+				<th>5k</th>
+				<th>5m</th>
+				<th>10k</th>
+				<th>10m</th>
+				<th>HM</th>
+				<th>20m</th>
+				<th>M</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+	<p style="font-size: smaller">The above Ipswich JAFFA Running Club rankings show where <span class="runnerName"></span> ranks among other Ipswich JAFFA members (past and present). Ranking category: <span class="runnerGender"></span>.</p>
+	<p style="font-size: smaller">Click on an above ranking to find out more information about the result.</p>
+	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+</div>
+<div class="section">
+	<table class="display" id="member-race-count-table">
+		<caption>Race distance breakdown for <span class="runnerName"></span></caption>
+		<thead>
+			<tr>			
+				<th></th>
+				<th>5k</th>
+				<th>5m</th>
+				<th>10k</th>
+				<th>10m</th>
+				<th>HM</th>
+				<th>20m</th>
+				<th>M</th>
+				<th>Other</th>
+				<th>Not Measured</th>
+				<th>Total</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+	<p style="font-size: smaller">The above totals are only valid for measured race distances (e.g. those that can count towards a personal best).</p>
+	<p style="font-size: smaller">The total distance covered calculation is only approximate and the accuracy of older results is not guaranteed.</p>
+	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+</div>
+<div class="row" id="member-race-and-course-summary">
+	<div class="col-50">
+		<h3>Race distance summary</h3>
+		<div id="race-distance-chart" style="height: 250px;"></div>
+	</div>
+	<div class="col-50">
+		<h3>Course type summary</h3>
+		<div id="course-type-chart" style="height: 250px;"></div>
+	</div>			
+	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+</div>
+<div class="section">
+	<div id="member-race-predictions-current">
+		<table class="display" id="member-race-predictions-current-table">			
+			<caption>Race predictions based on best known performances for last year of competition (<span class="lastYearOfCompetition"></span>)</caption>
+			<thead>
+				<tr>
+					<th></th>
+					<th>5k</th>
+					<th>5m</th>
+					<th>10k</th>
+					<th>10m</th>
+					<th>HM</th>
+					<th>20m</th>
+					<th>M</th>
+				</tr>
+			</thead>			
+			<tbody>		
 			</tbody>
 		</table>
-	  </div>
-	  <div class="modal-footer">
-		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	  </div>
-	</div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+	</div>
+	<div id="member-race-predictions-best">
+		<table class="display" id="member-race-predictions-best-table">
+			<caption>Race predictions based on best known performances.</caption>
+			<thead>
+				<tr>
+					<th></th>
+					<th>5k</th>
+					<th>5m</th>
+					<th>10k</th>
+					<th>10m</th>
+					<th>HM</th>
+					<th>20m</th>
+					<th>M</th>
+				</tr>
+			</thead>				
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+	<p style="font-size: smaller">The above race predictions are based on the known performances and calculated using the formula: T2 = T1 x (D2/D1)^1.06, where D1 is known distance, D2 is target distance, T1 is result for distance D1 and T2 is predicted time for target distance D2. Read predictions in columns not rows. Entries in bold show the achieved time (T1).</p>
+	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+	<br />
+</div>
+<div class="section">
+	<table class="display" id="member-seasonal-best-results-table">
+	<caption>The best known performances for <span class="runnerName"></span></caption>
+		<thead>
+			<tr>
+				<th>Year</th>
+				<th>5k</th>
+				<th>5m</th>
+				<th>10k</th>
+				<th>10m</th>
+				<th>HM</th>
+				<th>20m</th>
+				<th>M</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+</div>	
+<div class="section">
+	<table class="display" id="member-results-table">
+		<caption>All race results for <span class="runnerName"></span></caption>
+		<thead>
+			<tr>
+				<th data-hide="always">Race Id</th>	
+				<th>Race</th>
+				<th>Date</th>
+				<th>Position</th>
+				<th>Result</th>
+				<th>Personal Best</th>
+				<th>Standard</th>
+				<th>Info</th>
+				<th>Age Grading</th>
+			</tr>
+		</thead>
+		<tbody>			
+		</tbody>
+	</table>
+	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+</div>
 
 <!-- amCharts javascript sources -->
-<script src="https://www.amcharts.com/lib/4/core.js"></script>
-<script src="https://www.amcharts.com/lib/4/charts.js"></script>
-<script src="https://www.amcharts.com/lib/4/themes/material.js"></script>
-<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {	
 		
@@ -238,7 +243,7 @@
 				populateCertificatesTable(data.name, data.certificates);
 				populateRankingsTable(data.rankings);
 			}
-		);			
+		);	
 					
 		var supportedDistanceIds = [1,2,3,4,5,7,8];
 		var results;
@@ -260,7 +265,7 @@
 			)
 		).then( function(){			 
 			 processResults(results, allDistances);
-		 });
+		});
 				
 		function processResults(data, distances) {	
 			
@@ -284,7 +289,7 @@
 					} else {
 						if (seasonalBest[resultYear][result.distanceId] === undefined || (result.result < seasonalBest[resultYear][result.distanceId].result || 
 							(result.result == seasonalBest[resultYear][result.distanceId].result && result.date < seasonalBest[resultYear][result.distanceId].date))) {
-						seasonalBest[resultYear][result.distanceId] = result;					
+							seasonalBest[resultYear][result.distanceId] = result;					
 						}
 					}
 				}
@@ -329,6 +334,7 @@
 			createRaceDistancePieChart(raceDistanceCount, otherRaceDistanceCount);
 			createCourseTypePieChart(courseTypeCount);
 			createPercentageGradingChart(percentageGradingData.reverse());
+			createInsightsRaceDistancePanel(Object.keys(raceDistanceCount), distances);
 		}
 		
 		function getDistance(distanceId) {
@@ -339,26 +345,34 @@
 			}
 			
 			return null;
-		}
-		
+		}	
 				
 		function populateRankingsTable(rankings) {
-			var tableBody = $('#member-ranking-table tbody');
-				
+			var tableId = '#member-ranking-table';
+			var tableBody = $(tableId + ' tbody');
+							
 			var rows = '';				
 			rows += '<tr>';						
 			rows += '<td>All Time</td>';
 			$.each(supportedDistanceIds, function(i, distanceId) {										
 				$.each(rankings, function(j, rank) {		
 					if (distanceId == rank.distanceId) {
-						rows += '<td ><a tabindex="0" role="button" class="rank-result" data-contenttitle="All time ranking" data-overallrankid="' + rank.resultId + '">' + rank.rank + '</a></td>';		
+						rows += '<td ><a class="rank-result" data-overallrankid="' + rank.resultId + '">' + rank.rank + '</a></td>';		
 						return;
 					}
 				});
 			});
 			rows += '</tr>';	
 			
-			tableBody.append(rows);		
+			tableBody.append(rows);	
+			
+			$(tableId).DataTable({
+				paging : false,
+				searching: false,
+				processing: false,
+				ordering: false,
+				info: false				
+			});
 		}
 		
 		function populateLatestRacePredictorTable(data, year) {
@@ -367,32 +381,40 @@
 				
 			var rows = '';
 					
-			$.each(supportedDistanceIds, function(k, distanceId) {        
-          rows += '<tr>';	
-          var distance = getDistance(distanceId);
-          if (distance != null) {
-            rows += '<td>' +distance.text+ '</td>';				
-            $.each(supportedDistanceIds, function(k2, distanceId2) {							
-              if (data[year] !== undefined) {
-              if (data[year][distanceId] !== undefined) {
-                if (distanceId == distanceId2) {
-                  rows += '<td class="success"><strong>' + data[year][distanceId].result + '</strong></td>';
-                } else {
-                  rows += '<td>'+ getPredictedTime(distanceId, data[year][distanceId].result, distanceId2) +'</td>';
-                }
-              } else {
-                rows += '<td></td>';
-              }
-			  } else {
-                rows += '<td></td>';
-              }	  					
-            });	
-            rows += '</tr>';	
-          }        
+			$.each(supportedDistanceIds, function(k, distanceId) {                  
+          		var distance = getDistance(distanceId);
+          		if (distance != null) {
+					rows += '<tr>';	
+            		rows += '<td>' +distance.text+ '</td>';				
+					$.each(supportedDistanceIds, function(k2, distanceId2) {							
+					if (data[year] !== undefined) {
+						if (data[year][distanceId] !== undefined) {
+							if (distanceId == distanceId2) {
+							rows += '<td class="success"><strong>' + data[year][distanceId].result + '</strong></td>';
+							} else {
+							rows += '<td>'+ getPredictedTime(distanceId, data[year][distanceId].result, distanceId2) +'</td>';
+							}
+						} else {
+							rows += '<td></td>';
+						}
+					} else {
+						rows += '<td></td>';
+					}	  					
+					});	
+					rows += '</tr>';	
+				}        
 			});			
 			
 			tableBody.append(rows);
 			$('.lastYearOfCompetition').text(year);
+
+			$(tableId).DataTable({
+				paging : false,
+				searching: false,
+				processing: false,
+				ordering: false,
+				info: false					
+			});
 		}
 		
 		function populateAllTimeRacePredictorTable(data) {
@@ -422,6 +444,14 @@
 			});			
 			
 			tableBody.append(rows);
+
+			$(tableId).DataTable({
+				paging : false,
+				searching: false,
+				processing: false,
+				ordering: false,
+				info: false						
+			});
 		}
 		
 		function populateSeaonalBestTable(data) {
@@ -450,6 +480,14 @@
 			}
 			
 			tableBody.append(rows);
+
+			$(tableId).DataTable({
+				paging : false,
+				searching: false,
+				processing: false,
+				ordering: false,
+				info: false							
+			});
 		}
 		
 		function populateCertificatesTable(name, data) {
@@ -513,6 +551,14 @@
 			rows += '<td>' + totalDistance.toFixed(2) + '</td>';					
 			rows += '</tr>';
 			tableBody.append(rows);
+
+			$(tableId).DataTable({
+				paging : false,
+				searching: false,
+				processing: false,
+				ordering: false,
+				info: false				
+			});
 		}
 		
 		function getTotalRaceDistanceInMiles(distanceId, number) {
@@ -535,18 +581,17 @@
 			'&filepath=<? echo plugin_dir_path(dirname(__FILE__)); ?>php/standards/';
 		}
     
-    function addPadding(number, size) {
-      var s = String(number);
-      while (s.length < (size || 2)) {s = "0" + s;}
-      return s;
-    }
+		function addPadding(number, size) {
+			var s = String(number);
+			while (s.length < (size || 2)) {s = "0" + s;}
+			return s;
+		}
 		
 		function getPredictedTime(actualDistanceId, actualTime, targetDistanceId) {
 
 			var actualDistance = getDistance(actualDistanceId);
 			var targetDistance = getDistance(targetDistanceId);
-			var timeComponents = actualTime.split(':');
-			var actualTotalMinutes = (parseInt(timeComponents[0]) * 60) + parseInt(timeComponents[1]) + (parseInt(timeComponents[2]) / 60);
+			var actualTotalMinutes = timeToMinutes(actualTime);
 			
 			var targetTotalMinutes = actualTotalMinutes * (Math.pow((targetDistance.miles / actualDistance.miles), 1.06));
 			
@@ -604,7 +649,7 @@
 						data: "isPersonalBest",
 						render : function (data, type, row, meta) {							
 							if (data == 1) {
-								return '<span class="glyphicon glyphicon-ok" aria-hidden="true"><span class="hidden">Yes</span></span>';
+								return '<i class="fa fa-check" aria-hidden="true"></i>';
 							} 
 							return '';
 						},
@@ -621,7 +666,7 @@
 						render : function (data, type, row, meta) {
 							var html = data > 0 ? data + '%' : '';
 							if (row.percentageGradingBest == 1) {
-								html += ' <span style="color: #e88112;" class="glyphicon glyphicon-star" aria-hidden="true" title="New percenatge grading personal best"></span>'
+								html += ' <i style="color: #e88112;" class="fa fa-star" aria-hidden="true" title="New percenatge grading personal best"></i>'
 							}
 							return html;
 						}
@@ -634,8 +679,8 @@
 			return (value == null || value == "") ? "" : " - " + value;
 		}
 
-		$('.rank-result').live( 'click', function () {
-			var popover = $(this).popover({
+		$('.rank-result').click(function () {
+			/*var popover = $(this).popover({
 				html: true,
 				placement: 'top',
 				container: 'body',
@@ -655,7 +700,7 @@
 					}
 					return html;
 				}
-			}).popover('show');
+			}).popover('show');*/
 		});
 		
 		function getRanking(resultId) {
@@ -670,7 +715,6 @@
 		
 		function createRaceDistancePieChart(distances, otherRaceDistanceCount) {
 			am4core.ready(function() {
-				am4core.useTheme(am4themes_material);
 				am4core.useTheme(am4themes_animated);
 
 				var chart = am4core.create("race-distance-chart", am4charts.PieChart);
@@ -721,7 +765,6 @@
 		
 		function createCourseTypePieChart(courses) {
 			am4core.ready(function() {
-				am4core.useTheme(am4themes_material);
 				am4core.useTheme(am4themes_animated);
 
 				var chart = am4core.create("course-type-chart", am4charts.PieChart);
@@ -772,10 +815,7 @@
 
 		function createPercentageGradingChart(results) {
 			am4core.ready(function() {
-				// Themes begin
-				am4core.useTheme(am4themes_material);
 				am4core.useTheme(am4themes_animated);
-				// Themes end
 
 				// Create chart instance
 				var chart = am4core.create("age-grading-chart", am4charts.XYChart);
@@ -795,10 +835,19 @@
 				series.dataFields.valueY = "percentageGrading";
 				series.dataFields.dateX = "date";
 				series.strokeWidth = 3;
-				series.fillOpacity = 0.5;
+				series.stroke = am4core.color("#000");
+				series.fillOpacity = 1;
+				
 				series.tooltipText = "{valueY}% {eventName}: {result}";
 				series.tooltip.pointerOrientation = "vertical";
 				series.tooltip.background.fillOpacity = 0.5;	
+				
+				// Add colour gradient
+				var gradient = new am4core.LinearGradient();
+				gradient.addColor(am4core.color("#000"));
+				gradient.addColor(am4core.color("#E88112"));
+				gradient.rotation = 270;
+				series.fill = gradient;
 
 				// Add cursor
 				chart.cursor = new am4charts.XYCursor();
@@ -813,6 +862,138 @@
 			});
 		}
 
+		function timeToMinutes(time) {
+			var timeComponents = time.split(':');
+			return (parseInt(timeComponents[0]) * 60) + parseInt(timeComponents[1]) + (parseInt(timeComponents[2]) / 60);
+		}
 
+		function createInsightsRaceDistancePanel(distancesIds, allDistances) {
+
+			if (distancesIds.length < 1) {
+				return;
+			}
+
+			var selectList = $('#insights-race-distance-selection');
+
+			$.each(distancesIds, function (i, item) {
+				selectList.append($('<option>', { 
+					value: item,
+					text : allDistances.find(x => x.id == item)?.text ?? "Please select..."
+				}));
+			});
+
+			var chart = createInsightsRaceDistanceChart();
+			
+			selectList.change(function (e) {
+				var distanceId = selectList.val();
+				if (distanceId == 0)
+					return;
+
+				setInsightsRaceDistanceChartData(chart, distanceId);
+				$('#runner-insights-race-distance-text').text(selectList.find("option:selected").text());
+			});
+
+			// Set initial value to first in the list
+			setInsightsRaceDistanceChartData(chart, distancesIds[1]);
+			selectList.val(distancesIds[1]);
+			$('#runner-insights-race-distance-text').text(selectList.find("option:selected").text());
+		}
+
+		function setInsightsRaceDistanceChartData(chart, distanceId) {
+
+			$.getJSON('<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/runner/<?php echo $_GET['runner_id']; ?>/insights/distance/' + distanceId,
+				function(data) {	
+					am4core.array.each(data.raceTimes, function(a) {
+						var timeBand =  Number(a["timeBand"]);
+						var fastest = Math.floor(timeToMinutes(data.fastest));
+						if (timeBand == fastest) {
+							a.colour = am4core.color("#E88112");
+							a.hideBullet = false;
+							a.bulletText = "Fastest\n[bold]" + data.fastest + "[/]";
+							a.bulletColour = am4core.color("#E88112");
+							return;
+						}
+
+						var mean = Math.floor(timeToMinutes(data.mean));
+						if (timeBand == mean) {
+							a.colour = am4core.color("#E88112");
+							a.hideBullet = false;
+							a.bulletText = "Average\n[bold]" + data.mean + "[/]";
+							a.bulletColour = am4core.color("#E88112");
+							return;
+						}
+
+						var slowest = Math.floor(timeToMinutes(data.slowest));
+						if (timeBand == slowest) {
+							a.colour = am4core.color("#E88112");
+							a.hideBullet = false;
+							a.bulletText = "Slowest\n[bold]" + data.slowest + "[/]";
+							a.bulletColour = am4core.color("#E88112");
+							return;
+						}					
+					});
+
+					chart.data = data.raceTimes;
+			});
+		}
+			
+		function createInsightsRaceDistanceChart() {
+
+			am4core.useTheme(am4themes_animated);
+
+			// Create chart instance		
+			var chart = am4core.create("insights-race-distance-chart", am4charts.XYChart);
+			chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
+
+			// Create axes
+			var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+			categoryAxis.dataFields.category = "timeBand";
+			categoryAxis.title.text = "Race time (minutes)";
+			categoryAxis.renderer.grid.template.location = 0;
+			categoryAxis.renderer.minGridDistance = 30;
+
+			var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+			valueAxis.title.text = "Count";
+	
+			var gradient = new am4core.LinearGradient();
+			gradient.addColor(am4core.color("#000"));
+			gradient.addColor(am4core.color("#eee"));
+			gradient.rotation = 90;
+
+			// Create series
+			var series = chart.series.push(new am4charts.ColumnSeries());
+			series.dataFields.valueY = "count";
+			series.dataFields.categoryX  = "timeBand";
+			series.name = "Count of results";
+			series.tooltip.getFillFromObject = false;
+			series.tooltip.label.fill = am4core.color("#000");
+			series.tooltip.background.fill = am4core.color("#fff");
+			series.columns.template.tooltipText = "Minute {categoryX}: Results [bold]{valueY}[/]";
+			
+			series.columns.template.fill = gradient;
+			series.columns.template.fillOpacity = 0.8;
+			series.columns.template.strokeWidth = 1;
+			series.columns.template.strokeOpacity = 1;
+			series.columns.template.stroke = am4core.color("#000");
+
+			// Use "colour" on dataItem if found. 
+			series.columns.template.adapter.add("fill", function(fill, target) {
+				return target.dataItem && target.dataItem.dataContext.colour ? target.dataItem.dataContext.colour : fill;
+			});
+
+			var bullet = series.bullets.push(new am4charts.CircleBullet());
+			bullet.circle.stroke = am4core.color("#fff");
+			bullet.circle.strokeWidth = 2;
+			//bullet.circle.radius = 5;
+			bullet.propertyFields.fill = "bulletColour"
+			bullet.circle.fillOpacity = 1;
+			bullet.propertyFields.tooltipText = "bulletText";
+
+			// Disabling all bullets, except ones that are explicitly enabled via data
+			bullet.disabled = true;
+			bullet.propertyFields.disabled = "hideBullet";
+
+			return chart;
+		}
 	});
 </script>

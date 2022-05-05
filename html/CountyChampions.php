@@ -1,6 +1,6 @@
 <div class="section"> 
 	<h2 id="jaffa-event-title"></h2>
-	<div class="center-panel" id="jaffa-race-results">
+	<div id="jaffa-race-results">
 	</div>
 </div>
 <script type="text/javascript">
@@ -9,11 +9,11 @@
 		getCountyChampionResults();
 		
 		function getCountyChampionResults() {
-      var groupColumn = 0;
+      		var groupColumn = 0;
 			var tableName = 'jaffa-race-county-results-table';
 			var tableHtml = '';
 			var tableRow = '<tr><th>Year</th><th>Distance</th><th>Name</th><th>Category</th><th>Result</th><th>Event</th></tr>';
-			tableHtml += '<table class="table table-striped table-bordered no-wrap" id="' + tableName + '">';
+			tableHtml += '<table class="display" id="' + tableName + '">';
 			tableHtml += '<thead>';
 			tableHtml += tableRow;
 			tableHtml += '</thead>';

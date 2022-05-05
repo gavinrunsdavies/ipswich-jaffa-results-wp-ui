@@ -1,5 +1,5 @@
 <div class="section"> 
-	<div class="center-panel">
+	<div class="formRankCriteria">
 		<p>This form shows the average percentage age grading for male and female members for a given membership year and sample size. Only individual races where a WMA percentage grading has been calculated have been taken in to consideraton.</p>
 		<ul>
 			<li>If no year specificed the query is across all years.</li>
@@ -8,7 +8,7 @@
          	<li>In 2021 the membership year changed to be from 1st April, so the 2020 year shows 13 months worth of race results</li>
 			<li>From 2021 results will be 12 months from 1st April</li>
 		</ul>
-		<form id="formRankCriteria" action="#" title="Select ranking year">	
+		<form action="#" title="Select ranking year">	
 			<label for="year">Year</label>
 			<select id="year" name="year" size="1" title="Select year">
 				<option value="0" selected="selected">Optional: Please select...</option>  
@@ -19,6 +19,7 @@
 				}
 				?>							
 			</select>	
+			<p><small>If you omit the year from the selection criteria the average rankings for all results are taken in to calculation</small></p>
 			<label for="populationSize">Number of Races</label>
 			<select id="populationSize" name="populationSize" size="1" title="Select sample size">				
 				<?php
@@ -28,14 +29,12 @@
 				}
 				?>							
 			</select>				
-			<input id="average-age-rank-submit" type="button" name="submit" value="Get Average Rankings"/>	
-			<br/>
-			<small>If you omit the year from the selection criteria the average rankings for all results are taken in to calculation</small>			
+			<input id="average-age-rank-submit" type="button" value="Get Average Rankings"/>				
 		</form>
 	</div>
-	<div id="mens-average-age-ranking-results" style="display:none" class="center-panel">		
-		<table class="table table-striped table-bordered" id="mens-average-age-ranking-results-table">	
-			<caption style="font-weight:bold; padding: 0.5em">Mens Average Age Grading</caption>				
+	<div id="mens-average-age-ranking-results" style="display:none;margin-bottom: 1em;">		
+		<table class="display" id="mens-average-age-ranking-results-table">	
+			<caption>Mens Average Age Grading</caption>				
 			<thead>
 				<tr>
 					<th>Rank</th>
@@ -44,21 +43,13 @@
 					<th>Average Age Grading</th>
 				</tr>
 			</thead>
-			<tfoot>
-				<tr>
-					<th>Rank</th>
-					<th>Runner Id</th>
-					<th>Name</th>				
-					<th>Average Age Grading</th>
-				</tr>
-			</tfoot>
 			<tbody>				
 			</tbody>
 		</table>
 	</div>
-	<div id="ladies-average-age-ranking-results" style="display:none" class="center-panel">		
-		<table class="table table-striped table-bordered" id="ladies-average-age-ranking-results-table">	
-			<caption style="font-weight:bold; padding: 0.5em">Ladies Average Age Grading</caption>				
+	<div id="ladies-average-age-ranking-results" style="display:none">		
+		<table class="display" id="ladies-average-age-ranking-results-table">	
+			<caption>Ladies Average Age Grading</caption>				
 			<thead>
 				<tr>
 					<th>Rank</th>
@@ -66,15 +57,7 @@
 					<th>Name</th>								
 					<th>Average Age Grading</th>
 				</tr>
-			</thead>
-			<tfoot>
-				<tr>
-					<th>Rank</th>
-					<th>Runner Id</th>
-					<th>Name</th>				
-					<th>Average Age Grading</th>
-				</tr>
-			</tfoot>
+			</thead>			
 			<tbody>				
 			</tbody>
 		</table>
@@ -83,20 +66,24 @@
 <script type="text/javascript">
 	jQuery(document).ready(function($) {	
 			
-		var ladiesDt, mensDt = null;
 		$('#average-age-rank-submit').click(function () {
 		
 			$('#ladies-average-age-ranking-results', '#mens-average-age-ranking-results').hide();
 
-			var ladiesTableElement = $('#ladies-average-age-ranking-results-table');			
+			var ladiesTableElement = $('#ladies-average-age-ranking-results-table');
 			
-			if (ladiesTableElement.DataTable() != null)
+			if (ladiesTableElement.DataTable() != null) {
 				ladiesTableElement.DataTable().destroy();
+			}
 			
 			ladiesTableElement.DataTable({				
-				pageLength : 20,
-				destory	   : true,	
+			    pageLength : 20,
+				paging : true,
+				destroy	   : true,	
 				processing    : true,
+				searching: true,
+				autoWidth     : false,
+				scrollX: true,
 				columns: [
 				{ 
 					data: "rank",
@@ -141,13 +128,16 @@
 			$('#ladies-average-age-ranking-results').show();					
 			
 			var mensTableElement = $('#mens-average-age-ranking-results-table');
-			if (mensTableElement.DataTable() != null)
+			if (mensTableElement.DataTable() != null) {
 				mensTableElement.DataTable().destroy();
+			}
 			
 			mensTableElement.DataTable({
 				pageLength : 20,
-				destory	   : true,	
-				processing    : true,
+				destory : true,	
+				processing : true,
+				autoWidth : false,
+				scrollX: true,
 				columns: [
 				{ 
 					data: "rank",

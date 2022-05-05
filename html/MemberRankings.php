@@ -1,7 +1,7 @@
 <div class="section"> 
-	<div class="center-panel">
+	<div class="formRankCriteria">
 		<p>Here you can find out where Ipswich JAFFA club members rank against other members in the club.</p>
-		<form id="formRankCriteria" action="#" title="Select ranking year">	
+		<form action="#" title="Select ranking year">	
 			<label for="year">Year</label>
 			<select id="year" name="year" size="1" title="Select year">
 				<option value="0" selected="selected">All Time</option>  
@@ -14,13 +14,17 @@
 			</select>	
 			<label for="distance">Distance</label>
 			<select id="distance" name="distance" size="1" title="Select distance">						
+			</select>	
+			<label for="category">Category (optional)</label>
+			<select id="category" name="category" size="1" title="Select category">		
+				<option value="0" selected="selected">All</option> 				
 			</select>				
-			<input id="member-rank-submit" type="button" name="submit" value="Get Rankings"/>				
+			<input id="member-rank-submit" type="button" value="Get Rankings" disabled="disabled"/>				
 		</form>
 	</div>
-	<div id="mens-ranking-results" style="display:none" class="center-panel">		
-		<table class="table table-striped table-bordered" id="mens-ranking-results-table">	
-			<caption style="font-weight:bold; padding: 0.5em">Mens Ranking</caption>				
+	<div id="mens-ranking-results" style="display:none;margin-bottom: 1em;">		
+		<table class="display" id="mens-ranking-results-table">	
+			<caption>Mens Ranking</caption>				
 			<thead>
 				<tr>
 					<th>Rank</th>
@@ -31,25 +35,14 @@
 					<th>Date</th>	
 					<th>Time</th>	
 				</tr>
-			</thead>
-			<tfoot>
-				<tr>
-				<th>Rank</th>
-					<th data-hide="always">Runner Id</th>
-					<th>Name</th>								
-					<th data-hide="always">Race Id</th>	
-					<th>Event</th>	
-					<th>Date</th>	
-					<th>Time</th>
-				</tr>
-			</tfoot>
+			</thead>			
 			<tbody>				
 			</tbody>
 		</table>
 	</div>
-	<div id="ladies-ranking-results" style="display:none" class="center-panel">		
-		<table class="table table-striped table-bordered" id="ladies-ranking-results-table">	
-			<caption style="font-weight:bold; padding: 0.5em">Ladies Ranking</caption>				
+	<div id="ladies-ranking-results" style="display:none">		
+		<table class="display" id="ladies-ranking-results-table">	
+			<caption>Ladies Ranking</caption>				
 			<thead>
 				<tr>
 					<th>Rank</th>
@@ -60,18 +53,7 @@
 					<th>Date</th>	
 					<th>Time</th>	
 				</tr>
-			</thead>
-			<tfoot>
-				<tr>
-				<th>Rank</th>
-					<th data-hide="always">Runner Id</th>
-					<th>Name</th>								
-					<th data-hide="always">Race Id</th>	
-					<th>Event</th>	
-					<th>Date</th>	
-					<th>Time</th>
-				</tr>
-			</tfoot>
+			</thead>			
 			<tbody>				
 			</tbody>
 		</table>
@@ -88,12 +70,28 @@
 			// Get the raw DOM object for the select box
 			select = document.getElementById('distance');
 
-			// Clear the old options
-			select.options.length = 0;
-
 			// Load the new options
 			for (var i = 0; i < data.length; i++) {
 				select.options.add(new Option(data[i].text, data[i].id));
+			}
+
+			$('#member-rank-submit').prop('disabled', false);
+		  }
+		);
+
+		$.getJSON(
+		  '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/categories',
+		  function(data) {
+			var name, select, option;
+
+			// Get the raw DOM object for the select box
+			select = document.getElementById('category');
+
+			// Load the new options for non default categories
+			for (var i = 0; i < data.length; i++) {
+				if (data[i].isDefault == 0 ) {
+					select.options.add(new Option(data[i].code, data[i].id));
+				}
 			}
 		  }
 		);
@@ -156,7 +154,8 @@
 					url : '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/distance/' + $('#distance').val(),			
 					data : {
 						"sexId": '3',
-						"year":  $('#year').val()
+						"year":  $('#year').val(),
+						"categoryId" : $('#category').val()
 					},
 					dataSrc : ""
 				}				
@@ -217,7 +216,8 @@
 					url : '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/distance/' + $('#distance').val(),			
 					data : {
 						"sexId": '2',
-						"year":  $('#year').val()
+						"year":  $('#year').val(),
+						"categoryId" : $('#category').val()
 					},
 					dataSrc : ""
 				}					

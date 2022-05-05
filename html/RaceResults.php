@@ -1,18 +1,26 @@
+<style>
+table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before, 
+table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
+	border: none;
+}
+</style>
 <div class="section">
 	<h2 id="jaffa-event-title"></h2>
-	<div class="center-panel" id="jaffa-race-results">
+	<div id="jaffa-race-results">
 	</div>
-	<div class="center-panel">
-	    <br />
-		<form class="form-inline">
-		  <div class="form-group">
-			<label for="jaffa-other-race-results">Other race results</label>
-			  <select onchange="if (this.value) window.location.href=this.value" class="form-control" id="jaffa-other-race-results">
-			  </select>
-		  </div>
-		</form>
+	<div id="race-insights-panel" style="margin: 3em 0; display: none">
+		<h3>Race Insights: Yearly comparison</h3>		
+		<div id="race-insights-chart" style="height: 350px;clear: both;"></div>
+	</div>
+	<div class="formRankCriteria">
+		<label for="jaffa-other-race-results">Other race results</label>
+		<select onchange="if (this.value) window.location.href=this.value" id="jaffa-other-race-results">
+		</select>
 	</div>
 </div>
+<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script type="text/javascript">
 	<?php if (isset($_GET['raceId']) || (isset($_GET['eventId']) && isset($_GET['date']))): ?>
 	jQuery(document).ready(function ($) {
@@ -43,11 +51,14 @@
 			$('#jaffa-event-title').html(name);
 		}
 
+		var selectedRaceCourseTypeId = 0;
+
 		function getRace(raceId) {
 			$.ajax(
 				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/races/' + raceId))
 				.done(function(raceData) {
 					setEventName(raceData.eventName);
+					selectedRaceCourseTypeId = raceData.courseTypeId;
 					if (raceData.meetingId > 0) {
 						getMeeting(raceData.meetingId);
 					} else {
@@ -98,8 +109,8 @@
 			}
 			tableHeaderRow += '</tr>';
 
-			var tableHtml = '<table class="table table-striped table-bordered no-wrap" id="jaffa-team-results-table">';
-			tableHtml += '<caption style="text-align:center;font-weight:bold;font-size:1.5em">Team Results</caption>';
+			var tableHtml = '<table class="display" id="jaffa-team-results-table">';
+			tableHtml += '<caption>Team Results</caption>';
 
 			tableHtml += '<thead>';
 			tableHtml += tableHeaderRow;
@@ -166,6 +177,11 @@
 					}
 
 					$('#jaffa-other-race-results').append(dateOptions);
+
+					if (raceData.length > 4) {
+						$('#race-insights-panel').show();
+						getRaceInsightsData(eventId);
+					}
 			});
 		}
 
@@ -190,16 +206,18 @@
 					resultColumnTitle = 'Time';
 					break;
 			}
+			
 			var title = description != null ? description + ', ' : '';
 			title += formatDate(date);
-			var tableCaption = '<h3 style="text-align:center;font-weight:bold;font-size:1.5em">' + title + '</h3>';
-			$('#jaffa-race-results').append(tableCaption);
+			//var tableCaption = '<h3 style="text-align:center;font-weight:bold;font-size:1.5em">' + title + '</h3>';
+			//$('#jaffa-race-results').append(tableCaption);
 			if (race.report != null) {
 				var raceReport = '<p>' + race.report + '</p>';
 				$('#jaffa-race-results').append(raceReport);
 			}
-			var tableRow = '<tr><th>Position</th><th>Name</th><th>' + resultColumnTitle + '</th><th>Personal Best</th><th>Season Best</th><th>Category</th><th>Standard</th><th>Info</th><th>Age Grading</th></tr>';
-			var tableHtml = '<table class="table table-striped table-bordered no-wrap" id="' + tableName + race.id + '">';
+			var tableRow = '<tr><th data-priority="2">Position</th><th data-priority="1">Name</th><th data-priority="3">' + resultColumnTitle + '</th><th>Personal Best</th><th>Season Best</th><th>Category</th><th>Standard</th><th  data-priority="5">Info</th><th data-priority="4">Age Grading</th></tr>';
+			var tableHtml = '<table class="display" id="' + tableName + race.id + '">';
+			tableHtml += '<caption>' + title + '</caption>';
 			tableHtml += '<thead>';
 			tableHtml += tableRow;
 			tableHtml += '</thead>';
@@ -237,7 +255,7 @@
 								else
 									tooltip = "Part of the scoring team finishing in " + row.team;
 
-								html += ' <span class="glyphicon glyphicon-certificate" aria-hidden="true" title="' + tooltip + '"></span>'
+								html += ' <i class="fa fa-certificate" aria-hidden="true" title="' + tooltip + '"></i>'
 							}
 							return html;
 						}
@@ -256,17 +274,17 @@
 						render : function (data, type, row, meta) {
 							if (data == 1) {
 								var improvementHtml = '';
-							if (row.previousPersonalBestResult != undefined) {
-								var improvement = getResultImprovement(row.previousPersonalBestResult, row.time);
-								improvementHtml = '<span style="font-size:smaller; vertical-align: middle; font-family: Courier New; font-style: italic;"> -';
-								if (improvement.length > 1)
-									improvementHtml += improvement[0] + '\'' + improvement[1] + '\'\'';
-								else if (improvement.length > 0)
-									improvementHtml += improvement[0] + '\'\'';
-								improvementHtml += '</span>';
-							}
+								if (row.previousPersonalBestResult != undefined) {
+									var improvement = getResultImprovement(row.previousPersonalBestResult, row.time);
+									improvementHtml = '<span style="font-size:smaller; vertical-align: middle; font-family: Courier New; font-style: italic;"> -';
+									if (improvement.length > 1)
+										improvementHtml += improvement[0] + '\'' + improvement[1] + '\'\'';
+									else if (improvement.length > 0)
+										improvementHtml += improvement[0] + '\'\'';
+									improvementHtml += '</span>';
+								}
 
-								return '<span class="glyphicon glyphicon-ok" aria-hidden="true"><span class="hidden">Yes</span>' + improvementHtml + '</span>';
+								return '<i class="fa fa-check" aria-hidden="true"></i>' + improvementHtml;
 							}
 							return '';
 						},
@@ -276,7 +294,7 @@
 						visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
 						render : function (data, type, row, meta) {
 							if (data == 1) {
-								return '<span class="glyphicon glyphicon-ok" aria-hidden="true"><span class="hidden">Yes</span></span>';
+								return '<i class="fa fa-check" aria-hidden="true"></i>';
 							}
 							return '';
 						},
@@ -294,7 +312,7 @@
 						render : function (data, type, row, meta) {
 							var html = data > 0 ? data + '%' : '';
 							if (row.percentageGradingBest == 1) {
-								html += ' <span style="color: #e88112;" class="glyphicon glyphicon-star" aria-hidden="true" title="New percenatge grading personal best"></span>'
+								html += ' <i style="color: #e88112;" class="fa fa-star" aria-hidden="true" title="New percenatge grading personal best"></i>'
 							}
 							return html;
 						}
@@ -357,6 +375,180 @@
 				},
 				"dataSrc" : ""
 			}
+		}
+
+		function getRaceInsightsData(eventId) {
+			$.ajax(
+				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/' + eventId + '/insights'))
+					.done(function(data) {
+						createRaceInsightsChart(data)
+					});
+		}
+
+		function createRaceInsightsChart(data) {
+			am5.ready(function() {
+
+				var root = am5.Root.new("race-insights-chart");
+
+				root.setThemes([
+					am5themes_Animated.new(root)
+				]);
+
+				// Create chart
+				var chart = root.container.children.push(am5xy.XYChart.new(root, {	
+					panX: false,
+					panY: false,
+					wheelY: "none",
+					pinchZoomX:true
+				}));	
+				chart.zoomOutButton.set("forceHidden", true);		
+
+				// Create axes
+				// https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+				var xRenderer = am5xy.AxisRendererX.new(root, { minGridDistance: 30 });
+				xRenderer.labels.template.setAll({
+					rotation: -90,
+					centerY: am5.p50,
+					centerX: am5.p100,
+					paddingRight: 15
+				});
+
+				var yearXAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+					maxDeviation: 0.3,
+					categoryField: "year",
+					renderer: xRenderer
+				}));
+
+				var countAxisRenderer = am5xy.AxisRendererY.new(root, {});
+				countAxisRenderer.grid.template.set("forceHidden", true);
+				var countYAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+					maxDeviation: 0.3,
+					renderer: countAxisRenderer,
+					tooltip: am5.Tooltip.new(root, {})
+				}));
+
+				// Line series (date) axis 				
+				var timeYAxisRenderer = am5xy.AxisRendererY.new(root, {opposite: true});
+				timeYAxisRenderer.grid.template.set("forceHidden", true);
+				var timeYAxis = chart.yAxes.push(am5xy.DateAxis.new(root, {
+					groupData: false,
+					tooltipDateFormat: "HH:mm:ss",
+    				baseInterval: { timeUnit: "minute", count: 1 },
+					extraMax: 0.02,
+					extraMin: 0.02,
+					renderer: timeYAxisRenderer
+				}));
+
+				timeYAxisRenderer.grid.template.set("forceHidden", true);				
+
+				// Create series for count				
+				var countSeries = chart.series.push(am5xy.ColumnSeries.new(root, {
+					xAxis: yearXAxis,
+					yAxis: countYAxis,
+					valueYField: "count",
+					sequencedInterpolation: true,
+					categoryXField: "year"
+				}));
+
+				var tooltip = countSeries.set("tooltip", am5.Tooltip.new(root, {
+					pointerOrientation: "horizontal"
+				}));
+
+				if (selectedRaceCourseTypeId == 1 || selectedRaceCourseTypeId == 3) {
+					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}\n[width: 140px]Mean time[/] {mean}\n[width: 140px]Fastest time[/] {min}\n[width: 140px]Last finisher time[/] {max}"
+				} else {
+					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}"
+				}
+
+				tooltip.label.setAll({
+					text: tooltipText
+				});
+
+				countSeries.data.processor = am5.DataProcessor.new(root, {
+					numericFields: ["count"]
+				});
+
+				countSeries.columns.template.setAll({ cornerRadiusTL: 5, cornerRadiusTR: 5 });
+				countSeries.columns.template.adapters.add("fill", function(fill, target) {
+					return chart.get("colors").getIndex(countSeries.columns.indexOf(target));
+				});
+
+				countSeries.columns.template.adapters.add("stroke", function(stroke, target) {
+					return chart.get("colors").getIndex(countSeries.columns.indexOf(target));
+				});
+
+				// Line series for min, mean, max
+				function createTimeSeries(field) {
+					var lineSeries = chart.series.push(am5xy.LineSeries.new(root, {
+						name: field,
+						xAxis: yearXAxis,
+						yAxis: timeYAxis,
+						valueYField: field,
+						categoryXField: "year"
+					}));
+
+					lineSeries.strokes.template.setAll({ strokeWidth: 2 });
+
+					lineSeries.bullets.push(function() {
+						var graphics = am5.Circle.new(root, {
+							strokeWidth: 2,
+							radius: 5,
+							stroke: lineSeries.get("stroke"),
+							fill: root.interfaceColors.get("background"),
+						});
+						
+						return am5.Bullet.new(root, {
+							sprite: graphics
+						});	
+					});
+
+					lineSeries.data.setAll(data);
+					lineSeries.appear(1000);
+				}				
+				
+				var date = new Date();
+  				for (var i = 0; i < data.length; i++) {
+					data[i].meanTime = date.setHours(getHours(data[i].mean), getMinutes(data[i].mean), getSeconds(data[i].mean));
+    				data[i].minTime = date.setHours(getHours(data[i].min), getMinutes(data[i].min), getSeconds(data[i].min));
+    				data[i].maxTime = date.setHours(getHours(data[i].max), getMinutes(data[i].max), getSeconds(data[i].max));
+  				}
+
+				// Only display times for road (1) and track races (3)
+				if (selectedRaceCourseTypeId == 1 || selectedRaceCourseTypeId == 3) {
+					createTimeSeries("meanTime");
+					createTimeSeries("minTime");
+					createTimeSeries("maxTime");
+				}
+
+				// Add cursor
+				var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
+					xAxis: yearXAxis,
+  					yAxis: countYAxis
+				}));
+				
+				cursor.lineX.set("visible", false);
+
+				yearXAxis.data.setAll(data);
+				countSeries.data.setAll(data);
+
+				// Make stuff animate on load
+				// https://www.amcharts.com/docs/v5/concepts/animations/
+				countSeries.appear(1000);
+				chart.appear(1000, 100);
+
+				}); // end am5.ready()
+		}
+
+		function getHours(time) {
+			return time.substring(0, 2);
+		}
+
+		function getMinutes(time) {
+			return time.substring(3, 5);
+		}
+
+		function getSeconds(time) {
+			return time.substring(6, 8);
 		}
 	});
 	<?php endif;?>

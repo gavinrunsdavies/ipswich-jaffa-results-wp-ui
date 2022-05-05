@@ -1,38 +1,28 @@
 <div class="section"> 
-	<div class="center-panel">
-		<table class="table table-striped table-bordered" id="event-listings-table">
-			<thead>
-				<tr>
-					<th data-hide="always">cc</th>
-					<th></th>
-					<th>Event Name</th>
-					<th data-hide="phone,tablet">Website</th>
-					<th>Last Race Date</th>
-					<th>Total Number of Results</th>
-				</tr>
-			</thead>
-			<tfoot>
-				<tr>
-					<th>cc</th>
-					<th></th>
-					<th>Event Name</th>
-					<th>Website</th>
-					<th>Last Race Date</th>
-					<th>Total Number of Results</th>
-				</tr>
-			</tfoot>
-			<tbody>
-			</tbody>
-		</table>
-	</div>
+	<table class="display" id="event-listings-table">
+		<thead>
+			<tr>
+				<th data-hide="always"></th>
+				<th></th>
+				<th>Event Name</th>
+				<th data-hide="phone,tablet">Website</th>
+				<th>Last Race Date</th>
+				<th>Total Number of Results</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
 </div>
 <style>
-.close {
-  color: red;
-}
-.open {
-  color: green;
-}
+	.showHideRacesCell {
+  		cursor: pointer;
+  		user-select: none;
+	}	
+	
+	.showHideRacesCell:hover {
+		color: var(--primary-color);
+	}
 </style>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {	
@@ -50,12 +40,12 @@
 			 },
 			 {
 				data: "name",
-				class: "center",
+				class: "center showHideRacesCell",
 				searchable: false,
 				sortable: false,
 				// Member name, add hyperlink to profile
 				render: function ( data, type, row, meta ) {				
-					return '<span class="glyphicon glyphicon-chevron-down open"></span>';
+					return '<i class="showHideRaces fa fa-chevron-down"></i>';
 				}		
 			 },
 			 {
@@ -134,25 +124,21 @@
 			
 		  return countryName;
 		}
-	
-		$(document).on("click", '#event-listings-table tbody td span.glyphicon-chevron-down', function () {
-			$(this).addClass("glyphicon-chevron-up");
-			$(this).addClass("close");
-			$(this).removeClass("glyphicon-chevron-down");
-			$(this).removeClass("open");
-			var nTr = this.parentNode.parentNode;
-			var newTr = eventTable.fnOpen( nTr, 'Loading data...', 'details' );
-			var aData = eventTable.fnGetData( nTr );
-			fnSetEventDetails(eventTable, newTr, aData.id, aData.eventName);
-		});
-
-		$(document).on("click", '#event-listings-table tbody td span.glyphicon-chevron-up', function () {
-			$(this).addClass("glyphicon-chevron-down");
-			$(this).addClass("open");
-			$(this).removeClass("glyphicon-chevron-up");
-			$(this).removeClass("close");
-			var nTr = this.parentNode.parentNode;
-			eventTable.fnClose( nTr );
+		
+		$(document).on("click", '#event-listings-table tbody td .showHideRaces', function () {
+			var icon = $(this);
+			var icon_fa_icon = icon.attr('data-icon');
+            var nTr = this.parentNode.parentNode;
+			
+			if (icon_fa_icon === "chevron-up") {
+				eventTable.fnClose( nTr );
+				icon.attr('data-icon', 'chevron-down');
+			} else {
+				var newTr = eventTable.fnOpen( nTr, 'Loading data...', 'details' );
+			    var aData = eventTable.fnGetData( nTr );
+			    fnSetEventDetails(eventTable, newTr, aData.id, aData.eventName);
+				icon.attr('data-icon', 'chevron-up');
+			}
 		});
 		
 		$(document).on('click', 'a.toggle-vis', function(){
@@ -208,7 +194,7 @@
 						sOut += '<td>' + nullToEmptyString(data[i].distance) + '</td>';
 						sOut += '<td class="text-center">';
 						if (data[i].isGrandPrixRace == 1)
-							sOut += '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
+							sOut += '<i class="fa fa-check" aria-hidden="true"></i>';
 						sOut += '</td>';
 						sOut += '<td>' + data[i].count + '</td>';
 						sOut += '<td>' + data[i].meetingId + '</td>';

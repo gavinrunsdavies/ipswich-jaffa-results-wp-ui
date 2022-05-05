@@ -1,35 +1,34 @@
-<div class="section"> 
-	<div class="center-panel">
-		<form id="formRankCriteria" action="#" title="Select ranking criteria">
-			<label for="distance">Distance</label>
-			<select id="distance" name="distance" size="1" title="Select distance">
-				<option value="0" selected="selected">Optional. Please select...</option>
-			
-			</select>			 
-			<label for="sex">Gender</label>
-			<select id="sex" name="sex" size="1" title="Select gender">
-				<option value="0" selected="selected">Optional: Please select...</option>           
-				<option value="2">Men's</option>              
-				<option value="3">Ladies</option>              
-			</select>		
-			<label for="year">Year</label>
-			<select id="year" name="year" size="1" title="Select year">
-				<option value="0" selected="selected">Optional: Please select...</option>  
-				<?php
-				for ($y = date("Y"); $y >= 1977; $y--) 
-				{
-					printf('<option value="%d">%d</option>', $y, $y);              
-				}
-				?>							
-			</select>	
-			<label for="distinct">Distinct runners?</label>
-			<input id="distinct" type="checkbox" name="distinct" value="1" checked="checked"/>			     			
-			<input id="wma-rank-submit" type="button" name="submit" value="Get Rankings"/>			     
-		</form>
-	</div>
-	<div id="wma-ranking-results" style="display:none" class="center-panel">		
-		<table class="table table-striped table-bordered" id="wma-ranking-results-table" style="width:100%">	
-			<caption style="font-weight:bold; padding: 0.5em">Member Age Grading</caption>				
+<div class="section">
+<div class="formRankCriteria">
+	<form action="#" title="Select ranking criteria">
+		<label for="distance">Distance</label>
+		<select id="distance" name="distance" size="1" title="Select distance">
+			<option value="0" selected="selected">Optional. Please select...</option>
+
+		</select>
+		<label for="sex">Gender</label>
+		<select id="sex" name="sex" size="1" title="Select gender">
+			<option value="0" selected="selected">Optional: Please select...</option>
+			<option value="2">Men's</option>
+			<option value="3">Ladies</option>
+		</select>
+		<label for="year">Year</label>
+		<select id="year" name="year" size="1" title="Select year">
+			<option value="0" selected="selected">Optional: Please select...</option>
+			<?php
+for ($y = date("Y"); $y >= 1977; $y--) {
+    printf('<option value="%d">%d</option>', $y, $y);
+}
+?>
+		</select>
+		<label for="distinct">Distinct runners?</label>
+		<input id="distinct" type="checkbox" name="distinct" value="1" checked="checked"/>
+		<input id="wma-rank-submit" type="button" value="Get Rankings"/>
+	</form>
+</div>
+	<div id="wma-ranking-results" style="display:none" class="center-panel">
+		<table class="display" id="wma-ranking-results-table" style="width:100%">
+			<caption>Member Age Grading</caption>
 			<thead>
 				<tr>
 					<th>Rank</th>
@@ -38,7 +37,7 @@
 					<th data-hide="always">Event Id</th>
 					<th data-hide="phone">Event</th>
 					<th data-hide="phone,tablet">Date</th>
-					<th data-hide="phone">Time</th>					
+					<th data-hide="phone">Time</th>
 					<th>Age Grading</th>
 				</tr>
 			</thead>
@@ -50,20 +49,20 @@
 					<th>Event Id</th>
 					<th>Event</th>
 					<th>Date</th>
-					<th>Time</th>						
+					<th>Time</th>
 					<th>Age Grading</th>
 				</tr>
 			</tfoot>
-			<tbody>				
+			<tbody>
 			</tbody>
 		</table>
 	</div>
 </div>
 <script type="text/javascript">
-	jQuery(document).ready(function($) {	
-	
+	jQuery(document).ready(function($) {
+
 		$.getJSON(
-		  '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/distances',
+		  '<?php echo esc_url(home_url()); ?>/wp-json/ipswich-jaffa-api/v2/distances',
 		  function(data) {
 			var name, select, option;
 
@@ -80,54 +79,53 @@
 			}
 		  }
 		);
-			
+
 		var wmaDt = null;
 		$('#wma-rank-submit').click(function () {
-		
 			$('#wma-ranking-results').hide();
 
 			var tableElement = $('#wma-ranking-results-table');
-			
+
 			if (wmaDt != null) {
 				wmaDt.destroy();
 			}
-			
+
 			wmaDt = tableElement.DataTable({
 				pageLength : 50,
 				columns : [
-				{ 
-					data: "rank" 
+				{
+					data: "rank"
 				},
 				{
 					data: "runnerId",
-					visible: false  
-				},		
+					visible: false
+				},
 				{
 				data: "name",
-				render: function ( data, type, row, meta ) {	
+				render: function ( data, type, row, meta ) {
 					var resultsUrl = '<?php echo $memberResultsPageUrl; ?>';
-					var anchor = '<a href="' + resultsUrl;						
-					anchor += '?runner_id=' + row.runnerId;						
-					anchor += '">' + data + '</a>';								
+					var anchor = '<a href="' + resultsUrl;
+					anchor += '?runner_id=' + row.runnerId;
+					anchor += '">' + data + '</a>';
 
 					return anchor;
 				}
 			},
 			{
 				data: "eventId",
-				visible: false  
+				visible: false
 			},
 			{
 				data: "event",
-				render: function ( data, type, row, meta ) {	
+				render: function ( data, type, row, meta ) {
 					var resultsUrl = '<?php echo $eventResultsPageUrl; ?>';
-					var anchor = '<a href="' + resultsUrl;						
-					anchor += '?raceId=' + row.raceId;	
+					var anchor = '<a href="' + resultsUrl;
+					anchor += '?raceId=' + row.raceId;
 					if (row.race != null) {
-						anchor += '">' + data + ' ' + row.race + '</a>';								
+						anchor += '">' + data + ' ' + row.race + '</a>';
 					} else {
-						anchor += '">' + data + '</a>';								
-					}						
+						anchor += '">' + data + '</a>';
+					}
 
 					return anchor;
 				}
@@ -139,21 +137,24 @@
 				data: "result"
 			},
 			{
-				data: "percentageGrading"
-			},
+				data: "percentageGrading",
+				render : function (data, type, row, meta) {
+					return data + '%';
+				}
+			}
 			],
 			ajax    	  : {
-				url : '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/wma/',		
+				url : '<?php echo esc_url(home_url()); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/wma/',
 				data : {
 					"distanceId" : $('#distance').val(),
 					"sexId": $('#sex').val(),
 					"year":  $('#year').val(),
-					"distinct":  $('#distinct').is(':checked') ? 1 : 0 
+					"distinct":  $('#distinct').is(':checked') ? 1 : 0
 				},
 				dataSrc : ""
-			}			
+			}
 			});
-			
+
 			$('#wma-ranking-results').show();
 		});
 	});

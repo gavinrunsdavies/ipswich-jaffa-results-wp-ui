@@ -1,10 +1,12 @@
 <div class="section"> 
 	<style>
-		div.center-panel { margin-top:3em}
+		div.center-panel { margin-bottom:1em}
+		
+		#map-world-results .info { column-count: 3;}
 	</style>
 	<div style="display:block" class="center-panel">		
-		<table class="table table-striped table-bordered" id="results-year-table" style="width:100%">	
-			<caption style="font-weight:bold; padding: 0.5em">Number of Results By Year</caption>				
+		<table class="display" id="results-year-table" style="width:100%">	
+			<caption>Number of Results By Year</caption>				
 			<thead>
 				<tr>					
 					<th>Year</th>
@@ -16,8 +18,8 @@
 		</table>
 	</div>
 	<div style="display:block" class="center-panel">		
-		<table class="table table-striped table-bordered" id="personal-best-year-table" style="width:100%">	
-			<caption style="font-weight:bold; padding: 0.5em">Personal Bests By Year</caption>				
+		<table class="display" id="personal-best-year-table" style="width:100%">	
+			<caption>Personal Bests By Year</caption>				
 			<thead>
 				<tr>	
 					<th>Year</th>
@@ -29,8 +31,8 @@
 		</table>
 	</div>
 	<div style="display:block" class="center-panel">		
-		<table class="table table-striped table-bordered" id="personal-best-total-table" style="width:100%">	
-			<caption style="font-weight:bold; padding: 0.5em">Personal Best Total</caption>				
+		<table class="display" id="personal-best-total-table" style="width:100%">	
+			<caption>Personal Best Total</caption>				
 			<thead>
 				<tr>					
 					
@@ -45,8 +47,8 @@
 		</table>
 	</div>	
 	<div style="display:block" class="center-panel">		
-		<table class="table table-striped table-bordered" id="top-jaffa-attended-races-table" style="width:100%">	
-			<caption style="font-weight:bold; padding: 0.5em">Races with most JAFFA results</caption>				
+		<table class="display" id="top-jaffa-attended-races-table" style="width:100%">	
+			<caption>Races with most JAFFA results</caption>				
 			<thead>
 				<tr>				
 					<th>Name</th>						
@@ -59,8 +61,8 @@
 		</table>
 	</div>
 	<div style="display:block" class="center-panel">		
-		<table class="table table-striped table-bordered" id="top-member-results-table" style="width:100%">	
-			<caption style="font-weight:bold; padding: 0.5em">Members with most results</caption>				
+		<table class="display" id="top-member-results-table" style="width:100%">	
+			<caption>Members with most results</caption>				
 			<thead>
 				<tr>
 					<th>Name</th>						
@@ -72,8 +74,8 @@
 		</table>
 	</div>
 	<div style="display:none" class="center-panel">		
-		<table class="table table-striped table-bordered" id="top-jaffa-attended-races-year-table" style="width:100%">	
-			<caption style="font-weight:bold; padding: 0.5em">Races with most JAFFA results by year</caption>				
+		<table class="display" id="top-jaffa-attended-races-year-table" style="width:100%">	
+			<caption>Races with most JAFFA results by year</caption>				
 			<thead>
 				<tr>
 					<th>Year</th>					
@@ -85,7 +87,7 @@
 			</tbody>
 		</table>
 	</div>
-	<div id="map-uk-county-results" style="display:block" class="center-panel">		
+	<div id="map-uk-county-results" style="display:block" class="formRankCriteria">		
 		<h4>Map showing location of results across the UK and English counties</h4>
 		<em>This data is based on event course location (e.g. <a href="http://coursemeasurement.org.uk/">http://coursemeasurement.org.uk/</a>) and this data is largely incomplete. As such the following map is not a true representation of where races have occured and should only be used as a guide.</em>
 		<div class="map" id="countyMap" style="width: 100%; height: 500px;"></div>			
@@ -96,8 +98,8 @@
 		<input class="play" type="button" value="start" />
 		Current Year: <span class="year"></span>	
 	</div>
-	<div id="map-world-results" style="display:block" class="center-panel">		
-		<h4>Map showing location of results across the world.</h4>
+	<div id="map-world-results" style="display:block" class="formRankCriteria">		
+		<h4>Map showing location of results across the world</h4>
 		<em>This data is based on event course location and this data is largely incomplete. As such the following map is not a true representation of where races have occured and should only be used as a guide.</em>
 		<div class="map" id="worldMap" style="width: 100%; height: 500px;"></div>			
 		<div style="width: 25%; display: inline">
@@ -106,7 +108,7 @@
 		Cumalative <input class="cumalative" type="checkbox" value="1">
 		<input class="play" type="button" value="start" />
 		Current Year: <span class="year"></span>	
-		<div class="info" style="height: 100px; overflow: auto">
+		<div class="info">
 		<ul></ul>
 		</div>		
 	</div>

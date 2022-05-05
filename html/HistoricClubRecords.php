@@ -1,15 +1,13 @@
 <div class="section"> 
-	<style>
-		div.center-panel { margin-top:1em}
-	</style>
-	<div class="center-panel">
+	<div class="formRankCriteria">
 		<p>Here you can find the full history of Ipswich JAFFA club records for various race distances. Select the distance the history of club records will be shown for each race age category.</p>
 		
 		<label for="distance">Distance</label>
 		<select id="distance" name="distance" size="1" title="Select distance">
 		</select>			 						     				
 	</div>
-	<div style="display:block" class="center-panel">				
+	<div style="display:block;margin-top:1em">			
+		<h4 id="categoryLinks" style="display:none;text-align:center"></h4>	
 		<div id="chartData"></div>   
 	</div>	
 </div>
@@ -43,39 +41,47 @@
 			$.ajax(getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/historicrecords/distance/' + distanceId))
 				.done(function(data) {
 					$('#chartData').empty();
-					
-					
-						
+					$('#categoryLinks').empty().append('| ');
+																
 					$.each(data, function(i, item){
 						item.records.sort(function(a, b){
 						   return ((a.date < b.date) ? -1 : ((a.date > b.date) ? 1 : 0));
 						});
 					});
 					
-					$.each(data, function(i, item){
-						var sOut = '<h4>Category: ' + item.code + '</h4>';
-						sOut += '<table class="table table-condensed" id="category_' + item.code + '">';
-						sOut += '<thead>';
-						sOut += '<tr><th>Name</th><th>Event</th><th>Description</th><th>Date</th><th>Time</th><th>Position</th</tr>';
-						sOut += '</thead>';
-						sOut += '<tbody>';						
-						
-						$.each(item.records, function(j, record){							
-							
-							sOut += '<tr>';
-							sOut += '<td>' + getRunnerLink(record) + '</td>';
-							sOut += '<td>' + getRaceLink(record) + '</td>';
-							sOut += '<td>' + ((record.raceDescription == null) ? "" : record.raceDescription) + '</td>';
-							sOut += '<td>' + record.date + '</td>';
-							sOut += '<td>' + record.time + '</td>';
-							sOut += '<td>' + record.position + '</td>';
-							sOut += '</tr>';
+					$.each(data, function(i, item){						
+						var tableHtml = '<table class="display" id="category_' + item.code + '">';
+						tableHtml += '<caption>Category: ' + item.code + '</caption>';
+						tableHtml += '<thead>';
+						tableHtml += '<tr><th>Name</th><th>Event</th><th>Description</th><th>Date</th><th>Time</th><th>Position</th</tr>';
+						tableHtml += '</thead>';
+						tableHtml += '<tbody>';	
+						tableHtml += '</tbody>';	
+						tableHtml += '</table>';
+						tableHtml += '<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>';
+
+						var dataSet = [];
+						$.each(item.records, function(j, record){	
+							var dataRow = [];													
+							dataRow.push(getRunnerLink(record));
+							dataRow.push(getRaceLink(record));
+							dataRow.push(record.raceDescription == null ? "" : record.raceDescription);
+							dataRow.push(record.date);
+							dataRow.push(record.time);
+							dataRow.push(record.position);
+							dataSet.push(dataRow);
 						});
-						sOut += '</tbody>';	
-						sOut += '</table>';	
-												
-						$('#chartData').append(sOut);						
-                    });								
+					
+						$('#categoryLinks').append('<a href="#category_' + item.code +'">' + item.code +'</a> | ');
+						$('#chartData').append(tableHtml);	
+						$('#category_' + item.code).DataTable({
+							paging : false,
+							searching: false,							
+							data: dataSet,
+							order: [[ 3, "desc" ]]
+						});					
+                    });	
+					$('#categoryLinks').show();							
 				});	
 		});
 		

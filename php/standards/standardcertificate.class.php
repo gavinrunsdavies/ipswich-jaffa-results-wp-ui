@@ -18,10 +18,10 @@ if (!class_exists("StandardsCertificatePdf")) {
     var $documentAuthor = "Gavin Davies";
     
     // Class constructor
-    function StandardsCertificatePdf() {
+    function __construct() {
     
       // Call the base constructor
-      parent::FPDF('L','mm','A4');
+      parent::__construct('L','mm','A4');
 
       // Set documebt properties
       $this->SetMargins(0, 0, 0);

@@ -1,9 +1,9 @@
 <div class="section"> 
 	<div class="center-panel">
-		<table class="table table-striped table-bordered" id="league-listings-table">
+		<table class="display" id="league-listings-table">
 			<thead>
 				<tr>
-					<th data-hide="always">cc</th>
+					<th data-hide="always"></th>
 					<th></th>
 					<th>League</th>
 					<th>Starting Year</th>
@@ -11,16 +11,6 @@
 					<th>Final Position</th>
 				</tr>
 			</thead>
-			<tfoot>
-				<tr>
-					<th>cc</th>
-					<th></th>
-					<th>League</th>
-					<th>Starting Year</th>
-					<th>Total Number of Races</th>
-					<th>Final Position</th>
-				</tr>
-			</tfoot>
 			<tbody>
 			</tbody>
 		</table>
@@ -54,7 +44,7 @@
 				searchable: false,
 				sortable: false,	
 				render: function ( data, type, row, meta ) {				
-					return '<span class="glyphicon glyphicon-chevron-down open"></span>';
+					return '<i class="showHideRaces fa fa-chevron-down" aria-hidden="true"></i>';
 				}	
 			 },
              {
@@ -94,24 +84,20 @@
 			}
 		}
 
-		$(document).on("click", '#league-listings-table tbody td span.glyphicon-chevron-down', function () {
-			$(this).addClass("glyphicon-chevron-up");
-			$(this).addClass("close");
-			$(this).removeClass("glyphicon-chevron-down");
-			$(this).removeClass("open");
-			var nTr = this.parentNode.parentNode;
-			var newTr = leagueTable.fnOpen( nTr, 'Loading data...', 'details' );
-			var aData = leagueTable.fnGetData( nTr );
-			fnSetEventDetails(leagueTable, newTr, aData.id, aData.eventName);
-		});
-
-		$(document).on("click", '#league-listings-table tbody td span.glyphicon-chevron-up', function () {
-			$(this).addClass("glyphicon-chevron-down");
-			$(this).addClass("open");
-			$(this).removeClass("glyphicon-chevron-up");
-			$(this).removeClass("close");
-			var nTr = this.parentNode.parentNode;
-			leagueTable.fnClose( nTr );
+		$(document).on("click", '#league-listings-table tbody td .showHideRaces', function () {
+			var icon = $(this);
+			var icon_fa_icon = icon.attr('data-icon');
+            var nTr = this.parentNode.parentNode;
+			
+			if (icon_fa_icon === "chevron-up") {
+				leagueTable.fnClose( nTr );
+				icon.attr('data-icon', 'chevron-down');
+			} else {
+				var newTr = leagueTable.fnOpen( nTr, 'Loading data...', 'details' );
+			    var aData = leagueTable.fnGetData( nTr );
+			    fnSetEventDetails(leagueTable, newTr, aData.id, aData.eventName);
+				icon.attr('data-icon', 'chevron-up');
+			}
 		});
 		
 		/* Formating function for row details */

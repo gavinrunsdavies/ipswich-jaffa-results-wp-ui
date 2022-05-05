@@ -1,6 +1,6 @@
 <div class="section"> 
-	<div class="center-panel">
-		<form id="formGrandPrixCriteria" action="#" title="Select ranking criteria">		
+	<div class="formRankCriteria">
+		<form action="#" title="Select ranking criteria">		
 			<label for="year">Year</label>
 			<select id="year" name="year" size="1" title="Select year">
 				<option value="0" selected="selected">Please select...</option>  
@@ -14,60 +14,42 @@
 			<input id="grand-prix-submit" type="button" name="submit" value="Get Scores"/>			     
 		</form>
 	</div>
-	<div id="men-grand-prix-results" style="display:none" class="center-panel">		
-		<div class="row">
-			<div class="col-md-12">
-				<table class="table table-striped table-bordered" id="men-grand-prix-races">
-					<caption style="font-weight:bold; padding: 0.5em">Men's Grand Prix Races</caption>	
-					<thead>
-						<tr>
-							<th>Event</th>
-							<th>Date</th>
-							<th>Description</th>
-							<th>Course Type</th>
-							<th>County</th>
-							<th>Conditions</th>
-							<th>Venue</th>
-							<th>Distance</th>
-						</tr>
-					</thead>
-					<tbody>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-11">
-				<table class="table table-striped table-bordered grandprix-table" id="men-grand-prix-results-table" style="width:100%">	
-					<caption style="font-weight:bold; padding: 0.5em">Men's Grand Prix Current Standings</caption>				
-					<thead>
-						<tr>
-							<th>Name</th>
-							<th>Category</th>
-							<th>Total Points</th>
-							<th>Best 8 Points</th>		
-							<th>Details</th>
-						</tr>
-					</thead>
-					<tbody>
-					</tbody>
-					<tfoot>
-						<tr>
-							<th>Name</th>
-							<th>Category</th>
-							<th>Total Points</th>
-							<th>Best 8 Points</th>	
-							<th>Details</th>
-						</tr>
-					</tfoot>					
-				</table>
-			</div>			
-		</div>			
+	<div id="men-grand-prix-results" style="display:none">		
+		<table class="display" id="men-grand-prix-races">
+			<caption>Men's Grand Prix Races</caption>	
+			<thead>
+				<tr>
+					<th>Event</th>
+					<th>Date</th>
+					<th>Description</th>
+					<th>Course Type</th>
+					<th>Conditions</th>
+					<th>Venue</th>
+					<th>Distance</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+		<table class="display grandprix-table" id="men-grand-prix-results-table" style="width:100%">	
+			<caption>Men's Grand Prix Current Standings</caption>				
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Category</th>
+					<th>Total Points</th>
+					<th>Best 8 Points</th>		
+					<th>Details</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>					
+		</table>		
 	</div>
 	<div id="ladies-grand-prix-results" style="display:none" class="center-panel">		
 		<div class="row">
 			<div class="col-md-12">
-				<table class="table table-striped table-bordered" id="ladies-grand-prix-races">
+				<table class="display" id="ladies-grand-prix-races">
 					<caption style="font-weight:bold; padding: 0.5em">Ladies Grand Prix Races</caption>	
 					<thead>
 						<tr>
@@ -75,7 +57,6 @@
 							<th>Date</th>
 							<th>Description</th>
 							<th>Course Type</th>
-							<th>County</th>
 							<th>Conditions</th>
 							<th>Venue</th>
 							<th>Distance</th>
@@ -88,7 +69,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-11">
-				<table class="table table-striped table-bordered grandprix-table" id="ladies-grand-prix-results-table" style="width:100%">	
+				<table class="display grandprix-table" id="ladies-grand-prix-results-table" style="width:100%">	
 					<caption style="font-weight:bold; padding: 0.5em">ladies Grand Prix Current Standings</caption>				
 					<thead>
 						<tr>
@@ -100,16 +81,7 @@
 						</tr>
 					</thead>
 					<tbody>
-					</tbody>
-					<tfoot>
-						<tr>
-							<th>Name</th>
-							<th>Category</th>
-							<th>Total Points</th>
-							<th>Best 8 Points</th>	
-							<th>Details</th>
-						</tr>
-					</tfoot>					
+					</tbody>				
 				</table>
 			</div>	
 		</div>			
@@ -136,7 +108,7 @@
 				rows += '<td>' + runner.categoryCode + '</td>';
 				rows += '<td>' + runner.totalPoints + '</td>';
 				rows += '<td>' + runner.best8Score+ '</td>';
-				rows += '<td class="text-center"><a tabindex="0" role="button"><span class="glyphicon glyphicon-option-horizontal grand-prix-detail" aria-hidden="true"></span></a></td>';				
+				rows += '<td class="text-center"><a tabindex="0" role="button"><i class="fa fa-ellipsis-h grand-prix-detail" aria-hidden="true"></i></a></td>';				
 				rows += '</tr>';
 			});				
 	
@@ -176,8 +148,7 @@
 				rows += '<td>'+ anchor + '</td>';
 				rows += '<td>' + race.date + '</td>';
 				rows += '<td>' + nullToEmptyString(race.description)+ '</td>';
-				rows += '<td>' + nullToEmptyString(race.courseType) + '</td>';
-				rows += '<td>' + nullToEmptyString(race.county) + '</td>';					
+				rows += '<td>' + nullToEmptyString(race.courseType) + '</td>';				
 				rows += '<td>' + nullToEmptyString(race.conditions) + '</td>';
 				rows += '<td>' + nullToEmptyString(race.venue) + '</td>';
 				rows += '<td>' + nullToEmptyString(race.distance) + '</td>';							
@@ -185,6 +156,12 @@
 			});
 			
 			tableBody.append(rows);
+
+			$('#' + tableId).DataTable( {
+				paging : false,
+				searching: false,
+				processing: false
+			} );
 		}
 		
 		function nullToEmptyString(value) {
@@ -239,7 +216,7 @@
 		
 		function getResultDetailHtml(runner, orderedRacesIds) {
 						
-			var table = '<table class="table table-striped table-bordered"><thead><tr><th>Race</th><th>Points</th></tr></thead><tbody>';
+			var table = '<table class="display"><thead><tr><th>Race</th><th>Points</th></tr></thead><tbody>';
 					
 			var rows = '';
 			
@@ -269,7 +246,7 @@
 			return table;
 		}
 		
-		$('.grandprix-table tbody td a span.grand-prix-detail').live( 'click', function () {
+		$('.grandprix-table tbody td a .grand-prix-detail').click(function () {
 			var nTr = this.parentNode.parentNode.parentNode;
 			var sexId = $(nTr).data('sex-id');			
 				
@@ -291,7 +268,7 @@
 			var html = getResultDetailHtml(runner, orderedRacesIds);			
 		
 			// Hide any exitsing
-			$('.grandprix-table tbody td span.grand-prix-detail').popover('destroy');
+			$('.grandprix-table tbody td .grand-prix-detail').popover('destroy');
 			
 			var popover = $(this).popover({
 				title : runner.name,
