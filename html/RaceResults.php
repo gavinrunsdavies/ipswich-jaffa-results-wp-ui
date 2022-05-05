@@ -207,6 +207,11 @@
 			$('#jaffa-race-results').append(tableHtml);
 
 			var table = $('#'+tableName + race.id).DataTable({
+				responsive: {
+					details: {
+						type: 'inline'
+					}
+				},
 				dom: 'tBip',
 				buttons: {
 					buttons: [{
