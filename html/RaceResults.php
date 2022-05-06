@@ -3,6 +3,19 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before,
 table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
 	border: none;
 }
+.page-header {
+	display: none;
+}
+#jaffa-event-title {
+	text-align: center;
+}
+.site-content {
+	padding-top: 0;
+}
+
+table.display caption {
+	padding: 0;
+}
 </style>
 <div class="section">
 	<h2 id="jaffa-event-title"></h2>
@@ -227,7 +240,20 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
 			var table = $('#'+tableName + race.id).DataTable({
 				responsive: {
 					details: {
-						type: 'inline'
+						renderer: function ( api, rowIdx, columns ) {
+							var data = $.map( columns, function ( col, i ) {
+								return col.hidden ?
+									'<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
+										'<td>'+col.title+':'+'</td> '+
+										'<td>'+col.data+'</td>'+
+									'</tr>' :
+									'';
+							} ).join('');
+
+							return data ?
+								$('<table/>').append( data ) :
+								false;
+						}
 					}
 				},
 				dom: 'tBip',
