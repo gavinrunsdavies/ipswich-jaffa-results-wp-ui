@@ -417,10 +417,11 @@ table.display caption {
 		}
 
 		function getDistinctRaceDistanceData(data) {
-			var distinct = []
+			var distinct = [];
 			for (var i = 0; i < data.length; i++) {
-				if (data[i].distance not in distinct) {
-					distinct.push({distance : data[i].distance, data: {data}})
+				var index = distinct.findIndex(o => o.distance === data[i].distance);
+				if (index) < 0) {
+					distinct.push({distance : data[i].distance, data: {data}});
 				} else {
 					distinct.distance.push(data);
 				}
