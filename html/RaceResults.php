@@ -407,11 +407,29 @@ table.display caption {
 			$.ajax(
 				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/' + eventId + '/insights'))
 					.done(function(data) {
-						createRaceInsightsChart(data)
+						var distanceData = getDistinctRaceDistances(data);
+						distanceData.forEach(distance => {
+							if (distance.data.length > 4) {
+								createRaceInsightsChart(distance.data, distance.distance);
+							}
+						});	
 					});
 		}
 
-		function createRaceInsightsChart(data) {
+		function getDistinctRaceDistanceData(data) {
+			var distinct = []
+			for (var i = 0; i < data.length; i++) {
+				if (data[i].distance not in distinct) {
+					distinct.push({distance : data[i].distance, data: {data}})
+				} else {
+					distinct.distance.push(data);
+				}
+			}
+
+			return distinct;
+		}
+
+		function createRaceInsightsChart(data, distance) {
 			am5.ready(function() {
 
 				var root = am5.Root.new("race-insights-chart");
