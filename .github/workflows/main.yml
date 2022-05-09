@@ -31,7 +31,7 @@ jobs:
         server: ftp.test.ipswichjaffa.org.uk
         username: ftp@test.ipswichjaffa.org.uk
         password: ${{ secrets.FtpServerPassword }}
-        server-dir: public_html/wp-content/plugins/test/
+        server-dir: public_html/wp-content/plugins/ipswich-jaffa-results-wp-ui/
         dry-run: false
         exclude: |
           **/.git*
