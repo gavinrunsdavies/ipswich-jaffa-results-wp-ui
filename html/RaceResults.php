@@ -16,6 +16,11 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
 table.display caption {
 	padding: 0;
 }
+
+div.race-insights-chart {
+	height: 350px;	
+	margin-bottom: 5em;
+}
 </style>
 <div class="section">
 	<h2 id="jaffa-event-title"></h2>
@@ -23,7 +28,7 @@ table.display caption {
 	</div>
 	<div id="race-insights-panel" style="margin: 3em 0; display: none">
 		<h3>Race Insights: Yearly comparison</h3>		
-		<div id="race-insights-chart" style="height: 350px;clear: both;"></div>
+		<div id="race-insights-chart" style="clear: both;"></div>
 	</div>
 	<div class="formRankCriteria">
 		<label for="jaffa-other-race-results">Other race results</label>
@@ -407,9 +412,9 @@ table.display caption {
 			$.ajax(
 				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/' + eventId + '/insights'))
 					.done(function(data) {
-						var distanceData = getDistinctRaceDistances(data);
+						var distanceData = getDistinctRaceDistanceData(data);
 						distanceData.forEach(distance => {
-							if (distance.data.length > 4) {
+							if (distance.data.length > 4 && distance.distance != null) {
 								createRaceInsightsChart(distance.data, distance.distance);
 							}
 						});	
@@ -420,10 +425,10 @@ table.display caption {
 			var distinct = [];
 			for (var i = 0; i < data.length; i++) {
 				var index = distinct.findIndex(o => o.distance === data[i].distance);
-				if (index) < 0) {
-					distinct.push({distance : data[i].distance, data: {data}});
+				if (index < 0) {
+					distinct.push({distance : data[i].distance, data: new Array(data[i])});
 				} else {
-					distinct.distance.push(data);
+					distinct[index].data.push(data[i]);
 				}
 			}
 
@@ -431,9 +436,14 @@ table.display caption {
 		}
 
 		function createRaceInsightsChart(data, distance) {
+			var containerDiv = document.createElement('div');    
+			containerDiv.id = "distance-" + distance;
+			containerDiv.className = "race-insights-chart";
+			document.getElementById('race-insights-chart').appendChild(containerDiv);
+
 			am5.ready(function() {
 
-				var root = am5.Root.new("race-insights-chart");
+				var root = am5.Root.new(containerDiv.id);
 
 				root.setThemes([
 					am5themes_Animated.new(root)
