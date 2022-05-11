@@ -173,31 +173,32 @@
 					sOut += '<tr><th>Date</th><th>Description</th><th>Course Type</th><th>County</th><th>Country</th><th>Conditions</th><th>Venue</th><th>Distance</th><th>Grand Prix Race?</th><th>Number of Results</th></tr>';
 					sOut += '</thead>';
 					sOut += '<tbody>';
-					for (var i = 0; i < data.length; i++) {					
+					for (var i = 0; i < data.races.length; i++) {
+						var race = data.races[i];
 						sOut += '<tr>';
 					
 						var eventResultsUrl = '<?php echo $eventResultsPageUrl; ?>';
 						var anchor = '<a href="' + eventResultsUrl;
 						if (eventResultsUrl.indexOf("?") >= 0) {
-							anchor += '&raceId=' + data[i].id;
+							anchor += '&raceId=' + race.id;
 						} else {
-							anchor += '?raceId=' + data[i].id;
+							anchor += '?raceId=' + race.id;
 						}
-						anchor += '">' + data[i].date + '</a>';	
+						anchor += '">' + race.date + '</a>';	
 						sOut += '<td>'+ anchor + '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].description)+ '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].courseType) + '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].county) + '</td>';
-						sOut += '<td>' + getCountryName(nullToEmptyString(data[i].countryCode)) + '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].conditions) + '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].venue) + '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].distance) + '</td>';
+						sOut += '<td>' + nullToEmptyString(race.description)+ '</td>';
+						sOut += '<td>' + nullToEmptyString(race.courseType) + '</td>';
+						sOut += '<td>' + nullToEmptyString(race.county) + '</td>';
+						sOut += '<td>' + getCountryName(nullToEmptyString(race.countryCode)) + '</td>';
+						sOut += '<td>' + nullToEmptyString(race.conditions) + '</td>';
+						sOut += '<td>' + nullToEmptyString(race.venue) + '</td>';
+						sOut += '<td>' + nullToEmptyString(race.distance) + '</td>';
 						sOut += '<td class="text-center">';
-						if (data[i].isGrandPrixRace == 1)
+						if (race.isGrandPrixRace == 1)
 							sOut += '<i class="fa fa-check" aria-hidden="true"></i>';
 						sOut += '</td>';
-						sOut += '<td>' + data[i].count + '</td>';
-						sOut += '<td>' + data[i].meetingId + '</td>';
+						sOut += '<td>' + race.count + '</td>';
+						sOut += '<td>' + race.meetingId + '</td>';
 						sOut += '</tr>';
 					}
 					sOut += '</tbody>';
