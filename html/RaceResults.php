@@ -17,6 +17,10 @@ table.display caption {
 	padding: 0;
 }
 
+table .text-center {
+	text-align: center
+}
+
 div.race-insights-chart {
 	height: 350px;	
 	margin-bottom: 5em;
@@ -29,7 +33,7 @@ div.race-insights-chart {
 	<div id="race-insights-panel" style="margin: 3em 0; display: none">
 		<h3>Race Insights: Yearly comparison</h3>		
 		<div id="race-insights-chart" style="clear: both;"></div>
-	</div>
+	</div>	
 	<div class="formRankCriteria">
 		<label for="jaffa-other-race-results">Other race results</label>
 		<select onchange="if (this.value) window.location.href=this.value" id="jaffa-other-race-results">
@@ -57,8 +61,8 @@ div.race-insights-chart {
 				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/<?php echo $_GET['eventId']; ?>/races'))
 				.done(function(raceData) {
 					for (var i = 0; i < raceData.length; i++) {
-						if (raceData[i].date == '<?php echo $_GET['date']; ?>') {
-							getRace(raceData[i].id);
+						if (raceData.races[i].date == '<?php echo $_GET['date']; ?>') {
+							getRace(raceData.races[i].id);
 							break;
 						}
 					}
@@ -96,7 +100,7 @@ div.race-insights-chart {
 							meetingDates += ' - ' + response.meeting.toDate;
 						}
 
-						var meetingTitle = '<h3>Meeting: '+response.meeting.name+' ('+meetingDates+')</h3>';
+						var meetingTitle = '<h3>Event Meeting: '+response.meeting.name+' ('+meetingDates+')</h3>';
 						$('#jaffa-race-results').prepend(meetingTitle);
 					}
 
@@ -183,23 +187,22 @@ div.race-insights-chart {
 					var url = raceResultsUrl + '?raceId=';
 					var dateOptions = '<option>Please select...</option>';
 					var meetingId = 0;
-					for (var i = 0; i < raceData.length; i++) {
-						if (raceData[i].meetingId > 0) {
-							if (meetingId != raceData[i].meetingId) {
-								meetingId = raceData[i].meetingId;
-								dateOptions += '<option value="' + url + raceData[i].id + '">' + raceData[i].date + ' (meeting) </option>';
+					for (var i = 0; i < raceData.races.length; i++) {
+						var race = raceData.races[i];
+						if (race.meetingId > 0) {
+							if (meetingId != race.meetingId) {
+								meetingId = race.meetingId;
+								dateOptions += '<option value="' + url + race.id + '">' + race.date + ' (meeting) </option>';
 							}
 						} else {
-							dateOptions += '<option value="' + url + raceData[i].id + '">' + raceData[i].date + ' (' + raceData[i].count + ' results) </option>';
+							dateOptions += '<option value="' + url + race.id + '">' + race.date + ' (' + race.count + ' results) </option>';
 						}
 					}
 
 					$('#jaffa-other-race-results').append(dateOptions);
 
-					if (raceData.length > 4) {
-						$('#race-insights-panel').show();
-						getRaceInsightsData(eventId);
-					}
+					showRaceInsightsData(raceData.races);
+					showEventInsightsData(raceData.insights);
 			});
 		}
 
@@ -227,8 +230,7 @@ div.race-insights-chart {
 			
 			var title = description != null ? description + ', ' : '';
 			title += formatDate(date);
-			//var tableCaption = '<h3 style="text-align:center;font-weight:bold;font-size:1.5em">' + title + '</h3>';
-			//$('#jaffa-race-results').append(tableCaption);
+
 			if (race.report != null) {
 				var raceReport = '<p>' + race.report + '</p>';
 				$('#jaffa-race-results').append(raceReport);
@@ -346,7 +348,8 @@ div.race-insights-chart {
 								html += ' <i style="color: #e88112;" class="fa fa-star" aria-hidden="true" title="New percenatge grading personal best"></i>'
 							}
 							return html;
-						}
+						},
+						className : 'text-center'
 					}
 				],
 				processing : true,
@@ -361,41 +364,41 @@ div.race-insights-chart {
 			return (new Date(date)).toDateString();
 		}
 
-    function getResultImprovement(previousTime, newTime) {
-      var previousTimeUnits = previousTime.split(":");
-      var newTimeUnits = newTime.split(":");
+		function getResultImprovement(previousTime, newTime) {
+			var previousTimeUnits = previousTime.split(":");
+			var newTimeUnits = newTime.split(":");
 
-      var previousTotalSeconds = 0;
-      var newTotalSeconds = 0;
+			var previousTotalSeconds = 0;
+			var newTotalSeconds = 0;
 
-      if (previousTimeUnits.length > 2) {
-        previousTotalSeconds = (3600 * parseInt(previousTimeUnits[0], 10)) + (60 * parseInt(previousTimeUnits[1])) + parseInt(previousTimeUnits[2]);
-      } else if (previousTimeUnits.length > 1) {
-        previousTotalSeconds = (60 * parseInt(previousTimeUnits[0], 10)) + parseInt(previousTimeUnits[1]);
-      } else {
-        previousTotalSeconds = previousTimeUnits[0];
-      }
+			if (previousTimeUnits.length > 2) {
+				previousTotalSeconds = (3600 * parseInt(previousTimeUnits[0], 10)) + (60 * parseInt(previousTimeUnits[1])) + parseInt(previousTimeUnits[2]);
+			} else if (previousTimeUnits.length > 1) {
+				previousTotalSeconds = (60 * parseInt(previousTimeUnits[0], 10)) + parseInt(previousTimeUnits[1]);
+			} else {
+				previousTotalSeconds = previousTimeUnits[0];
+			}
 
-      if (newTimeUnits.length > 2) {
-        newTotalSeconds = (3600 * parseInt(newTimeUnits[0], 10)) + (60 * parseInt(newTimeUnits[1])) + parseInt(newTimeUnits[2]);
-      } else if (newTimeUnits.length > 1) {
-        newTotalSeconds = (60 * parseInt(newTimeUnits[0], 10)) + parseInt(newTimeUnits[1]);
-      } else {
-        newTotalSeconds = newTimeUnits[0];
-      }
+			if (newTimeUnits.length > 2) {
+				newTotalSeconds = (3600 * parseInt(newTimeUnits[0], 10)) + (60 * parseInt(newTimeUnits[1])) + parseInt(newTimeUnits[2]);
+			} else if (newTimeUnits.length > 1) {
+				newTotalSeconds = (60 * parseInt(newTimeUnits[0], 10)) + parseInt(newTimeUnits[1]);
+			} else {
+				newTotalSeconds = newTimeUnits[0];
+			}
 
-      var secondsImprovment = previousTotalSeconds - newTotalSeconds;
+			var secondsImprovment = previousTotalSeconds - newTotalSeconds;
 
-      var result = [];
-      if (secondsImprovment > 60) {
-        result.push(Math.floor(secondsImprovment / 60));
-        result.push(secondsImprovment % 60);
-      } else {
-        result.push(secondsImprovment);
-      }
+			var result = [];
+			if (secondsImprovment > 60) {
+				result.push(Math.floor(secondsImprovment / 60));
+				result.push(secondsImprovment % 60);
+			} else {
+				result.push(secondsImprovment);
+			}
 
-      return result;
-    }
+			return result;
+		}
 
 		function getAjaxRequest(url) {
 			return {
@@ -408,17 +411,33 @@ div.race-insights-chart {
 			}
 		}
 
-		function getRaceInsightsData(eventId) {
-			$.ajax(
-				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/' + eventId + '/insights'))
-					.done(function(data) {
-						var distanceData = getDistinctRaceDistanceData(data);
-						distanceData.forEach(distance => {
-							if (distance.data.length > 4 && distance.distance != null) {
-								createRaceInsightsChart(distance.data, distance.distance);
-							}
-						});	
-					});
+		function showRaceInsightsData(raceData) {
+			
+			var showPanel = false;
+			var distanceData = getDistinctRaceDistanceData(raceData);
+			distanceData.forEach(distance => {
+				if (distance.data.length > 4 && distance.distance != null) {
+					createRaceInsightsChart(distance.data, distance.distance);
+					showPanel = true;
+				}		
+			});
+
+			if (showPanel) {
+				$('#race-insights-panel').show();			
+			}
+		}
+
+		function showEventInsightsData(insights) {
+			$('#race-insights-panel').append('<h4>Event Records</h5>');
+			$('#race-insights-panel').append('<p><small>Please note these are the Ipswich JAFFA Event records and are indepedent of course which may have changed over the duration of our event results.</small></p>');
+			insights.forEach(distance => {
+				$('#race-insights-panel').append('<h5> Distance: ' + distance.distance + '</h5>');
+				$('#race-insights-panel').append('<p>Total results: <strong>' + distance.count +
+					'</strong>, Average time: <strong>' + distance.mean +
+					'</strong>, Fastest time: <strong>' + distance.min +
+					'</strong>, Slowest time: <strong>' + distance.max + 
+					'</strong></p>');
+			});
 		}
 
 		function getDistinctRaceDistanceData(data) {
@@ -428,7 +447,7 @@ div.race-insights-chart {
 				if (index < 0) {
 					distinct.push({distance : data[i].distance, data: new Array(data[i])});
 				} else {
-					distinct[index].data.push(data[i]);
+					distinct[index].data.unshift(data[i]);
 				}
 			}
 
