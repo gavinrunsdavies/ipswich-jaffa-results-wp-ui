@@ -528,7 +528,7 @@ div.race-insights-chart {
 					pointerOrientation: "horizontal"
 				}));
 
-				if (selectedRaceCourseTypeId == 1 || selectedRaceCourseTypeId == 3) {
+				if (selectedRaceCourseTypeId == 1 || selectedRaceCourseTypeId == 2 || selectedRaceCourseTypeId == 3) {
 					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}\n[width: 140px]Mean time[/] {mean}\n[width: 140px]Fastest time[/] {min}\n[width: 140px]Last finisher time[/] {max}"
 				} else {
 					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}"
@@ -555,6 +555,7 @@ div.race-insights-chart {
 				function createTimeSeries(field) {
 					var lineSeries = chart.series.push(am5xy.LineSeries.new(root, {
 						name: field,
+connect: false,
 						xAxis: yearXAxis,
 						yAxis: timeYAxis,
 						valueYField: field,
@@ -587,8 +588,8 @@ div.race-insights-chart {
     				data[i].maxTime = date.setHours(getHours(data[i].max), getMinutes(data[i].max), getSeconds(data[i].max));
   				}
 
-				// Only display times for road (1) and track races (3)
-				if (selectedRaceCourseTypeId == 1 || selectedRaceCourseTypeId == 3) {
+				// Only display times for road (1), track races (3) and MT( 2)
+				if (selectedRaceCourseTypeId == 1 || selectedRaceCourseTypeId == 2 || selectedRaceCourseTypeId == 3) {
 					createTimeSeries("meanTime");
 					createTimeSeries("minTime");
 					createTimeSeries("maxTime");
@@ -602,6 +603,17 @@ div.race-insights-chart {
 				
 				cursor.lineX.set("visible", false);
 
+				chart.children.unshift(am5.Label.new(root, {
+					text: "Race distance "+ distance,
+					fontSize: 18,
+					fontWeight: "500",
+					textAlign: "center",
+					x: am5.percent(50),
+					centerX: am5.percent(50),
+					paddingTop: 0,
+  					paddingBottom: 0
+				}));
+
 				yearXAxis.data.setAll(data);
 				countSeries.data.setAll(data);
 
@@ -614,15 +626,15 @@ div.race-insights-chart {
 		}
 
 		function getHours(time) {
-			return time.substring(0, 2);
+			return time ? time.substring(0, 2) : 0;
 		}
 
 		function getMinutes(time) {
-			return time.substring(3, 5);
+			return time ? time.substring(3, 5) : 0;
 		}
 
 		function getSeconds(time) {
-			return time.substring(6, 8);
+			return time ? time.substring(6, 8) : 0;
 		}
 	});
 	<?php endif;?>
