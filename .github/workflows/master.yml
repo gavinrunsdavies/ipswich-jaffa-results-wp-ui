@@ -24,7 +24,7 @@ jobs:
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
       with:
         server: ftp.ipswichjaffa.org.uk
-        username: ftp@ipswichjaffa.org.uk
+        username: githubftp@ipswichjaffa.org.uk
         password: ${{ secrets.FtpServerPassword }}
         server-dir: public_html/wordpress/wp-content/plugins/ipswich-jaffa-results-wp-ui/
         dry-run: true
