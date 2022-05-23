@@ -148,6 +148,7 @@ class LatestResultsWidget extends \WP_Widget
 		$url = esc_url( home_url() ).'/wp-json/ipswich-jaffa-api/v2/events';
 		$curl = curl_init($url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Cache-Control: no-cache"));
 		$response = curl_exec($curl);			
 		curl_close($curl);
 		$decoded = json_decode($response);
