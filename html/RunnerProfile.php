@@ -264,7 +264,7 @@ table.display th {
 					results = data;
 					createResultsDataTable(data);
 				}
-			});
+			})
 		).then( function(){			 
 			 processResults(results, allDistances);
 		});
