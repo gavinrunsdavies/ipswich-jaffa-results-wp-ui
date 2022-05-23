@@ -255,14 +255,16 @@ table.display th {
 					allDistances = data;
 				}
 			),
-			$.getJSON(
-				// {"eventId":"89","eventName":"Jaffa Handicap 5","distanceId":"2","id":"82722","date":"2016-07-25","raceName":"","raceId":"3965","position":"22","time":"00:28:07","result":"00:28:07","isPersonalBest":"0","isSeasonBest":"0","standard":"3 Star","info":"","percentageGrading":"77.99"}
-				'<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/runner/<?php echo $_GET['runner_id']; ?>',
-				function(data) {
+
+			$.ajax({
+				cache: false,
+				url: '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/runner/<?php echo $_GET['runner_id']; ?>',
+				dataType: "json",
+				success: function(data) {
 					results = data;
 					createResultsDataTable(data);
 				}
-			)
+			});
 		).then( function(){			 
 			 processResults(results, allDistances);
 		});
