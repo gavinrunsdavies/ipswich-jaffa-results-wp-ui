@@ -16,6 +16,15 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
 table.display caption {
 	padding: 0;
 }
+
+table .text-center {
+	text-align: center
+}
+
+div.race-insights-chart {
+	height: 350px;	
+	margin-bottom: 5em;
+}
 </style>
 <div class="section">
 	<h2 id="jaffa-event-title"></h2>
@@ -23,7 +32,7 @@ table.display caption {
 	</div>
 	<div id="race-insights-panel" style="margin: 3em 0; display: none">
 		<h3>Race Insights: Yearly comparison</h3>		
-		<div id="race-insights-chart" style="height: 350px;clear: both;"></div>
+		<div id="race-insights-chart" style="clear: both;"></div>
 	</div>
 	<div class="formRankCriteria">
 		<label for="jaffa-other-race-results">Other race results</label>
@@ -191,10 +200,7 @@ table.display caption {
 
 					$('#jaffa-other-race-results').append(dateOptions);
 
-					if (raceData.length > 4) {
-						$('#race-insights-panel').show();
-						getRaceInsightsData(eventId);
-					}
+					getRaceInsightsData(eventId);
 			});
 		}
 
@@ -356,41 +362,41 @@ table.display caption {
 			return (new Date(date)).toDateString();
 		}
 
-    function getResultImprovement(previousTime, newTime) {
-      var previousTimeUnits = previousTime.split(":");
-      var newTimeUnits = newTime.split(":");
+		function getResultImprovement(previousTime, newTime) {
+			var previousTimeUnits = previousTime.split(":");
+			var newTimeUnits = newTime.split(":");
 
-      var previousTotalSeconds = 0;
-      var newTotalSeconds = 0;
+			var previousTotalSeconds = 0;
+			var newTotalSeconds = 0;
 
-      if (previousTimeUnits.length > 2) {
-        previousTotalSeconds = (3600 * parseInt(previousTimeUnits[0], 10)) + (60 * parseInt(previousTimeUnits[1])) + parseInt(previousTimeUnits[2]);
-      } else if (previousTimeUnits.length > 1) {
-        previousTotalSeconds = (60 * parseInt(previousTimeUnits[0], 10)) + parseInt(previousTimeUnits[1]);
-      } else {
-        previousTotalSeconds = previousTimeUnits[0];
-      }
+			if (previousTimeUnits.length > 2) {
+				previousTotalSeconds = (3600 * parseInt(previousTimeUnits[0], 10)) + (60 * parseInt(previousTimeUnits[1])) + parseInt(previousTimeUnits[2]);
+			} else if (previousTimeUnits.length > 1) {
+				previousTotalSeconds = (60 * parseInt(previousTimeUnits[0], 10)) + parseInt(previousTimeUnits[1]);
+			} else {
+				previousTotalSeconds = previousTimeUnits[0];
+			}
 
-      if (newTimeUnits.length > 2) {
-        newTotalSeconds = (3600 * parseInt(newTimeUnits[0], 10)) + (60 * parseInt(newTimeUnits[1])) + parseInt(newTimeUnits[2]);
-      } else if (newTimeUnits.length > 1) {
-        newTotalSeconds = (60 * parseInt(newTimeUnits[0], 10)) + parseInt(newTimeUnits[1]);
-      } else {
-        newTotalSeconds = newTimeUnits[0];
-      }
+			if (newTimeUnits.length > 2) {
+				newTotalSeconds = (3600 * parseInt(newTimeUnits[0], 10)) + (60 * parseInt(newTimeUnits[1])) + parseInt(newTimeUnits[2]);
+			} else if (newTimeUnits.length > 1) {
+				newTotalSeconds = (60 * parseInt(newTimeUnits[0], 10)) + parseInt(newTimeUnits[1]);
+			} else {
+				newTotalSeconds = newTimeUnits[0];
+			}
 
-      var secondsImprovment = previousTotalSeconds - newTotalSeconds;
+			var secondsImprovment = previousTotalSeconds - newTotalSeconds;
 
-      var result = [];
-      if (secondsImprovment > 60) {
-        result.push(Math.floor(secondsImprovment / 60));
-        result.push(secondsImprovment % 60);
-      } else {
-        result.push(secondsImprovment);
-      }
+			var result = [];
+			if (secondsImprovment > 60) {
+				result.push(Math.floor(secondsImprovment / 60));
+				result.push(secondsImprovment % 60);
+			} else {
+				result.push(secondsImprovment);
+			}
 
-      return result;
-    }
+			return result;
+		}
 
 		function getAjaxRequest(url) {
 			return {
@@ -407,14 +413,65 @@ table.display caption {
 			$.ajax(
 				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/' + eventId + '/insights'))
 					.done(function(data) {
-						createRaceInsightsChart(data)
+						showRaceInsightsData(data.years);
+						showEventInsightsData(data.distance);
 					});
 		}
 
-		function createRaceInsightsChart(data) {
+		function showRaceInsightsData(raceData) {
+			
+			var showPanel = false;
+			var distanceData = getDistinctRaceDistanceData(raceData);
+			distanceData.forEach(distance => {
+				if (distance.data.length > 4 && distance.distance != null) {
+					createRaceInsightsChart(distance.data, distance.distance);
+					showPanel = true;
+				}		
+			});
+
+			if (showPanel) {
+				$('#race-insights-panel').show();			
+			}
+		}
+
+		function getDistinctRaceDistanceData(data) {
+			var distinct = [];
+			for (var i = 0; i < data.length; i++) {
+				var index = distinct.findIndex(o => o.distance === data[i].distance);
+				if (index < 0) {
+					distinct.push({distance : data[i].distance, data: new Array(data[i])});
+				} else {
+					distinct[index].data.push(data[i]);
+				}
+			}
+
+			return distinct;
+		}
+
+		function showEventInsightsData(insights) {
+			$('#race-insights-panel').append('<h4>Event Records</h5>');
+			$('#race-insights-panel').append('<p><small>Please note these are the Ipswich JAFFA Event records and are indepedent of course which may have changed over the duration of our event results.</small></p>');
+			insights.forEach(distance => {
+				$('#race-insights-panel').append('<h5> Distance: ' + distance.distance + '</h5>');
+				$('#race-insights-panel').append('<p>Total results: <strong>' + distance.count +
+					'</strong>, Average time: <strong>' + distance.mean +
+					'</strong>, Fastest time: <strong>' + distance.min +
+					'</strong>, Slowest time: <strong>' + distance.max + 
+					'</strong></p>');
+			});
+		}
+
+		function createRaceInsightsChart(data, distance) {
+			$('#race-insights-panel').show();
+
+			var containerDiv = document.createElement('div');    
+			containerDiv.id = "distance-" + distance;
+			containerDiv.className = "race-insights-chart";
+			document.getElementById('race-insights-chart').appendChild(containerDiv);
+
 			am5.ready(function() {
 
-				var root = am5.Root.new("race-insights-chart");
+				var root = am5.Root.new(containerDiv.id);
 
 				root.setThemes([
 					am5themes_Animated.new(root)
@@ -480,7 +537,7 @@ table.display caption {
 					pointerOrientation: "horizontal"
 				}));
 
-				if (selectedRaceCourseTypeId == 1 || selectedRaceCourseTypeId == 3) {
+				if (selectedRaceCourseTypeId == 1 || selectedRaceCourseTypeId == 2 || selectedRaceCourseTypeId == 3) {
 					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}\n[width: 140px]Mean time[/] {mean}\n[width: 140px]Fastest time[/] {min}\n[width: 140px]Last finisher time[/] {max}"
 				} else {
 					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}"
@@ -507,6 +564,7 @@ table.display caption {
 				function createTimeSeries(field) {
 					var lineSeries = chart.series.push(am5xy.LineSeries.new(root, {
 						name: field,
+						connect: true,
 						xAxis: yearXAxis,
 						yAxis: timeYAxis,
 						valueYField: field,
@@ -539,8 +597,8 @@ table.display caption {
     				data[i].maxTime = date.setHours(getHours(data[i].max), getMinutes(data[i].max), getSeconds(data[i].max));
   				}
 
-				// Only display times for road (1) and track races (3)
-				if (selectedRaceCourseTypeId == 1 || selectedRaceCourseTypeId == 3) {
+				// Only display times for road (1),  MT (2) and track races (3)
+				if (selectedRaceCourseTypeId == 1 || selectedRaceCourseTypeId == 2 || selectedRaceCourseTypeId == 3) {
 					createTimeSeries("meanTime");
 					createTimeSeries("minTime");
 					createTimeSeries("maxTime");
@@ -554,6 +612,17 @@ table.display caption {
 				
 				cursor.lineX.set("visible", false);
 
+				chart.children.unshift(am5.Label.new(root, {
+					text: "Race distance "+ distance,
+					fontSize: 18,
+					fontWeight: "500",
+					textAlign: "center",
+					x: am5.percent(50),
+					centerX: am5.percent(50),
+					paddingTop: 0,
+  					paddingBottom: 0
+				}));
+
 				yearXAxis.data.setAll(data);
 				countSeries.data.setAll(data);
 
@@ -566,15 +635,15 @@ table.display caption {
 		}
 
 		function getHours(time) {
-			return time.substring(0, 2);
+			return time ? time.substring(0, 2) : 0;
 		}
 
 		function getMinutes(time) {
-			return time.substring(3, 5);
+			return time ? time.substring(3, 5) : 0;
 		}
 
 		function getSeconds(time) {
-			return time.substring(6, 8);
+			return time ? time.substring(6, 8) : 0;
 		}
 	});
 	<?php endif;?>
