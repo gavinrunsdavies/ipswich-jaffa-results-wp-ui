@@ -262,15 +262,6 @@ div.race-insights-chart {
 						}
 					}
 				},
-				dom: 'tBip',
-				buttons: {
-					buttons: [{
-					  extend: 'print',
-					  text: '<i class="fa fa-print"></i> Print',
-					  title: $('#jaffa-event-title').text() + ': ' + $('#' +tableName + race.id + ' caption').text(),
-					  footer: true
-					}]
-				},
 				paging : false,
 				searching: false,
 				serverSide : false,
@@ -298,7 +289,7 @@ div.race-insights-chart {
 								return Number(data).toLocaleString();
 							}
 
-							return data;
+							return formatTime(data);
 						}
 					}, {
 						data : "isPersonalBest",
@@ -356,6 +347,18 @@ div.race-insights-chart {
 				order : [[0, "asc"], [2, "asc"]],
 				ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/race/' + race.id)
 			});
+		}
+
+		function formatTime(time) {
+			if (time.startsWith("00:")) {
+				time = time.substring(3);
+			}
+
+			if (time.startsWith("0")) {
+				time = time.substring(1);
+			}
+
+			return time;
 		}
 
 		function formatDate(date) {
