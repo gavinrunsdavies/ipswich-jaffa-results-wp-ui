@@ -1,6 +1,19 @@
 <style>
+table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before, 
+table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
+	border: none;
+}
 .site-content {
 	padding-top: 0;
+}
+
+@media only screen and (max-width: 768px) {
+	.page-header {
+		padding: 0;
+	}
+	.page-content, .entry-content, .entry-summary {
+		margin: 0;
+	}
 }
 </style>
 <div class="section" id="club-records-top"> 
