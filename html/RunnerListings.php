@@ -2,7 +2,6 @@
 wp_enqueue_style( 'jquery-ui-style', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css');
 wp_enqueue_script('jquery-ui-dialog');
 ?>
-<div class="section">
 <style>
 * {
   box-sizing: border-box;
@@ -50,8 +49,20 @@ wp_enqueue_script('jquery-ui-dialog');
 	width: 100%;
 	height: 500px;
 }
+.site-content {
+	padding-top: 0;
+}
 
+@media only screen and (max-width: 768px) {
+	.page-header {
+		padding: 0;
+	}
+	.page-content, .entry-content, .entry-summary {
+		margin: 0;
+	}
+}
 </style>
+<div class="section">
 <p>You can select up to four Ipswich JAFFA members (past and present) to compare race positions head-to-head. Only races where each selected member competited will be compared. Therefore if you get no results back it is likely that the selected members never raced each other all in same race. To add members to the comparison list please click on the checkboxes. To remove a player from the list either click the cross in the comparison list or untick the checkbox. Hint: the search functionality of the table makes finding members very easy!</p>
 <div class="form-container">		
 	<form class="formCompareRunners">
