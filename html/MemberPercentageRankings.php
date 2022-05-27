@@ -1,3 +1,25 @@
+<style>
+table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before, 
+table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
+	border: none;
+}
+.site-content {
+	padding-top: 0;
+}
+
+table .text-right {
+	text-align: right
+}
+
+@media only screen and (max-width: 768px) {
+	.page-header {
+		padding: 0;
+	}
+	.page-content, .entry-content, .entry-summary {
+		margin: 0;
+	}
+}
+</style>
 <div class="section">
 <div class="formRankCriteria">
 	<form action="#" title="Select ranking criteria">
@@ -31,28 +53,16 @@ for ($y = date("Y"); $y >= 1977; $y--) {
 			<caption>Member Age Grading</caption>
 			<thead>
 				<tr>
-					<th>Rank</th>
-					<th data-hide="always">Runner Id</th>
-					<th>Name</th>
-					<th data-hide="always">Event Id</th>
-					<th data-hide="phone">Event</th>
-					<th data-hide="phone,tablet">Date</th>
-					<th data-hide="phone">Time</th>
-					<th>Age Grading</th>
+					<th data-priority="2">Rank</th>
+					<th>Runner Id</th>
+					<th data-priority="1">Name</th>
+					<th>Event Id</th>
+					<th data-priority="5">Event</th>
+					<th data-priority="6">Date</th>
+					<th data-priority="4">Time</th>
+					<th data-priority="3">Age Grading</th>
 				</tr>
 			</thead>
-			<tfoot>
-				<tr>
-					<th>Rank</th>
-					<th>Runner Id</th>
-					<th>Name</th>
-					<th>Event Id</th>
-					<th>Event</th>
-					<th>Date</th>
-					<th>Time</th>
-					<th>Age Grading</th>
-				</tr>
-			</tfoot>
 			<tbody>
 			</tbody>
 		</table>
@@ -91,6 +101,24 @@ for ($y = date("Y"); $y >= 1977; $y--) {
 			}
 
 			wmaDt = tableElement.DataTable({
+				responsive: {
+					details: {
+						renderer: function ( api, rowIdx, columns ) {
+							var data = $.map( columns, function ( col, i ) {
+								return col.hidden ?
+									'<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
+										'<td>'+col.title+':'+'</td> '+
+										'<td>'+col.data+'</td>'+
+									'</tr>' :
+									'';
+							} ).join('');
+
+							return data ?
+								$('<table/>').append( data ) :
+								false;
+						}
+					}
+				},
 				pageLength : 50,
 				columns : [
 				{
@@ -134,7 +162,11 @@ for ($y = date("Y"); $y >= 1977; $y--) {
 				data: "date"
 			},
 			{
-				data: "result"
+				data: "result",
+				render : function (data, type, row, meta) {
+					return formatTime(data);
+				},
+				className : 'text-right'
 			},
 			{
 				data: "percentageGrading",
@@ -157,5 +189,17 @@ for ($y = date("Y"); $y >= 1977; $y--) {
 
 			$('#wma-ranking-results').show();
 		});
+
+		function formatTime(time) {
+			if (time.startsWith("00:")) {
+				time = time.substring(3);
+			}
+
+			if (time.startsWith("0")) {
+				time = time.substring(1);
+			}
+
+			return time;
+		}
 	});
 </script>

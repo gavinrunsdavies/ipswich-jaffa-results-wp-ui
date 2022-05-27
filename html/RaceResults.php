@@ -21,6 +21,10 @@ table .text-center {
 	text-align: center
 }
 
+table .text-right {
+	text-align: right
+}
+
 div.race-insights-chart {
 	height: 350px;	
 	margin-bottom: 5em;
@@ -290,7 +294,8 @@ div.race-insights-chart {
 							}
 
 							return formatTime(data);
-						}
+						},
+						className : 'text-right'
 					}, {
 						data : "isPersonalBest",
 						visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
