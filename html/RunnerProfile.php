@@ -392,9 +392,9 @@ table.display th {
 					if (data[year] !== undefined) {
 						if (data[year][distanceId] !== undefined) {
 							if (distanceId == distanceId2) {
-							rows += '<td class="success"><strong>' + data[year][distanceId].result + '</strong></td>';
+							rows += '<td class="success"><strong>' + ipswichjaffarc.formatTime(data[year][distanceId].result) + '</strong></td>';
 							} else {
-							rows += '<td>'+ getPredictedTime(distanceId, data[year][distanceId].result, distanceId2) +'</td>';
+							rows += '<td>'+ ipswichjaffarc.formatTime(getPredictedTime(distanceId, data[year][distanceId].result, distanceId2)) +'</td>';
 							}
 						} else {
 							rows += '<td></td>';
@@ -433,9 +433,9 @@ table.display th {
 					$.each(supportedDistanceIds, function(k2, distanceId2) {							
 						if (data[distanceId] !== undefined) {
 							if (distanceId == distanceId2) {
-								rows += '<td class="success"><strong>' + data[distanceId].result + '</strong></td>';
+								rows += '<td class="success"><strong>' + ipswichjaffarc.formatTime(data[distanceId].result) + '</strong></td>';
 							} else {
-								rows += '<td>'+ getPredictedTime(distanceId, data[distanceId].result, distanceId2) +'</td>';
+								rows += '<td>'+ ipswichjaffarc.formatTime(getPredictedTime(distanceId, data[distanceId].result, distanceId2)) +'</td>';
 							}
 						} else {
 							rows += '<td></td>';
@@ -472,7 +472,7 @@ table.display th {
 				
 				$.each(supportedDistanceIds, function(k, distanceId) {
 					if (data[year][distanceId] !== undefined) {
-						rows += '<td>' + data[year][distanceId].time + '</td>';
+						rows += '<td>' + ipswichjaffarc.formatTime(data[year][distanceId].time) + '</td>';
 					} else {
 						rows += '<td></td>';
 					}
@@ -644,9 +644,10 @@ table.display th {
 					{
 						data: "result",
 						render : function (data, type, row, meta) {
-							return data != '00:00:00' ? data : '';
-						}
-					},
+							return data != '00:00:00' ? ipswichjaffarc.formatTime(data) : '';
+						},
+						className : 'text-right'
+					},					
 					{
 						data: "isPersonalBest",
 						render : function (data, type, row, meta) {							
