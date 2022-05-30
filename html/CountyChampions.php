@@ -12,7 +12,7 @@
       		var groupColumn = 0;
 			var tableName = 'jaffa-race-county-results-table';
 			var tableHtml = '';
-			var tableRow = '<tr><th>Year</th><th>Distance</th><th>Name</th><th>Category</th><th>Result</th><th>Event</th></tr>';
+			var tableRow = '<tr><th data-priority="3">Year</th><th data-priority="2">Distance</th><th data-priority="1">Name</th><th data-priority="4">Category</th><th data-priority="5">Result</th><th data-priority="6">Event</th></tr>';
 			tableHtml += '<table class="display" id="' + tableName + '">';
 			tableHtml += '<thead>';
 			tableHtml += tableRow;
@@ -20,34 +20,46 @@
 			tableHtml += '</table>';
 			$('#jaffa-race-results').append(tableHtml);
 			
-			var table = $('#'+tableName).DataTable({				
-				dom: 'ftBip',
-				buttons: {
-					buttons: [{
-					  extend: 'print',
-					  text: '<i class="fa fa-print"></i> Print',
-					  title: $('#jaffa-event-title').text() + ': ' + $('#' +tableName + ' caption').text(),
-					  footer: true					  
-					}]
-				},
+			var table = $('#'+tableName).DataTable({
+				responsive: {
+					details: {
+						renderer: function ( api, rowIdx, columns ) {
+							var data = $.map( columns, function ( col, i ) {
+								return col.hidden ?
+									'<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
+										'<td>'+col.title+':'+'</td> '+
+										'<td>'+col.data+'</td>'+
+									'</tr>' :
+									'';
+							} ).join('');
+
+							return data ?
+								$('<table/>').append( data ) :
+								false;
+						}
+					}
+				},							
 				paging : false,
 				searching: true,
 				serverSide : false,
-        columnDefs: [
-            { "visible": false, "targets": groupColumn }
-        ],
-        order: [[ groupColumn, 'desc' ]],
-				columns : [{
+				columnDefs: [
+					{ "visible": false, "targets": groupColumn }
+				],
+				order: [[ groupColumn, 'desc' ]],
+				columns : [
+					{
 						data : "date",
 						render : function (data, type, row, meta) {
 							return data.substring(0, 4);
 						}
-					},  {
+					},  
+					{
 						data : "distance",
-            searchable: true
-					}, {
+            			searchable: true
+					}, 
+					{
 						data : "runnerName",
-            searchable: true,
+            			searchable: true,
 						render : function (data, type, row, meta) {
 							var html = '<a href="<?php echo $memberResultsPageUrl; ?>?runner_id=' + row.runnerId + '">' + data + '</a>';
 							if (row.team > 0) {
@@ -61,45 +73,52 @@
 							}
 							return html;
 						}
-					}, {
+					}, 
+					{
 						data : "categoryCode",
-            searchable: true
-					}, {
-						data : "result",
-            searchable: false
-					}, {
-					data: "eventName",
-          searchable: true,
-					render: function ( data, type, row, meta ) {	
-						var resultsUrl = '<?php echo $raceResultsPageUrl; ?>';
-						var anchor = '<a href="' + resultsUrl;
-						anchor += '?raceId=' + row.raceId;					
-						anchor += '">' + data + ' (' + row.date + ') </a>';								
+            			searchable: true
+					}, 
+					{
+						data: "result",
+						render : function (data, type, row, meta) {
+							return ipswichjaffarc.formatTime(data);
+						},
+						className : 'text-right',
+						searchable: false
+					}, 
+					{
+						data: "eventName",
+          				searchable: true,
+						render: function ( data, type, row, meta ) {	
+							var resultsUrl = '<?php echo $raceResultsPageUrl; ?>';
+							var anchor = '<a href="' + resultsUrl;
+							anchor += '?raceId=' + row.raceId;					
+							anchor += '">' + data + ' (' + row.date + ') </a>';								
 
-						return anchor;
+							return anchor;
+						}
 					}
-				 }
 				],
 				processing : true,
 				autoWidth : false,
 				scrollX : true,				
 				ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/county'),
-        drawCallback: function ( settings ) {
-          var api = this.api();
-          var rows = api.rows( {page:'current'} ).nodes();
-          var last=null;
+				drawCallback: function ( settings ) {
+				var api = this.api();
+				var rows = api.rows( {page:'current'} ).nodes();
+				var last=null;
 
-          api.column(groupColumn, {page:'current'} ).data().each( function ( group, i ) {
-              var year = group.substring(0, 4);
-              if ( last !== year ) {
-                  $(rows).eq( i ).before(
-                      '<tr class="group"><th colspan="5">'+year+'</th></tr>'
-                  );
+				api.column(groupColumn, {page:'current'} ).data().each( function ( group, i ) {
+					var year = group.substring(0, 4);
+					if ( last !== year ) {
+						$(rows).eq( i ).before(
+							'<tr class="group"><th colspan="5">'+year+'</th></tr>'
+						);
 
-                  last = year;
-              }
-          } );
-        }
+						last = year;
+					}
+				} );
+				}
 			});
 		}
     

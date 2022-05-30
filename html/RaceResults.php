@@ -231,7 +231,7 @@ div.race-insights-chart {
 			}
 			
 			var title = description != null ? description + ', ' : '';
-			title += formatDate(date);
+			title += ipswichjaffarc.formatDate(date);
 			//var tableCaption = '<h3 style="text-align:center;font-weight:bold;font-size:1.5em">' + title + '</h3>';
 			//$('#jaffa-race-results').append(tableCaption);
 			if (race.report != null) {
@@ -293,7 +293,7 @@ div.race-insights-chart {
 								return Number(data).toLocaleString();
 							}
 
-							return formatTime(data);
+							return ipswichjaffarc.formatTime(data);
 						},
 						className : 'text-right'
 					}, {
@@ -352,22 +352,6 @@ div.race-insights-chart {
 				order : [[0, "asc"], [2, "asc"]],
 				ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/race/' + race.id)
 			});
-		}
-
-		function formatTime(time) {
-			if (time.startsWith("00:")) {
-				time = time.substring(3);
-			}
-
-			if (time.startsWith("0")) {
-				time = time.substring(1);
-			}
-
-			return time;
-		}
-
-		function formatDate(date) {
-			return (new Date(date)).toDateString();
 		}
 
 		function getResultImprovement(previousTime, newTime) {

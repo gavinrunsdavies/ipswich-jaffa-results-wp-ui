@@ -125,7 +125,11 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
 				}
 				},
 				{
-				data: "result"
+					data: "result",
+					render : function (data, type, row, meta) {
+						return ipswichjaffarc.formatTime(data);
+					},
+					className : 'text-right'
 				}
 			],
 			ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/records')		
@@ -188,8 +192,12 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
 					}
 				 },
 				 {
-					data: "result"
-				 }
+					data: "result",
+					render : function (data, type, row, meta) {
+						return ipswichjaffarc.formatTime(data);
+					},
+					className : 'text-right'
+				}
 				],
 				ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/records/distance/' + table.parent().attr('id'))		
 			});

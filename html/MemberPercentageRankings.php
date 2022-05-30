@@ -164,7 +164,7 @@ for ($y = date("Y"); $y >= 1977; $y--) {
 			{
 				data: "result",
 				render : function (data, type, row, meta) {
-					return formatTime(data);
+					return ipswichjaffarc.formatTime(data);
 				},
 				className : 'text-right'
 			},
@@ -189,17 +189,5 @@ for ($y = date("Y"); $y >= 1977; $y--) {
 
 			$('#wma-ranking-results').show();
 		});
-
-		function formatTime(time) {
-			if (time.startsWith("00:")) {
-				time = time.substring(3);
-			}
-
-			if (time.startsWith("0")) {
-				time = time.substring(1);
-			}
-
-			return time;
-		}
 	});
 </script>
