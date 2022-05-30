@@ -207,15 +207,15 @@ table.display th {
 		<caption>All race results for <span class="runnerName"></span></caption>
 		<thead>
 			<tr>
-				<th data-hide="always">Race Id</th>	
-				<th>Race</th>
-				<th>Date</th>
-				<th>Position</th>
-				<th>Result</th>
-				<th>Personal Best</th>
-				<th>Standard</th>
-				<th>Info</th>
-				<th>Age Grading</th>
+				<th>Race Id</th>	
+				<th data-priority="2">Race</th>
+				<th data-priority="1">Date</th>
+				<th data-priority="4">Position</th>
+				<th data-priority="3">Result</th>
+				<th data-priority="6">Personal Best</th>
+				<th data-priority="7">Standard</th>
+				<th data-priority="8">Info</th>
+				<th data-priority="5">Age Grading</th>
 			</tr>
 		</thead>
 		<tbody>			
@@ -392,9 +392,9 @@ table.display th {
 					if (data[year] !== undefined) {
 						if (data[year][distanceId] !== undefined) {
 							if (distanceId == distanceId2) {
-							rows += '<td class="success"><strong>' + ipswichjaffarc.formatTime(data[year][distanceId].result) + '</strong></td>';
+								rows += '<td class="success"><strong>' + ipswichjaffarc.formatTime(data[year][distanceId].result) + '</strong></td>';
 							} else {
-							rows += '<td>'+ ipswichjaffarc.formatTime(getPredictedTime(distanceId, data[year][distanceId].result, distanceId2)) +'</td>';
+								rows += '<td>'+ ipswichjaffarc.formatTime(getPredictedTime(distanceId, data[year][distanceId].result, distanceId2)) +'</td>';
 							}
 						} else {
 							rows += '<td></td>';
@@ -582,12 +582,6 @@ table.display th {
 			'&time=' + cert.result +
 			'&filepath=<? echo plugin_dir_path(dirname(__FILE__)); ?>php/standards/';
 		}
-    
-		function addPadding(number, size) {
-			var s = String(number);
-			while (s.length < (size || 2)) {s = "0" + s;}
-			return s;
-		}
 		
 		function getPredictedTime(actualDistanceId, actualTime, targetDistanceId) {
 
@@ -597,19 +591,37 @@ table.display th {
 			
 			var targetTotalMinutes = actualTotalMinutes * (Math.pow((targetDistance.miles / actualDistance.miles), 1.06));
 			
-			var hours = Math.floor(targetTotalMinutes / 60);
+			var hours = Math.floor(targetTotalMinutes / 60).toString().padStart(2, '0');
 		
-			var minutes = Math.floor(targetTotalMinutes % 60);
+			var minutes = Math.floor(targetTotalMinutes % 60).toString().padStart(2, '0');
 			
-			var seconds =  Math.floor(((targetTotalMinutes % 60) - minutes) * 60).toString();
+			var seconds =  Math.floor(((targetTotalMinutes % 60) - minutes) * 60).toString().padStart(2, '0');
 		
-			var targetTime = hours + ':' + minutes + ':' + addPadding(seconds, 2);
+			var targetTime = hours + ':' + minutes + ':' + seconds;
 		
 			return targetTime;
 		}
 
 		function createResultsDataTable(data) {
 			$('#member-results-table').DataTable({
+				responsive: {
+					details: {
+						renderer: function ( api, rowIdx, columns ) {
+							var data = $.map( columns, function ( col, i ) {
+								return col.hidden ?
+									'<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
+										'<td>'+col.title+':'+'</td> '+
+										'<td>'+col.data+'</td>'+
+									'</tr>' :
+									'';
+							} ).join('');
+
+							return data ?
+								$('<table/>').append( data ) :
+								false;
+						}
+					}
+				},
 				pageLength : 20,
 				serverSide : false,
 				processing : true,
