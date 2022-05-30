@@ -1,8 +1,4 @@
 <style>
-table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before, 
-table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
-	border: none;
-}
 .page-header {
 	display: none;
 }
@@ -11,18 +7,6 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
 }
 .site-content {
 	padding-top: 0;
-}
-
-table.display caption {
-	padding: 0;
-}
-
-table .text-center {
-	text-align: center
-}
-
-table .text-right {
-	text-align: right
 }
 
 div.race-insights-chart {

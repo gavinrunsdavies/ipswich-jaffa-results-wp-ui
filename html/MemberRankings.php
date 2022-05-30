@@ -1,14 +1,6 @@
 <style>
-table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before, 
-table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
-	border: none;
-}
 .site-content {
 	padding-top: 0;
-}
-
-table .text-right {
-	text-align: right
 }
 
 @media only screen and (max-width: 768px) {

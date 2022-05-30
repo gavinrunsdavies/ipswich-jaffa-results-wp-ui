@@ -35,7 +35,20 @@ div.formRankCriteria input[type=button]:disabled {
 	background-color: #9a9a9a;
 }
 
-table.display caption {
+table.dataTable caption {
 	font-weight:bold;
 	padding: 0.5em;
+}
+
+table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before, 
+table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
+	border: none;
+}
+
+table.dataTable .text-right {
+	text-align: right
+}
+
+table.dataTable .text-center {
+	text-align: center
 }
