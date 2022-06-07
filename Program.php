@@ -46,8 +46,7 @@ class Program
 		wp_enqueue_style(
 		    'responsive.dataTables.min.css',
 			'https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css'
-		);
-		
+		);		
 	}
 		
 	public function registerWidgets() {
@@ -95,12 +94,20 @@ class Program
 			array(self::JQUERY_HANDLE),
 			null,
 			true
-		);
-		
+		);				
+
 		wp_enqueue_script(
 			self::JQUERY_DATATABLES_RESPONSIVE_HANDLE,
 			'https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js',
 			array(self::JQUERY_DATATABLES_HANDLE),
+			null,
+			true
+		);
+
+		wp_enqueue_script(
+			'IpswichJaffaResults.js',
+			plugins_url('/lib/IpswichJaffaResults.js', __FILE__ ),
+			null,
 			null,
 			true
 		);

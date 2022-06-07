@@ -1,13 +1,27 @@
+<style>
+.site-content {
+	padding-top: 0;
+}
+
+@media only screen and (max-width: 768px) {
+	.page-header {
+		padding: 0;
+	}
+	.page-content, .entry-content, .entry-summary {
+		margin: 0;
+	}
+}
+</style>
 <div class="section" id="club-records-top"> 
 	<div>
 		<table class="display" id="overall-club-records">	
 			<caption>Overall Club Records</caption>
 			<thead>
 				<tr>
-					<th>Distance</th>
-					<th>Record Holder</th>					
-					<th>Event</th>
-					<th>Record</th>
+					<th data-priority="3">Distance</th>
+					<th data-priority="1">Record Holder</th>					
+					<th data-priority="4">Event</th>
+					<th data-priority="2">Record</th>
 				</tr>
 			</thead>							
 		</table>	
@@ -35,10 +49,10 @@
 				<caption><?php echo $text; ?></caption>
 				<thead>
 					<tr>
-						<th>Category</th>
-						<th>Record Holder</th>					
-						<th>Event</th>
-						<th>Record</th>
+						<th data-priority="3">Category</th>
+						<th data-priority="1">Record Holder</th>					
+						<th data-priority="4">Event</th>
+						<th data-priority="2">Record</th>
 					</tr>
 				</thead>							
 			</table>	
@@ -53,6 +67,24 @@
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
 		$('#overall-club-records').DataTable({
+			responsive: {
+				details: {
+					renderer: function ( api, rowIdx, columns ) {
+						var data = $.map( columns, function ( col, i ) {
+							return col.hidden ?
+								'<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
+									'<td>'+col.title+':'+'</td> '+
+									'<td>'+col.data+'</td>'+
+								'</tr>' :
+								'';
+						} ).join('');
+
+						return data ?
+							$('<table/>').append( data ) :
+							false;
+					}
+				}
+			},
 			serverSide : false,
 			paging : false,
 			searching: false,
@@ -89,7 +121,11 @@
 				}
 				},
 				{
-				data: "result"
+					data: "result",
+					render : function (data, type, row, meta) {
+						return ipswichjaffarc.formatTime(data);
+					},
+					className : 'text-right'
 				}
 			],
 			ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/records')		
@@ -98,6 +134,24 @@
 		$('.club-records').each(function (index, value){
 			var table = $(value);
 			table.DataTable({
+				responsive: {
+					details: {
+						renderer: function ( api, rowIdx, columns ) {
+							var data = $.map( columns, function ( col, i ) {
+								return col.hidden ?
+									'<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
+										'<td>'+col.title+':'+'</td> '+
+										'<td>'+col.data+'</td>'+
+									'</tr>' :
+									'';
+							} ).join('');
+
+							return data ?
+								$('<table/>').append( data ) :
+								false;
+						}
+					}
+				},
 				pageLength : 50,
 				serverSide : false,
 				paging : false,
@@ -134,8 +188,12 @@
 					}
 				 },
 				 {
-					data: "result"
-				 }
+					data: "result",
+					render : function (data, type, row, meta) {
+						return ipswichjaffarc.formatTime(data);
+					},
+					className : 'text-right'
+				}
 				],
 				ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/records/distance/' + table.parent().attr('id'))		
 			});

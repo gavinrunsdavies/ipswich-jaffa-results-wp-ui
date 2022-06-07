@@ -1,3 +1,17 @@
+<style>
+.site-content {
+	padding-top: 0;
+}
+
+@media only screen and (max-width: 768px) {
+	.page-header {
+		padding: 0;
+	}
+	.page-content, .entry-content, .entry-summary {
+		margin: 0;
+	}
+}
+</style>
 <div class="section"> 
 	<div class="formRankCriteria">
 		<p>Here you can find out where Ipswich JAFFA club members rank against other members in the club.</p>
@@ -27,13 +41,13 @@
 			<caption>Mens Ranking</caption>				
 			<thead>
 				<tr>
-					<th>Rank</th>
-					<th data-hide="always">Runner Id</th>
-					<th>Name</th>								
-					<th data-hide="always">Race Id</th>	
-					<th>Event</th>	
-					<th>Date</th>	
-					<th>Time</th>	
+					<th data-priority="2">Rank</th>
+					<th>Runner Id</th>
+					<th data-priority="1">Name</th>								
+					<th>Race Id</th>	
+					<th data-priority="4">Event</th>	
+					<th data-priority="5">Date</th>	
+					<th data-priority="3">Time</th>	
 				</tr>
 			</thead>			
 			<tbody>				
@@ -44,14 +58,14 @@
 		<table class="display" id="ladies-ranking-results-table">	
 			<caption>Ladies Ranking</caption>				
 			<thead>
-				<tr>
-					<th>Rank</th>
-					<th data-hide="always">Runner Id</th>
-					<th>Name</th>								
-					<th data-hide="always">Race Id</th>	
-					<th>Event</th>	
-					<th>Date</th>	
-					<th>Time</th>	
+			<tr>
+					<th data-priority="2">Rank</th>
+					<th>Runner Id</th>
+					<th data-priority="1">Name</th>								
+					<th>Race Id</th>	
+					<th data-priority="4">Event</th>	
+					<th data-priority="5">Date</th>	
+					<th data-priority="3">Time</th>	
 				</tr>
 			</thead>			
 			<tbody>				
@@ -101,13 +115,31 @@
 			$('#ladies-ranking-results', '#mens-ranking-results').hide();
 
 			var ladiesTableElement = $('#ladies-ranking-results-table');			
-			ladiesTableElement.DataTable({				
+			ladiesTableElement.DataTable({	
+				responsive: {
+					details: {
+						renderer: function ( api, rowIdx, columns ) {
+							var data = $.map( columns, function ( col, i ) {
+								return col.hidden ?
+									'<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
+										'<td>'+col.title+':'+'</td> '+
+										'<td>'+col.data+'</td>'+
+									'</tr>' :
+									'';
+							} ).join('');
+
+							return data ?
+								$('<table/>').append( data ) :
+								false;
+						}
+					}
+				},			
 				pageLength : 20,
 				paging : true,
-				destroy	   : true,	
-				processing    : true,
+				destroy : true,	
+				processing : true,
 				searching: true,
-				autoWidth     : false,
+				autoWidth : false,
 				scrollX: true,
 				columns: [
 				{ 
@@ -147,10 +179,14 @@
 					data: "date"
 				},
 				{
-					data: "result"
-				},
+					data: "result",
+					render : function (data, type, row, meta) {
+						return ipswichjaffarc.formatTime(data);
+					},
+					className : 'text-right'
+				}
 				],
-				ajax    	  : {
+				ajax : {
 					url : '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/distance/' + $('#distance').val(),			
 					data : {
 						"sexId": '3',
@@ -164,6 +200,24 @@
 			
 			var mensTableElement = $('#mens-ranking-results-table');			
 			mensTableElement.DataTable({
+				responsive: {
+					details: {
+						renderer: function ( api, rowIdx, columns ) {
+							var data = $.map( columns, function ( col, i ) {
+								return col.hidden ?
+									'<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
+										'<td>'+col.title+':'+'</td> '+
+										'<td>'+col.data+'</td>'+
+									'</tr>' :
+									'';
+							} ).join('');
+
+							return data ?
+								$('<table/>').append( data ) :
+								false;
+						}
+					}
+				},
 				pageLength : 20,
 				paging : true,
 				destroy	   : true,	
@@ -209,7 +263,11 @@
 					data: "date"
 				},
 				{
-					data: "result"
+					data: "result",
+					render : function (data, type, row, meta) {
+						return ipswichjaffarc.formatTime(data);
+					},
+					className : 'text-right'
 				},
 				],
 				ajax    	  : {

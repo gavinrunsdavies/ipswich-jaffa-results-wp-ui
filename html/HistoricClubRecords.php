@@ -53,7 +53,7 @@
 						var tableHtml = '<table class="display" id="category_' + item.code + '">';
 						tableHtml += '<caption>Category: ' + item.code + '</caption>';
 						tableHtml += '<thead>';
-						tableHtml += '<tr><th>Name</th><th>Event</th><th>Description</th><th>Date</th><th>Time</th><th>Position</th</tr>';
+						tableHtml += '<tr><th data-priority="1">Name</th><th data-priority="4">Event</th><th data-priority="6">Description</th><th data-priority="3">Date</th><th data-priority="2">Time</th><th data-priority="5">Position</th</tr>';
 						tableHtml += '</thead>';
 						tableHtml += '<tbody>';	
 						tableHtml += '</tbody>';	
@@ -67,7 +67,7 @@
 							dataRow.push(getRaceLink(record));
 							dataRow.push(record.raceDescription == null ? "" : record.raceDescription);
 							dataRow.push(record.date);
-							dataRow.push(record.time);
+							dataRow.push(ipswichjaffarc.formatTime(record.time));
 							dataRow.push(record.position);
 							dataSet.push(dataRow);
 						});
@@ -75,6 +75,24 @@
 						$('#categoryLinks').append('<a href="#category_' + item.code +'">' + item.code +'</a> | ');
 						$('#chartData').append(tableHtml);	
 						$('#category_' + item.code).DataTable({
+							responsive: {
+								details: {
+									renderer: function ( api, rowIdx, columns ) {
+										var data = $.map( columns, function ( col, i ) {
+											return col.hidden ?
+												'<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
+													'<td>'+col.title+':'+'</td> '+
+													'<td>'+col.data+'</td>'+
+												'</tr>' :
+												'';
+										} ).join('');
+
+										return data ?
+											$('<table/>').append( data ) :
+											false;
+									}
+								}
+							},
 							paging : false,
 							searching: false,							
 							data: dataSet,
