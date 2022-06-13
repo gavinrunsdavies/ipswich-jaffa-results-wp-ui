@@ -575,7 +575,7 @@ a.to-top {
 			'&standard=' + cert.name +
 			'&event=' + cert.event +
 			'&date=' + cert.date +
-			'&time=' + cert.result +
+			'&time=' + ipswichjaffarc.formatTime(cert.result) +
 			'&filepath=<? echo plugin_dir_path(dirname(__FILE__)); ?>php/standards/';
 		}
 		
