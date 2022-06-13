@@ -1,4 +1,10 @@
 <style>
+.page-header {
+	display: none;
+}
+.site-content {
+	padding-top: 0;
+}
 .row * {
   box-sizing: border-box;
 }
@@ -21,22 +27,6 @@
 	text-align: center;
 }
 
-.togglePanelTrigger {
-  padding: 10px;
-  text-align: center;
-  border: solid 1px var(--primary-color);
-  text-decoration: none;
-  display: inline-block;
-  font-size: 12px;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 8px;
-}
-
-.togglePanel {
-   display: none;
-}
-
 .section, .center-panel  {
    margin-bottom: 1em;
 	clear: both;
@@ -45,33 +35,39 @@
 table.display th {
 	text-align: left;
 }
+
+a.to-top {
+	float: right;
+	font-size: small;
+}
 </style>
 <div class="center-panel">
-	<h2 class="runnerName"></h2>
+	<h2>My Results: <span class="runnerName"></span></h2>
 	<h5 class="runnerAgeCategory"></h5>
 	<h4><a href="#age-grading-chart">Age Grading Performances</a> | <a href="#certificates-panel">Certificates</a> | <a href="#insights-distance-panel">Runner Insights</a> | <a href="#member-ranking-table">Club rankings</a> | <a href="#member-race-count-table">Race distance breakdown</a> | <a href="#member-race-and-course-summary">Race & course summary</a> | <a href="#member-race-predictions-current">Race predictions</a> | <a href="#age-grading-chart">Best known performances</a> | <a href="#member-results-table">All Results</a></h4>
 </div>
 <div class="center-panel">
 	<h3>Age Grading Performances</h3>
 	<div id="age-grading-chart" style="height: 350px;"></div>
-	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+	<a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
 </div>
 <div class="section">
 	<div id="certificates-panel">
 		<table class="display" id="member-certificates-table">
-			<caption>Standard certificates achieved by <span class="runnerName"></span></caption>
+			<caption>7 Star Standard certificates achieved by <span class="runnerName"></span>.</caption>
+			<caption style="font-size:smaller">All certifcates are for races from 2017 onwards. Click on the standard to view or download your certificate.</caption>
 			<thead>
 				<tr>
 					<th>Standard</th>
+					<th>Distance</th>
 					<th>Details</th>
-					<th>Certificate</th>
 				</tr>
 			</thead>
 			<tbody>			
 			</tbody>
 		</table>	  
 	</div>
-	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+	<a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
 </div>
 <div class="center-panel">
 	<div id="insights-distance-panel">
@@ -79,7 +75,7 @@ table.display th {
 		<select id="insights-race-distance-selection" style="font-size: 10px; float: right;"></select>			
 		<div id="insights-race-distance-chart" style="height: 350px;clear: both;"></div>
 	</div>
-	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+	<a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
 </div>
 <div class="section">
 	<table class="display" id="member-ranking-table">
@@ -101,7 +97,7 @@ table.display th {
 	</table>
 	<p style="font-size: smaller">The above Ipswich JAFFA Running Club rankings show where <span class="runnerName"></span> ranks among other Ipswich JAFFA members (past and present). Ranking category: <span class="runnerGender"></span>.</p>
 	<p style="font-size: smaller">Click on an above ranking to find out more information about the result.</p>
-	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+	<a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
 </div>
 <div class="section">
 	<table class="display" id="member-race-count-table">
@@ -126,7 +122,7 @@ table.display th {
 	</table>
 	<p style="font-size: smaller">The above totals are only valid for measured race distances (e.g. those that can count towards a personal best).</p>
 	<p style="font-size: smaller">The total distance covered calculation is only approximate and the accuracy of older results is not guaranteed.</p>
-	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+	<a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
 </div>
 <div class="row" id="member-race-and-course-summary">
 	<div class="col-50">
@@ -137,7 +133,7 @@ table.display th {
 		<h3>Course type summary</h3>
 		<div id="course-type-chart" style="height: 250px;"></div>
 	</div>			
-	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+	<a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
 </div>
 <div class="section">
 	<div id="member-race-predictions-current">
@@ -179,7 +175,7 @@ table.display th {
 		</table>
 	</div>
 	<p style="font-size: smaller">The above race predictions are based on the known performances and calculated using the formula: T2 = T1 x (D2/D1)^1.06, where D1 is known distance, D2 is target distance, T1 is result for distance D1 and T2 is predicted time for target distance D2. Read predictions in columns not rows. Entries in bold show the achieved time (T1).</p>
-	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+	<a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
 	<br />
 </div>
 <div class="section">
@@ -200,7 +196,7 @@ table.display th {
 		<tbody>
 		</tbody>
 	</table>
-	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+	<a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
 </div>	
 <div class="section">
 	<table class="display" id="member-results-table">
@@ -221,7 +217,7 @@ table.display th {
 		<tbody>			
 		</tbody>
 	</table>
-	<a style="float:right" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+	<a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
 </div>
 
 <!-- amCharts javascript sources -->
@@ -501,9 +497,9 @@ table.display th {
 					
 			$.each(data, function(i, cert) {
 				rows += '<tr>';	
-				rows += '<td>' + cert.name+ '</td>';
-				rows += '<td>' + cert.event + ', on ' + cert.date +'. Time ' + cert.result + '</td>';
-				rows += '<td><a href="' + getStandardCertificatesUrl(name, cert) +'" target="_blank">View</a></td>';				
+				rows += '<td><a href="' + getStandardCertificatesUrl(name, cert) +'" target="_blank">' + cert.name+ '</a></td>';
+				rows += '<td>' + cert.distance+ '</td>';
+				rows += '<td>' + cert.event + ', on ' + cert.date +'. Time ' + ipswichjaffarc.formatTime(cert.result) + '</td>';				
 				rows += '</tr>';	
 			});
 			
