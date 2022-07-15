@@ -98,7 +98,7 @@ div.race-insights-chart {
 						}
 					}
 
-					if (response.teams != null) {
+					if (response.teams.length > 0) {
 						setTeamResults(response.teams);
 					}
 			});
