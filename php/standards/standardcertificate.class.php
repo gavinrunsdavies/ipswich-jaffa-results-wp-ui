@@ -94,7 +94,7 @@ if (!class_exists("StandardsCertificatePdf")) {
       $this->SetXY(0, 0);
       $imagePath = $filepath . $number . 'StarCertificate.jpg';
 
-      if ($number > 0 && $number <= 6) {
+      if ($number > 0 && $number <= 7) {
         $this->Image($imagePath, 0, 0, 297, 210);
       } else {
         // try 
