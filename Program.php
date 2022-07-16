@@ -106,7 +106,7 @@ class Program
 
 		wp_enqueue_script(
 			'IpswichJaffaResults.js',
-			plugins_url('/lib/IpswichJaffaResults.js', __FILE__ ),
+			plugins_url('/lib/IpswichJaffaResults.js?version=1.1.0', __FILE__ ),
 			null,
 			null,
 			true
