@@ -345,7 +345,7 @@ div.race-insights-chart {
 			var result = [];
 			if (secondsImprovment > 60) {
 				result.push(Math.floor(secondsImprovment / 60));
-				result.push(secondsImprovment % 60);
+				result.push(Math.floor(secondsImprovment % 60));
 			} else {
 				result.push(secondsImprovment);
 			}
