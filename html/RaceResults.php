@@ -340,14 +340,14 @@ div.race-insights-chart {
 
 		function getResultImprovement(previousTimeInSeconds, newTimeInSeconds) {
 
-			var secondsImprovment = previousTimeInSeconds - newTimeInSeconds;
+			var secondsImprovment = parseFloat(previousTimeInSeconds) - parseFloat(newTimeInSeconds);
 
 			var result = [];
 			if (secondsImprovment > 60) {
 				result.push(Math.floor(secondsImprovment / 60));
-				result.push(Math.floor(secondsImprovment % 60));
+				result.push((secondsImprovment % 60).toFixed(2));
 			} else {
-				result.push(secondsImprovment);
+				result.push(secondsImprovment.toFixed(2));
 			}
 
 			return result;
