@@ -341,7 +341,7 @@ div.race-insights-chart {
 		function getResultImprovement(previousTimeInSeconds, newTimeInSeconds) {
 
 			var secondsImprovment = parseFloat(previousTimeInSeconds) - parseFloat(newTimeInSeconds);
-			Math.round((num + Number.EPSILON) * 100) / 100
+			
 			var result = [];
 			if (secondsImprovment > 60) {
 				result.push(Math.floor(secondsImprovment / 60));
