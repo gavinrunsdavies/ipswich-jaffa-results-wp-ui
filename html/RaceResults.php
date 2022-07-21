@@ -41,7 +41,7 @@ div.race-insights-chart {
 				return;
 
 			$('#jaffa-race-results').empty();
-			getRace(raceId);
+			getRace(raceId, false);
 		});
 
 		// 1. Get race
@@ -72,7 +72,7 @@ div.race-insights-chart {
 
 		var selectedRaceCourseTypeId = 0;
 
-		function getRace(raceId) {
+		function getRace(raceId, getEventRaces = true) {
 			$.ajax(
 				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/races/' + raceId))
 				.done(function(raceData) {
@@ -83,7 +83,10 @@ div.race-insights-chart {
 					} else {
 						getRaceResult(raceData, raceData.eventName, raceData.date, raceData.resultMeasurementUnitTypeId);
 					}
-					getEventRaces(raceData.eventId);
+
+					if (getEventRaces) {
+						getEventRaces(raceData.eventId);
+					}
 				});
 		}
 
