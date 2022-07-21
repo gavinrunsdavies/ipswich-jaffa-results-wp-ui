@@ -73,7 +73,7 @@ div.race-insights-chart {
 
 		var selectedRaceCourseTypeId = 0;
 
-		function getRace(raceId, getEventRaces = true) {
+		function getRace(raceId, addEventRacesToSelect = true) {
 			$.ajax(
 				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/races/' + raceId))
 				.done(function(raceData) {
@@ -85,7 +85,7 @@ div.race-insights-chart {
 						getRaceResult(raceData, raceData.eventName, raceData.date, raceData.resultMeasurementUnitTypeId);
 					}
 
-					if (getEventRaces) {
+					if (addEventRacesToSelect) {
 						getEventRaces(raceData.eventId);
 					}
 				});
