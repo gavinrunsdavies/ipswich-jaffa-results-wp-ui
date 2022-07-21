@@ -40,6 +40,7 @@ div.race-insights-chart {
 			if (raceId == 0)
 				return;
 
+			$('#jaffa-race-results').empty();
 			getRace(raceId);
 		});
 
