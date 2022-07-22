@@ -42,7 +42,7 @@ div.race-insights-chart {
 
 			$('#jaffa-race-results').empty();
 			getRace(raceId, false);
-			$('#jaffa-race-results').scrollTop(0);
+			document.getElementById("jaffa-race-results").scrollIntoView();
 		});
 
 		// 1. Get race
