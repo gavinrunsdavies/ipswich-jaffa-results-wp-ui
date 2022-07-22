@@ -24,7 +24,7 @@ div.race-insights-chart {
 	</div>
 	<div class="formRankCriteria">
 		<label for="jaffa-other-race-results">Other race results</label>
-		<select onchange="if (this.value) window.location.href=this.value" id="jaffa-other-race-results">
+		<select id="jaffa-other-race-results">
 		</select>
 	</div>
 </div>
@@ -34,6 +34,16 @@ div.race-insights-chart {
 <script type="text/javascript">
 	<?php if (isset($_GET['raceId']) || (isset($_GET['eventId']) && isset($_GET['date']))): ?>
 	jQuery(document).ready(function ($) {
+
+		$('#jaffa-other-race-results').change(function () {
+			var raceId = $('#jaffa-other-race-results').val();
+			if (raceId == 0)
+				return;
+
+			$('#jaffa-race-results').empty();
+			getRace(raceId, false);
+			document.getElementById("jaffa-race-results").scrollIntoView();
+		});
 
 		// 1. Get race
 		// 2. If meetingId is > 0, get meetingId
@@ -63,7 +73,7 @@ div.race-insights-chart {
 
 		var selectedRaceCourseTypeId = 0;
 
-		function getRace(raceId) {
+		function getRace(raceId, addEventRacesToSelect = true) {
 			$.ajax(
 				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/races/' + raceId))
 				.done(function(raceData) {
@@ -74,7 +84,10 @@ div.race-insights-chart {
 					} else {
 						getRaceResult(raceData, raceData.eventName, raceData.date, raceData.resultMeasurementUnitTypeId);
 					}
-					getEventRaces(raceData.eventId);
+
+					if (addEventRacesToSelect) {
+						getEventRaces(raceData.eventId);
+					}
 				});
 		}
 
@@ -171,18 +184,16 @@ div.race-insights-chart {
 			$.ajax(
 				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/'+ eventId + '/races'))
 				.done(function(raceData) {
-					var raceResultsUrl = '<?php echo $eventResultsPageUrl; ?>';
-					var url = raceResultsUrl + '?raceId=';
 					var dateOptions = '<option>Please select...</option>';
 					var meetingId = 0;
 					for (var i = 0; i < raceData.length; i++) {
 						if (raceData[i].meetingId > 0) {
 							if (meetingId != raceData[i].meetingId) {
 								meetingId = raceData[i].meetingId;
-								dateOptions += '<option value="' + url + raceData[i].id + '">' + raceData[i].date + ' (meeting) </option>';
+								dateOptions += '<option value="' + raceData[i].id + '">' + raceData[i].date + ' (meeting) </option>';
 							}
 						} else {
-							dateOptions += '<option value="' + url + raceData[i].id + '">' + raceData[i].date + ' (' + raceData[i].count + ' results) </option>';
+							dateOptions += '<option value="' + raceData[i].id + '">' + raceData[i].date + ' (' + raceData[i].count + ' results) </option>';
 						}
 					}
 
