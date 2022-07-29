@@ -409,8 +409,8 @@ div.race-insights-chart {
 				$('#race-insights-panel').append('<p>Total results: <strong>' + distance.count +
 					'</strong>, average time: <strong>' + ipswichjaffarc.secondsToTime(distance.meanPerformance) +
 					'</strong>, fastest time: <strong>' + ipswichjaffarc.secondsToTime(distance.minPerformance) +
-					'</strong> was achieved by <strong><a href="<?php echo $memberResultsPageUrl; ?>?runner_id=' + distance.fastestRunnerId + '">' + fastestRunnerName +
-					'<a/></strong> at the ' + ipswichjaffarc.formatDate(fastestRaceDate) +
+					'</strong> was achieved by <strong><a href="<?php echo $memberResultsPageUrl; ?>?runner_id=' + distance.fastestRunnerId + '">' + distance.fastestRunnerName +
+					'<a/></strong> at the ' + ipswichjaffarc.formatDate(distance.fastestRaceDate) +
 					' race, slowest time: <strong>' + ipswichjaffarc.secondsToTime(distance.maxPerformance) + 
 					'</strong>.</p>');
 			});
