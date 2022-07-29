@@ -82,7 +82,7 @@ div.race-insights-chart {
 					if (raceData.meetingId > 0) {
 						getMeeting(raceData.meetingId);
 					} else {
-						getRaceResult(raceData, raceData.eventName, raceData.date, raceData.resultMeasurementUnitTypeId);
+						getRaceResult(raceData, raceData.eventName, raceData.date, raceData.resultUnitTypeId);
 					}
 
 					if (addEventRacesToSelect) {
@@ -107,7 +107,7 @@ div.race-insights-chart {
 
 					if (response.races != null) {
 						for (var i = 0; i < response.races.length; i++) {
-							getRaceResult(response.races[i], response.races[i].description, response.races[i].date, response.races[i].resultMeasurementUnitTypeId);
+							getRaceResult(response.races[i], response.races[i].description, response.races[i].date, response.races[i].resultUnitTypeId);
 						}
 					}
 
@@ -207,28 +207,15 @@ div.race-insights-chart {
 			var courseTypeIdsToDisplayImprovements = ["1", "3", "6"];
 			var resultColumnTitle;
 			var tableName = 'jaffa-race-results-table-';
-			switch (Number(measurementUnitType)) {
-				case 2:
-					resultColumnTitle = 'Seconds';
-					break;
-				case 3:
-					resultColumnTitle = 'Metres';
-				break;
-				case 4:
-					resultColumnTitle = 'Kilometres';
-				break;
-				case 5:
-					resultColumnTitle = 'Miles';
-				break;
-				default:
-					resultColumnTitle = 'Time';
-					break;
-			}
+			if  (Number(measurementUnitType) == 1) {
+				resultColumnTitle = 'Distance';
+			} else {
+				resultColumnTitle = 'Time';
+			}			
 			
 			var title = description != null ? description + ', ' : '';
 			title += ipswichjaffarc.formatDate(date);
-			//var tableCaption = '<h3 style="text-align:center;font-weight:bold;font-size:1.5em">' + title + '</h3>';
-			//$('#jaffa-race-results').append(tableCaption);
+			
 			if (race.report != null) {
 				var raceReport = '<p>' + race.report + '</p>';
 				$('#jaffa-race-results').append(raceReport);
@@ -282,7 +269,7 @@ div.race-insights-chart {
 							return html;
 						}
 					}, {
-						data : "result",
+						data : "performance",
 						render : function(data, type, row, meta) {
 							if (measurementUnitType != 1 && measurementUnitType != "1" && measurementUnitType != undefined) {
 								return Number(data).toLocaleString();
@@ -416,14 +403,16 @@ div.race-insights-chart {
 
 		function showEventInsightsData(insights) {
 			$('#race-insights-panel').append('<h4>Event Records</h5>');
-			$('#race-insights-panel').append('<p><small>Please note these are the Ipswich JAFFA Event records and are indepedent of course which may have changed over the duration of our event results.</small></p>');
+			$('#race-insights-panel').append('<p><small>Please note these are the Ipswich JAFFA Event records and are independent of course which may have changed over the duration of our event results.</small></p>');
 			insights.forEach(distance => {
-				$('#race-insights-panel').append('<h5> Distance: ' + distance.distance + '</h5>');
+				$('#race-insights-panel').append('<h5>Distance: ' + distance.distance + '</h5>');
 				$('#race-insights-panel').append('<p>Total results: <strong>' + distance.count +
-					'</strong>, Average time: <strong>' + distance.mean +
-					'</strong>, Fastest time: <strong>' + distance.min +
-					'</strong>, Slowest time: <strong>' + distance.max + 
-					'</strong></p>');
+					'</strong>, average time: <strong>' + ipswichjaffarc.secondsToTime(distance.meanPerformance) +
+					'</strong>, fastest time: <strong>' + ipswichjaffarc.secondsToTime(distance.minPerformance) +
+					'</strong> was achieved by <strong><a href="<?php echo $memberResultsPageUrl; ?>?runner_id=' + distance.fastestRunnerId + '">' + fastestRunnerName +
+					'<a/></strong> at the ' + ipswichjaffarc.formatDate(fastestRaceDate) +
+					' race, slowest time: <strong>' + ipswichjaffarc.secondsToTime(distance.maxPerformance) + 
+					'</strong>.</p>');
 			});
 		}
 
@@ -558,9 +547,9 @@ div.race-insights-chart {
 				
 				var date = new Date();
   				for (var i = 0; i < data.length; i++) {
-					data[i].meanTime = date.setHours(getHours(data[i].mean), getMinutes(data[i].mean), getSeconds(data[i].mean));
-    				data[i].minTime = date.setHours(getHours(data[i].min), getMinutes(data[i].min), getSeconds(data[i].min));
-    				data[i].maxTime = date.setHours(getHours(data[i].max), getMinutes(data[i].max), getSeconds(data[i].max));
+					data[i].meanTime = date.setSeconds(data[i].meanPerformance);
+    				data[i].minTime = date.setSeconds(data[i].minPerformance);
+    				data[i].maxTime = date.setSeconds(data[i].maxPerformance);
   				}
 
 				// Only display times for road (1),  MT (2) and track races (3)
@@ -598,18 +587,6 @@ div.race-insights-chart {
 				chart.appear(1000, 100);
 
 				}); // end am5.ready()
-		}
-
-		function getHours(time) {
-			return time ? time.substring(0, 2) : 0;
-		}
-
-		function getMinutes(time) {
-			return time ? time.substring(3, 5) : 0;
-		}
-
-		function getSeconds(time) {
-			return time ? time.substring(6, 8) : 0;
 		}
 	});
 	<?php endif;?>
