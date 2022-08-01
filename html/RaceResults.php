@@ -528,6 +528,10 @@ div.race-insights-chart {
 						categoryXField: "year"
 					}));
 
+					lineSeries.data.processor = am5.DataProcessor.new(root, {
+						numericFields: [field]
+					});
+
 					lineSeries.strokes.template.setAll({ strokeWidth: 2 });
 
 					lineSeries.bullets.push(function() {
