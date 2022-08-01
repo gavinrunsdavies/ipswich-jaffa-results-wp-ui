@@ -271,7 +271,7 @@ div.race-insights-chart {
 					}, {
 						data : "performance",
 						render : function(data, type, row, meta) {
-							if (measurementUnitType != 1 && measurementUnitType != "1" && measurementUnitType != undefined) {
+							if (measurementUnitType == "1") {
 								return Number(data).toLocaleString();
 							}
 
