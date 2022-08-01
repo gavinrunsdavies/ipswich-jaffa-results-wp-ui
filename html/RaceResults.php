@@ -432,6 +432,11 @@ div.race-insights-chart {
 					am5themes_Animated.new(root)
 				]);
 
+				root.durationFormatter.setAll({
+					baseUnit: "second",
+					durationFormat: "mm:ss"
+				});
+
 				// Create chart
 				var chart = root.container.children.push(am5xy.XYChart.new(root, {	
 					panX: false,
@@ -465,15 +470,12 @@ div.race-insights-chart {
 					tooltip: am5.Tooltip.new(root, {})
 				}));
 
-				// Line series (date) axis 				
+				// Duration series (seconds) axis 				
 				var timeYAxisRenderer = am5xy.AxisRendererY.new(root, {opposite: true});
 				timeYAxisRenderer.grid.template.set("forceHidden", true);
-				var timeYAxis = chart.yAxes.push(am5xy.DateAxis.new(root, {
-					groupData: false,
-					tooltipDateFormat: "HH:mm:ss",
-    				baseInterval: { timeUnit: "minute", count: 1 },
+				var timeYAxis = chart.yAxes.push(am5xy.DurationAxis.new(root, {
+					baseUnit: "second",
 					extraMax: 0.02,
-					extraMin: 0.02,
 					renderer: timeYAxisRenderer
 				}));
 
