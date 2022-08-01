@@ -545,20 +545,13 @@ div.race-insights-chart {
 
 					lineSeries.data.setAll(data);
 					lineSeries.appear(1000);
-				}				
-				
-				var date = new Date();
-  				for (var i = 0; i < data.length; i++) {
-					data[i].meanTime = date.setSeconds(data[i].meanPerformance);
-    				data[i].minTime = date.setSeconds(data[i].minPerformance);
-    				data[i].maxTime = date.setSeconds(data[i].maxPerformance);
-  				}
+				}								
 
 				// Only display times for road (1),  MT (2) and track races (3)
 				if (selectedRaceCourseTypeId == 1 || selectedRaceCourseTypeId == 2 || selectedRaceCourseTypeId == 3) {
-					createTimeSeries("meanTime");
-					createTimeSeries("minTime");
-					createTimeSeries("maxTime");
+					createTimeSeries("meanPerformance");
+					createTimeSeries("minPerformance");
+					createTimeSeries("maxPerformance");
 				}
 
 				// Add cursor
