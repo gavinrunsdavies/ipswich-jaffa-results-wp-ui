@@ -28,9 +28,12 @@
 				</tr>
 			</thead>
 		</table>
-		<label for="distances">Select alternative distances (multiple sections allowed).</label>
-		<select id="distances" name="distance" size="1" title="Select distance" multiple>
-		</select>	
+		<div class="formRankCriteria">
+			<label for="distances">Select alternative distances (multiple sections allowed).</label>
+			<select id="distances" name="distance" size="5" title="Select distance" multiple>
+			</select>
+			<input id="club-records-submit" type="button" value="Get Records" disabled="disabled"/>
+		</div>
 	</div>
 	<?php
 	$distances = array('5 km' => 1, '5 m' => 2, '10 km' => 3, '10 m' => 4, 'Half marathon' => 5, '20 m' => 7, 'Marathon' => 8);
@@ -87,10 +90,12 @@
 			for (var i = 0; i < data.length; i++) {
 				select.options.add(new Option(data[i].text, data[i].id));
 			}
+
+			$('#club-records-submit').prop('disabled', false);
 		  }
 		);
 
-		$('#distances').change(function () {
+		$('#club-records-submit').click(function () {
 			var distanceIds = $('#distances').val();
 			if (distanceIds == 0)
 				return;
