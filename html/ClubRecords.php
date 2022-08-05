@@ -34,6 +34,19 @@
 			</select>
 			<input id="club-records-submit" type="button" value="Get Records" disabled="disabled"/>
 		</div>
+		<div id="custom-club-records" style="display:none">	
+			<table class="display" id="custom-club-records-table">
+				<caption>Other Club Records</caption>
+				<thead>
+					<tr>
+						<th data-priority="3">Distance</th>
+						<th data-priority="1">Record Holder</th>
+						<th data-priority="4">Event</th>
+						<th data-priority="2">Record</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
 	</div>
 	<?php
 	$distances = array('5 km' => 1, '5 m' => 2, '10 km' => 3, '10 m' => 4, 'Half marathon' => 5, '20 m' => 7, 'Marathon' => 8);
@@ -84,7 +97,6 @@
 
 			// Clear the old options
 			select.options.length = 0;
-			select.options.add(new Option('Please select...', 0));
 			
 			// Load the new options
 			for (var i = 0; i < data.length; i++) {
@@ -100,9 +112,74 @@
 			if (distanceIds == 0)
 				return;
 
-			$.ajax(getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/records/?distanceIds=' + distanceIds))
-				.done(function(data) {
-				});
+			$('#custom-club-records').hide();
+
+			$('#custom-club-records-table').DataTable({
+				responsive: {
+					details: {
+						renderer: function(api, rowIdx, columns) {
+							var data = $.map(columns, function(col, i) {
+								return col.hidden ?
+									'<tr data-dt-row="' + col.rowIndex + '" data-dt-column="' + col.columnIndex + '">' +
+									'<td>' + col.title + ':' + '</td> ' +
+									'<td>' + col.data + '</td>' +
+									'</tr>' :
+									'';
+							}).join('');
+
+							return data ?
+								$('<table/>').append(data) :
+								false;
+						}
+					}
+				},
+				serverSide: false,
+				paging: false,
+				destroy : true,
+				searching: false,
+				processing: true,
+				ordering: false,
+				autoWidth: false,
+				scrollX: true,
+				columns: [{
+						data: "distance"
+					},
+					{
+						data: "runnerName",
+						searchable: true,
+						sortable: true,
+						render: function(data, type, row, meta) {
+							var resultsUrl = '<?php echo $memberResultsPageUrl; ?>';
+							var anchor = '<a href="' + resultsUrl;
+							anchor += '?runner_id=' + row.runnerId;
+							anchor += '">' + data + '</a>';
+
+							return anchor;
+						}
+					},
+					{
+						data: "eventName",
+						render: function(data, type, row, meta) {
+							var resultsUrl = '<?php echo $raceResultsPageUrl; ?>';
+							var anchor = '<a href="' + resultsUrl;
+							anchor += '?raceId=' + row.raceId;
+							anchor += '">' + data + ' (' + row.date + ') </a>';
+
+							return anchor;
+						}
+					},
+					{
+						data: "performance",
+						render: function(data, type, row, meta) {
+							return ipswichjaffarc.secondsToTime(data);
+						},
+						className: 'text-right'
+					}
+				],
+				ajax: getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/records/?distanceIds=' + distanceIds)
+			});
+
+			$('#custom-club-records').show();
 		});
 
 		$('#overall-club-records').DataTable({
