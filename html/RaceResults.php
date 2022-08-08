@@ -207,7 +207,7 @@ div.race-insights-chart {
 			var courseTypeIdsToDisplayImprovements = ["1", "3", "6"];
 			var resultColumnTitle;
 			var tableName = 'jaffa-race-results-table-';
-			if  (Number(measurementUnitType) == 1) {
+			if  (Number(measurementUnitType) == 3) {
 				resultColumnTitle = 'Distance';
 			} else {
 				resultColumnTitle = 'Time';
@@ -271,7 +271,7 @@ div.race-insights-chart {
 					}, {
 						data : "performance",
 						render : function(data, type, row, meta) {
-							if (measurementUnitType == "1") {
+							if (measurementUnitType == "3") {
 								return Number(data).toLocaleString();
 							}
 
