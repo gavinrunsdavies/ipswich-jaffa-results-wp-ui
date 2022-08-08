@@ -171,6 +171,10 @@
 					{
 						data: "performance",
 						render: function(data, type, row, meta) {
+							if (row.measurementUnitType == "1") {
+								return Number(data).toLocaleString();
+							}
+							
 							return ipswichjaffarc.secondsToTime(data);
 						},
 						className: 'text-right'
