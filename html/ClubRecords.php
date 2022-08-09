@@ -14,6 +14,10 @@
 			margin: 0;
 		}
 	}
+
+	.formRankCiteria {
+		margin-top: 2em;
+	}
 </style>
 <div class="section" id="club-records-top">
 	<div>
@@ -34,7 +38,7 @@
 			</select>
 			<input id="club-records-submit" type="button" value="Get Records" disabled="disabled"/>
 		</div>
-		<div id="custom-club-records" style="display:none">	
+		<div id="custom-club-records" style="display:none; margin-bottom: 2em;">	
 			<table class="display" id="custom-club-records-table">
 				<caption>Other Club Records</caption>
 				<thead>
