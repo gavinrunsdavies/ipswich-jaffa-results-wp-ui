@@ -172,7 +172,7 @@
 						data: "performance",
 						render: function(data, type, row, meta) {
 							if (row.resultUnitTypeId == "3") {
-								return Number(data).toLocaleString();
+								return Number(data).toLocaleString() + "m";
 							}
 
 							return ipswichjaffarc.secondsToTime(data);
