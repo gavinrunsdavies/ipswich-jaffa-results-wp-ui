@@ -171,7 +171,7 @@
 					{
 						data: "performance",
 						render: function(data, type, row, meta) {
-							if (row.measurementUnitType == "3") {
+							if (row.resultUnitTypeId == "3") {
 								return Number(data).toLocaleString();
 							}
 
