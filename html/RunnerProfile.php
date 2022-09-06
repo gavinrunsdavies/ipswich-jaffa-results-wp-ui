@@ -352,14 +352,19 @@ a.to-top {
 			var rows = '';				
 			rows += '<tr>';						
 			rows += '<td>All Time</td>';
-			$.each(supportedDistanceIds, function(i, distanceId) {										
+			$.each(supportedDistanceIds, function(i, distanceId) {	
+				var matched = false;									
 				$.each(rankings, function(j, rank) {		
 					if (distanceId == rank.distanceId) {
 						rows += '<td><a class="rank-result" data-overallrankid="' + rank.resultId + '">' + rank.rank + '</a></td>';		
-					} else {
-						rows += '<td></td>';
+						matched = true;
+						return;
 					}
 				});
+
+				if (!matched) {
+					rows += '<td></td>';
+				}
 			});
 			rows += '</tr>';	
 			
