@@ -355,8 +355,9 @@ a.to-top {
 			$.each(supportedDistanceIds, function(i, distanceId) {										
 				$.each(rankings, function(j, rank) {		
 					if (distanceId == rank.distanceId) {
-						rows += '<td ><a class="rank-result" data-overallrankid="' + rank.resultId + '">' + rank.rank + '</a></td>';		
-						return;
+						rows += '<td><a class="rank-result" data-overallrankid="' + rank.resultId + '">' + rank.rank + '</a></td>';		
+					} else {
+						rows += '<td></td>';
 					}
 				});
 			});
