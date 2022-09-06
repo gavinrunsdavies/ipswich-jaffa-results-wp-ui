@@ -82,7 +82,6 @@ a.to-top {
 		<caption>Club rankings for <span class="runnerName"></span></caption>
 		<thead>
 			<tr>
-				<th></th>
 				<th>5k</th>
 				<th>5m</th>
 				<th>10k</th>
