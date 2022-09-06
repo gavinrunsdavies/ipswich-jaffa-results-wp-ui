@@ -47,7 +47,7 @@
 					<th>Race Id</th>	
 					<th data-priority="4">Event</th>	
 					<th data-priority="5">Date</th>	
-					<th data-priority="3">Time</th>	
+					<th data-priority="3">Performance</th>	
 				</tr>
 			</thead>			
 			<tbody>				
@@ -65,7 +65,7 @@
 					<th>Race Id</th>	
 					<th data-priority="4">Event</th>	
 					<th data-priority="5">Date</th>	
-					<th data-priority="3">Time</th>	
+					<th data-priority="3">Performance</th>	
 				</tr>
 			</thead>			
 			<tbody>				
@@ -179,9 +179,13 @@
 					data: "date"
 				},
 				{
-					data: "result",
+					data: "performance",
 					render : function (data, type, row, meta) {
-						return ipswichjaffarc.formatTime(data);
+						if (row.resultUnitTypeId == "3") {
+								return Number(data).toLocaleString();
+						}
+
+						return ipswichjaffarc.secondsToTime(row.performance);						
 					},
 					className : 'text-right'
 				}
@@ -263,12 +267,16 @@
 					data: "date"
 				},
 				{
-					data: "result",
+					data: "performance",
 					render : function (data, type, row, meta) {
-						return ipswichjaffarc.formatTime(data);
+						if (row.resultUnitTypeId == "3") {
+								return Number(data).toLocaleString();
+						}
+
+						return ipswichjaffarc.secondsToTime(row.performance);						
 					},
 					className : 'text-right'
-				},
+				}
 				],
 				ajax    	  : {
 					url : '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/ranking/distance/' + $('#distance').val(),			

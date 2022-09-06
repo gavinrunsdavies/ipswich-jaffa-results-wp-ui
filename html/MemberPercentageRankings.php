@@ -51,7 +51,7 @@ for ($y = date("Y"); $y >= 1977; $y--) {
 					<th>Event Id</th>
 					<th data-priority="5">Event</th>
 					<th data-priority="6">Date</th>
-					<th data-priority="4">Time</th>
+					<th data-priority="4">Performance</th>
 					<th data-priority="3">Age Grading</th>
 				</tr>
 			</thead>
@@ -154,9 +154,13 @@ for ($y = date("Y"); $y >= 1977; $y--) {
 				data: "date"
 			},
 			{
-				data: "result",
+				data: "performance",
 				render : function (data, type, row, meta) {
-					return ipswichjaffarc.formatTime(data);
+					if (row.resultUnitTypeId == "3") {
+						return Number(data).toLocaleString();
+					}
+
+					return ipswichjaffarc.secondsToTime(row.performance);						
 				},
 				className : 'text-right'
 			},
