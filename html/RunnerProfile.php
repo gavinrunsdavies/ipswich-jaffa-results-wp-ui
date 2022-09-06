@@ -356,7 +356,7 @@ a.to-top {
 				var matched = false;									
 				$.each(rankings, function(j, rank) {		
 					if (distanceId == rank.distanceId) {
-						rows += '<td><a class="rank-result" data-overallrankid="' + rank.resultId + '">' + rank.rank + '</a></td>';		
+						rows += '<td><strong>' + rank.rank + '</strong><br/><small>'+rank.event+', '+rank.date+', '+ipswichjaffarc.formatTime(rank.result)+'</small></td>';		
 						matched = true;
 						return;
 					}
@@ -695,30 +695,6 @@ a.to-top {
 		function nullToEmptyString(value) {
 			return (value == null || value == "") ? "" : " - " + value;
 		}
-
-		$('.rank-result').click(function () {
-			/*var popover = $(this).popover({
-				html: true,
-				placement: 'top',
-				container: 'body',
-				title: function(){
-					return $(this).data('contenttitle');
-				},
-				content: function(){
-					var resultId = $(this).data('overallrankid');
-					var ranking = getRanking(resultId);
-					var html = '';
-					if (ranking != null) {
-						html = '<div><div class="row"><div class="col-md-6">Event</div><div class="col-md-6">'+ranking.event+'</div>';
-						html += '<div class="col-md-6">Date</div><div class="col-md-6">'+ranking.date+'</div>';
-						html += '<div class="col-md-6">Result</div><div class="col-md-6">'+ranking.result+'</div>';
-						html += '<div class="col-md-6">Position in Event</div><div class="col-md-6">'+ranking.position+'</div>';
-						html += '<div class="col-md-6">Rank</div><div class="col-md-6">'+ranking.rank+'</div></div></div>';			
-					}
-					return html;
-				}
-			}).popover('show');*/
-		});
 		
 		function getRanking(resultId) {
 			for (var i = 0; i < rankings.length; i++) {
