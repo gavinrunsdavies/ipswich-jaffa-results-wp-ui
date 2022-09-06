@@ -96,7 +96,6 @@ a.to-top {
 		</tbody>
 	</table>
 	<p style="font-size: smaller">The above Ipswich JAFFA Running Club rankings show where <span class="runnerName"></span> ranks among other Ipswich JAFFA members (past and present). Ranking category: <span class="runnerGender"></span>.</p>
-	<p style="font-size: smaller">Click on an above ranking to find out more information about the result.</p>
 	<a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
 </div>
 <div class="section">
@@ -349,9 +348,7 @@ a.to-top {
 			var tableId = '#member-ranking-table';
 			var tableBody = $(tableId + ' tbody');
 							
-			var rows = '';				
-			rows += '<tr>';						
-			rows += '<td>All Time</td>';
+			var rows = '<tr>';						
 			$.each(supportedDistanceIds, function(i, distanceId) {	
 				var matched = false;									
 				$.each(rankings, function(j, rank) {		
