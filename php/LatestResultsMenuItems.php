@@ -29,7 +29,7 @@ class LatestResultsMenuItems
 
 	public function addLatestResultsMenuItems($items, $menu)
 	{
-		if ($menu->slug == $this->MENU_SLUG) {
+		if ($menu->slug == self::MENU_SLUG) {
 			$results = $this->getLatestResults();
 			$order = 100;
 			$top = $this->creatCustomNavMenuItem('Latest Results', '/', $order);
@@ -45,7 +45,7 @@ class LatestResultsMenuItems
 					$results[$i]->countOfPersonalBests,
 					$results[$i]->countOfSeasonalBests
 				);
-				
+
 				$url = '/member-results/race-results/?raceId=' . $results[$i]->lastRaceId;
 				$items[] = $this->creatCustomNavMenuItem($item, $url, $order, $top->ID);
 			}
@@ -56,7 +56,7 @@ class LatestResultsMenuItems
 
 	private function getLatestResults()
 	{
-		$url = esc_url(home_url()) . '/wp-json/ipswich-jaffa-api/v2/races/latest?count=10&time='.time();
+		$url = esc_url(home_url()) . '/wp-json/ipswich-jaffa-api/v2/races/latest?count=10&time=' . time();
 		$curl = curl_init($url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$response = curl_exec($curl);

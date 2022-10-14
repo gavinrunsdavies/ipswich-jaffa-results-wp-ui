@@ -12,9 +12,9 @@ namespace IpswichJAFFARunningClubResults;
 
 require_once plugin_dir_path(__FILE__) . 'widgets/LatestResultsWidget.php';
 require_once plugin_dir_path(__FILE__) . 'widgets/RunnerOfTheMonthWidget.php';
-//require_once plugin_dir_path(__FILE__) . 'php/LatestResultsMenuItems.php';
+require_once plugin_dir_path(__FILE__) . 'php/LatestResultsMenuItems.php';
 
-use IpswichJAFFARunningClubAPI\Php\LatestResultsMenuItems as LatestResultsMenuItems;
+use IpswichJAFFARunningClubResults\Php\LatestResultsMenuItems as LatestResultsMenuItems;
 
 $go = new Program();
 
