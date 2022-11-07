@@ -72,7 +72,7 @@ div.race-insights-chart {
 				.done(function(response) {
 					setEventName(response.event.name);
 					processMeeting(response.meeting);
-					if (response.teams.length > 0) {
+					if (response.teams?.length > 0) {
 						setTeamResults(response.teams);
 					}
 					for (var i = 0; i < response.races.length; i++) {
@@ -85,13 +85,15 @@ div.race-insights-chart {
 		}
 
 		function processMeeting(meeting) {
-			var meetingDates = meeting.fromDate;
-			if (meeting.fromDate != meeting.toDate) {
-				meetingDates += ' - ' + meeting.toDate;
-			}
+			if (meeting.id != 0) { // Ignore virtual meetings
+				var meetingDates = meeting.fromDate;
+				if (meeting.fromDate != meeting.toDate) {
+					meetingDates += ' - ' + meeting.toDate;
+				}
 
-			var meetingTitle = '<h3>Meeting: '+meeting.name+' ('+meetingDates+')</h3>';
-			$('#jaffa-race-results').prepend(meetingTitle);
+				var meetingTitle = '<h3>Meeting: '+meeting.name+' ('+meetingDates+')</h3>';
+				$('#jaffa-race-results').prepend(meetingTitle);
+			}
 		}
 
 		function setTeamResults(teams) {
