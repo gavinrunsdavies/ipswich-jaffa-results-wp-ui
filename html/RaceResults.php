@@ -173,11 +173,11 @@ div.race-insights-chart {
 							if (date != 0) {
 								options += '<option value="' + raceId + '">' + date + ' (' + resultsCount + ' results)</option>';
 							}
-							resultsCount = races[i].count;
+							resultsCount = Number(races[i].count);
 							date = races[i].date;
 							raceId = races[i].id;
 						} else {
-							resultsCount += races[i].count;
+							resultsCount += Number(races[i].count);
 						}
 					}
 					options += '<option value="' + raceId + '">' + date + ' (' + resultsCount + ' results)</option>';
