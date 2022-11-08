@@ -350,9 +350,9 @@ div.race-insights-chart {
 					}
 				],
 				footerCallback: function ( row, data, start, end, display ) {
-					// Hide time / distance column if value is all zeroes
+					// Hide column if value is all zeroes / empty
 					var api = this.api();
-					var nonEmpty = (x) => x != '' || x != undefined;
+					var nonEmpty = (x) => x != '' && x != undefined;
 					var nonZero = (x) => x > 0;
 					showHideColumn(api, 'performance:name', nonZero);
 					showHideColumn(api, 'percentageGrading:name', nonZero);
@@ -371,6 +371,7 @@ div.race-insights-chart {
 			var visible = api
 				.column( columnName, { page: 'current'} )
 				.data()
+				.toArray()
 				.some(expression);
 					
 			$(api.column(columnName).visible(visible));
