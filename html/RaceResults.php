@@ -190,31 +190,31 @@ div.race-insights-chart {
 			var title = race.description != '' ? race.description + ', ' : '';
 			title += ipswichjaffarc.formatDate(race.date);
 
-			if (race.distanceId > 0) {
+			if (race.distance) {
 				title += " | " + race.distance;
 			}
 
-			if (race.courseType != '') {
+			if (race.courseType) {
 				title += " | " + race.courseType;
 			}
 
-			if (race.conditions != '') {
+			if (race.conditions) {
 				title += " | " + race.conditions;
 			}
 
-			if (race.venue != '') {
+			if (race.venue) {
 				title += " | " + race.venue;
 			}
 
-			if (race.county != '') {
+			if (race.county) {
 				title += " | " + race.county;
 			}
 
-			if (race.area != '') {
+			if (race.area) {
 				title += " | " + race.area;
 			}
 
-			if (race.countryCode != '') {
+			if (race.countryCode) {
 				title += " | " + race.countryCode;
 			}
 
