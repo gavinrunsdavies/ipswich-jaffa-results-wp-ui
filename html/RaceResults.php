@@ -354,10 +354,10 @@ div.race-insights-chart {
 					var api = this.api();
 					var nonEmpty = (x) => x != '' || x != undefined;
 					var nonZero = (x) => x > 0;
-					showHideNumericColumn(api, 'performance:name', nonZero);
-					showHideNumericColumn(api, 'percentageGrading:name', nonZero);
-					showHideNumericColumn(api, 'position:name', nonZero);
-					showHideTextColumn(api, 'standardType:name', nonEmpty);
+					showHideColumn(api, 'performance:name', nonZero);
+					showHideColumn(api, 'percentageGrading:name', nonZero);
+					showHideColumn(api, 'position:name', nonZero);
+					showHideColumn(api, 'standardType:name', nonEmpty);
 				},
 				processing : true,
 				autoWidth : false,
