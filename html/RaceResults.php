@@ -351,10 +351,13 @@ div.race-insights-chart {
 				],
 				footerCallback: function ( row, data, start, end, display ) {
 					// Hide time / distance column if value is all zeroes
-					showHideNumericColumn('performance:name');
-					showHideNumericColumn('percentageGrading:name');
-					showHideNumericColumn('position:name');
-					showHideTextColumn('standardType:name');
+					var api = this.api();
+					var nonEmpty = (x) => x != '' || x != undefined;
+					var nonZero = (x) => x > 0;
+					showHideNumericColumn(api, 'performance:name', nonZero);
+					showHideNumericColumn(api, 'percentageGrading:name', nonZero);
+					showHideNumericColumn(api, 'position:name', nonZero);
+					showHideTextColumn(api, 'standardType:name', nonEmpty);
 				},
 				processing : true,
 				autoWidth : false,
@@ -364,27 +367,13 @@ div.race-insights-chart {
 			});
 		}
 
-		function showHideTextColumn(columnName) {
-			var api = this.api();
-
-			var value = api
+		function showHideColumn(api, columnName, expression) {
+			var visible = api
 				.column( columnName, { page: 'current'} )
 				.data()
-				.some((x) => x != '' || x != undefined);
+				.some(expression);
 					
-			$(api.column(columnName).visible(value));
-		}
-
-		function showHideNumericColumn(columnName) {
-			// Hide column if value is all zeroes
-			var api = this.api();
-
-			var total = api
-				.column( columnName, { page: 'current'} )
-				.data()
-				.some((x) => x > 0);
-					
-			$(api.column(columnName).visible(total != 0));
+			$(api.column(columnName).visible(visible));
 		}
 
 		function getResultImprovement(previousTimeInSeconds, newTimeInSeconds) {
