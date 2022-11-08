@@ -186,6 +186,41 @@ div.race-insights-chart {
 			});
 		}
 
+		function getResultsTitle(race) {
+			var title = race.description != '' ? race.description + ', ' : '';
+			title += ipswichjaffarc.formatDate(race.date);
+
+			if (race.distanceId > 0) {
+				title += " | " + race.distance;
+			}
+
+			if (race.courseType != '') {
+				title += " | " + race.courseType;
+			}
+
+			if (race.conditions != '') {
+				title += " | " + race.conditions;
+			}
+
+			if (race.venue != '') {
+				title += " | " + race.venue;
+			}
+
+			if (race.county != '') {
+				title += " | " + race.county;
+			}
+
+			if (race.area != '') {
+				title += " | " + race.area;
+			}
+
+			if (race.countryCode != '') {
+				title += " | " + race.countryCode;
+			}
+
+			return title;
+		}
+
 		function getRaceResult(race) {
 			var courseTypeIdsToDisplayImprovements = ["1", "3", "6"];
 			var resultColumnTitle;
@@ -196,8 +231,7 @@ div.race-insights-chart {
 				resultColumnTitle = 'Time';
 			}
 			
-			var title = race.description != null ? race.description + ', ' : '';
-			title += ipswichjaffarc.formatDate(race.date);
+			var title = getResultsTitle(race);
 			
 			if (race.report != null) {
 				var raceReport = '<p>' + race.report + '</p>';
