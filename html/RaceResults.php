@@ -269,7 +269,8 @@ div.race-insights-chart {
 				searching: false,
 				serverSide : false,
 				columns : [{
-						data : "position"
+						data : "position",
+						name : "position"
 					}, {
 						data : "runnerName",
 						render : function (data, type, row, meta) {
@@ -331,34 +332,29 @@ div.race-insights-chart {
 						data : "categoryCode"
 					}, {
 						data : "standardType",
-						visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false
+						//visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
+						name : "standardType"
 					}, {
 						data : "info"
 					}, {
 						data : "percentageGrading",
-						visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
+						//visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
 						render : function (data, type, row, meta) {
 							var html = data > 0 ? data + '%' : '';
 							if (row.percentageGradingBest == 1) {
 								html += ' <i style="color: #e88112;" class="fa fa-star" aria-hidden="true" title="New percenatge grading personal best"></i>'
 							}
 							return html;
-						}
+						},
+						name : "percentageGrading"
 					}
 				],
 				footerCallback: function ( row, data, start, end, display ) {
 					// Hide time / distance column if value is all zeroes
-					var performanceColumnName = 'performance:name';
-					var api = this.api();
-		
-					var timeTotal = api
-						.column( performanceColumnName, { page: 'current'} )
-						.data()
-						.reduce( function (a, b) {
-							return Number(a) + Number(b);
-						}, 0 );
-							
-					$(api.column(performanceColumnName).visible(timeTotal != 0));
+					showHideNumericColumn('performance:name');
+					showHideNumericColumn('percentageGrading:name');
+					showHideNumericColumn('position:name');
+					showHideTextColumn('standardType:name');
 				},
 				processing : true,
 				autoWidth : false,
@@ -366,6 +362,29 @@ div.race-insights-chart {
 				order : [[0, "asc"], [2, "asc"]],
 				ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/race/' + race.id)
 			});
+		}
+
+		function showHideTextColumn(columnName) {
+			var api = this.api();
+
+			var value = api
+				.column( columnName, { page: 'current'} )
+				.data()
+				.some((x) => x != '' || x != undefined);
+					
+			$(api.column(columnName).visible(value));
+		}
+
+		function showHideNumericColumn(columnName) {
+			// Hide column if value is all zeroes
+			var api = this.api();
+
+			var total = api
+				.column( columnName, { page: 'current'} )
+				.data()
+				.some((x) => x > 0);
+					
+			$(api.column(columnName).visible(total != 0));
 		}
 
 		function getResultImprovement(previousTimeInSeconds, newTimeInSeconds) {
