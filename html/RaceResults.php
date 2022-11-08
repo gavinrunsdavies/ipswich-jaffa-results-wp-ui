@@ -294,6 +294,7 @@ div.race-insights-chart {
 
 							return ipswichjaffarc.secondsToTime(row.performance);
 						},
+						name: 'performance',
 						className : 'text-right'
 					}, {
 						data : "isPersonalBest",
@@ -345,6 +346,20 @@ div.race-insights-chart {
 						}
 					}
 				],
+				footerCallback: function ( row, data, start, end, display ) {
+					// Hide time / distance column if value is all zeroes
+					var performanceColumnName = 'performance:name';
+					var api = this.api();
+		
+					var timeTotal = api
+						.column( performanceColumnName, { page: 'current'} )
+						.data()
+						.reduce( function (a, b) {
+							return Number(a) + Number(b);
+						}, 0 );
+							
+					$(api.column(performanceColumnName).visible(timeTotal != 0));
+				},
 				processing : true,
 				autoWidth : false,
 				scrollX : true,
