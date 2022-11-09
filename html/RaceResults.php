@@ -35,31 +35,21 @@ div.race-insights-chart {
 	
 	jQuery(document).ready(function ($) {
 
-		getMeetingDetails(<?php echo $_GET['raceId']; ?>);
+		getMeetingDetails(<?php echo $_GET['raceId']; ?>, true);
 
-		// Get Meeting Details for event and date
 		// Get race - get meeting details for event and date
 		// Returns - races, teams/team results, event, meeting (report, dates)
 		// Get event insights
 
-		// Get races for event and date
-		// - For each get race results
-		// Get event races - group per date
-		// Get event insights
-		// Meetings?
 		// Leagues? Are races part of a league
-		var meetingId = 0;
-		var selectedRaceCourseTypeId = 0;
-		//
-	//				selectedRaceCourseTypeId = raceData.courseTypeId;
-	
+
 		$('#jaffa-other-race-results').change(function () {
 			var raceId = $('#jaffa-other-race-results').val();
 			if (raceId == 0)
 				return;
 
 			$('#jaffa-race-results').empty();
-			getMeetingDetails(raceId);
+			getMeetingDetails(raceId, false);
 			document.getElementById("jaffa-race-results").scrollIntoView();
 		});
 
@@ -67,7 +57,7 @@ div.race-insights-chart {
 			$('#jaffa-event-title').html(name);
 		}
 
-		function getMeetingDetails(raceId) {
+		function getMeetingDetails(raceId, isEventMetaDataRequired) {
 			$.ajax(getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/meetingdetails/races/'+raceId))
 				.done(function(response) {
 					setEventName(response.event.name);
@@ -78,8 +68,11 @@ div.race-insights-chart {
 					for (var i = 0; i < response.races.length; i++) {
 						getRaceResult(response.races[i]);
 					}
-					getEventRaces(response.event.id);
-					getRaceInsightsData(response.event.id);
+
+					if (isEventMetaDataRequired) {
+						getEventRaces(response.event.id);
+						getRaceInsightsData(response.event.id);
+					}
 				}
 			);
 		}
@@ -187,7 +180,12 @@ div.race-insights-chart {
 		}
 
 		function getResultsTitle(race) {
-			var title = race.description != '' ? race.description + ', ' : '';
+			var title = '';
+
+			if (race.description) {
+				title += race.description + ', ';
+			}
+
 			title += ipswichjaffarc.formatDate(race.date);
 
 			if (race.distance) {
@@ -417,7 +415,7 @@ div.race-insights-chart {
 			var showPanel = false;
 			var distanceData = getDistinctRaceDistanceData(raceData);
 			distanceData.forEach(distance => {
-				if (distance.data.length > 4 && distance.distance != null) {
+				if (distance.data.length > 4) {
 					createRaceInsightsChart(distance.data, distance.distance);
 					showPanel = true;
 				}
@@ -483,7 +481,7 @@ div.race-insights-chart {
 					panX: false,
 					panY: false,
 					wheelY: "none",
-					pinchZoomX:true
+					pinchZoomX: true
 				}));
 				chart.zoomOutButton.set("forceHidden", true);
 
@@ -535,8 +533,10 @@ div.race-insights-chart {
 					pointerOrientation: "horizontal"
 				}));
 
-				if (selectedRaceCourseTypeId == 1 || selectedRaceCourseTypeId == 2 || selectedRaceCourseTypeId == 3) {
-					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}\n[width: 140px]Mean time[/] {mean}\n[width: 140px]Fastest time[/] {min}\n[width: 140px]Last finisher time[/] {max}"
+				if (distance) {
+					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}\n"
+					+"[width: 140px]Mean time[/] {mean}\n[width: 140px]Fastest time[/] {min}\n"
+					+"[width: 140px]Last finisher time[/] {max}"
 				} else {
 					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}"
 				}
@@ -592,8 +592,8 @@ div.race-insights-chart {
 					lineSeries.appear(1000);
 				}
 
-				// Only display times for road (1), MT (2) and track races (3)
-				if (selectedRaceCourseTypeId == 1 || selectedRaceCourseTypeId == 2 || selectedRaceCourseTypeId == 3) {
+				// Only display times for defined distance races.
+				if (distance) {
 					createTimeSeries("meanPerformance");
 					createTimeSeries("minPerformance");
 					createTimeSeries("maxPerformance");
@@ -607,8 +607,12 @@ div.race-insights-chart {
 				
 				cursor.lineX.set("visible", false);
 
+				var chartTitle = '';
+				if (distance) {
+					chartTitle = "Race distance " + distance;
+				}
 				chart.children.unshift(am5.Label.new(root, {
-					text: "Race distance "+ distance,
+					text: chartTitle,
 					fontSize: 18,
 					fontWeight: "500",
 					textAlign: "center",
