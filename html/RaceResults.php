@@ -535,9 +535,9 @@ div.race-insights-chart {
 
 				if (distance) {
 					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}\n"
-					+"[width: 140px]Mean time[/] {ipswichjaffarc.secondsToTime(mean)}\n"
-					+"[width: 140px]Fastest time[/] {ipswichjaffarc.secondsToTime(min)}\n"
-					+"[width: 140px]Last finisher time[/] {ipswichjaffarc.secondsToTime(max)}";
+					+"[width: 140px]Mean time[/] {meanPerformance.formatDuration('hh:mm:ss')}\n"
+					+"[width: 140px]Fastest time[/] {minPerformance.formatDuration('hh:mm:ss')}\n"
+					+"[width: 140px]Last finisher time[/] {maxPerformance.formatDuration('hh:mm:ss')}";
 				} else {
 					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}";
 				}
