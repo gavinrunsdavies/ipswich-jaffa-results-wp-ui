@@ -611,6 +611,8 @@ div.race-insights-chart {
 				var chartTitle = '';
 				if (distance) {
 					chartTitle = "Race distance " + distance;
+				} else {
+					chartTitle = "Race distance undefined/inaccurate";
 				}
 				chart.children.unshift(am5.Label.new(root, {
 					text: chartTitle,
