@@ -535,10 +535,11 @@ div.race-insights-chart {
 
 				if (distance) {
 					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}\n"
-					+"[width: 140px]Mean time[/] {mean}\n[width: 140px]Fastest time[/] {min}\n"
-					+"[width: 140px]Last finisher time[/] {max}"
+					+"[width: 140px]Mean time[/] {ipswichjaffarc.secondsToTime(mean)}\n"
+					+"[width: 140px]Fastest time[/] {ipswichjaffarc.secondsToTime(min)}\n"
+					+"[width: 140px]Last finisher time[/] {ipswichjaffarc.secondsToTime(max)}";
 				} else {
-					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}"
+					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}";
 				}
 
 				tooltip.label.setAll({
