@@ -10,7 +10,7 @@
 }
 
 div.race-insights-chart {
-	height: 350px;	
+	height: 350px;
 	margin-bottom: 5em;
 }
 </style>
@@ -19,7 +19,7 @@ div.race-insights-chart {
 	<div id="jaffa-race-results">
 	</div>
 	<div id="race-insights-panel" style="margin: 3em 0; display: none">
-		<h3>Race Insights: Yearly comparison</h3>		
+		<h3>Race Insights: Yearly comparison</h3>
 		<div id="race-insights-chart" style="clear: both;"></div>
 	</div>
 	<div class="formRankCriteria">
@@ -32,8 +32,16 @@ div.race-insights-chart {
 <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script type="text/javascript">
-	<?php if (isset($_GET['raceId']) || (isset($_GET['eventId']) && isset($_GET['date']))): ?>
+	
 	jQuery(document).ready(function ($) {
+
+		getMeetingDetails(<?php echo $_GET['raceId']; ?>, true);
+
+		// Get race - get meeting details for event and date
+		// Returns - races, teams/team results, event, meeting (report, dates)
+		// Get event insights
+
+		// Leagues? Are races part of a league
 
 		$('#jaffa-other-race-results').change(function () {
 			var raceId = $('#jaffa-other-race-results').val();
@@ -41,80 +49,44 @@ div.race-insights-chart {
 				return;
 
 			$('#jaffa-race-results').empty();
-			getRace(raceId, false);
+			getMeetingDetails(raceId, false);
 			document.getElementById("jaffa-race-results").scrollIntoView();
 		});
-
-		// 1. Get race
-		// 2. If meetingId is > 0, get meetingId
-		// 2.1 Get associated races
-		// 3 Get race results (for each race)
-		// 4. If no race Id (backwards compatibility) get event races then match on date field (array in response)
-
-		<?php if (isset($_GET['raceId'])) {?>
-			getRace(<?php echo $_GET['raceId']; ?>);
-		<?php } else {?>
-			// Temporary. For backwards compatibility only.
-			$.ajax(
-				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/<?php echo $_GET['eventId']; ?>/races'))
-				.done(function(raceData) {
-					for (var i = 0; i < raceData.length; i++) {
-						if (raceData[i].date == '<?php echo $_GET['date']; ?>') {
-							getRace(raceData[i].id);
-							break;
-						}
-					}
-				});
-		<?php }?>
 
 		function setEventName(name) {
 			$('#jaffa-event-title').html(name);
 		}
 
-		var selectedRaceCourseTypeId = 0;
-
-		function getRace(raceId, addEventRacesToSelect = true) {
-			$.ajax(
-				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/races/' + raceId))
-				.done(function(raceData) {
-					setEventName(raceData.eventName);
-					selectedRaceCourseTypeId = raceData.courseTypeId;
-					if (raceData.meetingId > 0) {
-						getMeeting(raceData.meetingId);
-					} else {
-						getRaceResult(raceData, raceData.eventName, raceData.date, raceData.resultUnitTypeId);
-					}
-
-					if (addEventRacesToSelect) {
-						getEventRaces(raceData.eventId);
-					}
-				});
-		}
-
-		function getMeeting(meetingId) {
-			$.ajax(
-				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/meetings/' + meetingId))
+		function getMeetingDetails(raceId, isEventMetaDataRequired) {
+			$.ajax(getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/meetingdetails/races/'+raceId))
 				.done(function(response) {
-					if (response.meeting != null) {
-						var meetingDates = response.meeting.fromDate;
-						if (response.meeting.fromDate != response.meeting.toDate) {
-							meetingDates += ' - ' + response.meeting.toDate;
-						}
-
-						var meetingTitle = '<h3>Meeting: '+response.meeting.name+' ('+meetingDates+')</h3>';
-						$('#jaffa-race-results').prepend(meetingTitle);
-					}
-
-					if (response.races != null) {
-						for (var i = 0; i < response.races.length; i++) {
-							getRaceResult(response.races[i], response.races[i].description, response.races[i].date, response.races[i].resultUnitTypeId);
-						}
-					}
-
-					if (response.teams.length > 0) {
+					setEventName(response.event.name);
+					processMeeting(response.meeting);
+					if (response.teams?.length > 0) {
 						setTeamResults(response.teams);
 					}
-			});
+					for (var i = 0; i < response.races.length; i++) {
+						getRaceResult(response.races[i]);
+					}
+
+					if (isEventMetaDataRequired) {
+						getEventRaces(response.event.id);
+						getRaceInsightsData(response.event.id);
+					}
+				}
+			);
+		}
+
+		function processMeeting(meeting) {
+			if (meeting.id != 0) { // Ignore virtual meetings
+				var meetingDates = meeting.fromDate;
+				if (meeting.fromDate != meeting.toDate) {
+					meetingDates += ' - ' + meeting.toDate;
+				}
+
+				var meetingTitle = '<h3>Meeting: '+meeting.name+' ('+meetingDates+')</h3>';
+				$('#jaffa-race-results').prepend(meetingTitle);
+			}
 		}
 
 		function setTeamResults(teams) {
@@ -158,14 +130,14 @@ div.race-insights-chart {
 						runnerTime += ' (' + teams[i].results[j].runnerResult + ')';
 					}
 					runnerTime += '</a>';
-					dataRow.push(runnerTime);					
+					dataRow.push(runnerTime);
 				}
 				// cells for missing runners
 				for (; runnerCount <= maxResults; runnerCount++) {
 					dataRow.push('-');
 				}
 
-				dataSet.push(dataRow);				
+				dataSet.push(dataRow);
 			}
 			tableHtml += '</tbody>';
 			tableHtml += '</table>';
@@ -183,38 +155,81 @@ div.race-insights-chart {
 		function getEventRaces(eventId) {
 			$.ajax(
 				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/'+ eventId + '/races'))
-				.done(function(raceData) {
-					var dateOptions = '<option>Please select...</option>';
-					var meetingId = 0;
-					for (var i = 0; i < raceData.length; i++) {
-						if (raceData[i].meetingId > 0) {
-							if (meetingId != raceData[i].meetingId) {
-								meetingId = raceData[i].meetingId;
-								dateOptions += '<option value="' + raceData[i].id + '">' + raceData[i].date + ' (meeting) </option>';
+				.done(function(races) {
+					var options = '<option>Please select...</option>';
+					var date = 0;
+					var raceId = 0;
+					var resultsCount = 0;
+					
+					for (var i = 0; i < races.length; i++) {
+						if (races[i].date != date) {
+							if (date != 0) {
+								options += '<option value="' + raceId + '">' + date + ' (' + resultsCount + ' results)</option>';
 							}
+							resultsCount = Number(races[i].count);
+							date = races[i].date;
+							raceId = races[i].id;
 						} else {
-							dateOptions += '<option value="' + raceData[i].id + '">' + raceData[i].date + ' (' + raceData[i].count + ' results) </option>';
+							resultsCount += Number(races[i].count);
 						}
 					}
+					options += '<option value="' + raceId + '">' + date + ' (' + resultsCount + ' results)</option>';
 
-					$('#jaffa-other-race-results').append(dateOptions);
-
-					getRaceInsightsData(eventId);
+					$('#jaffa-other-race-results').append(options);
 			});
 		}
 
-		function getRaceResult(race, description, date, measurementUnitType) {
+		function getResultsTitle(race) {
+			var title = '';
+
+			if (race.description) {
+				title += race.description + ', ';
+			}
+
+			title += ipswichjaffarc.formatDate(race.date);
+
+			if (race.distance) {
+				title += " | " + race.distance;
+			}
+
+			if (race.courseType) {
+				title += " | " + race.courseType;
+			}
+
+			if (race.conditions) {
+				title += " | " + race.conditions;
+			}
+
+			if (race.venue) {
+				title += " | " + race.venue;
+			}
+
+			if (race.county) {
+				title += " | " + race.county;
+			}
+
+			if (race.area) {
+				title += " | " + race.area;
+			}
+
+			if (race.countryCode) {
+				title += " | " + race.countryCode;
+			}
+
+			return title;
+		}
+
+		function getRaceResult(race) {
 			var courseTypeIdsToDisplayImprovements = ["1", "3", "6"];
 			var resultColumnTitle;
 			var tableName = 'jaffa-race-results-table-';
-			if  (Number(measurementUnitType) == 3) {
+			if  (race.resultUnitTypeId == "3") {
 				resultColumnTitle = 'Distance';
 			} else {
 				resultColumnTitle = 'Time';
-			}			
+			}
 			
-			var title = description != null ? description + ', ' : '';
-			title += ipswichjaffarc.formatDate(date);
+			var title = getResultsTitle(race);
 			
 			if (race.report != null) {
 				var raceReport = '<p>' + race.report + '</p>';
@@ -252,7 +267,8 @@ div.race-insights-chart {
 				searching: false,
 				serverSide : false,
 				columns : [{
-						data : "position"
+						data : "position",
+						name : "position"
 					}, {
 						data : "runnerName",
 						render : function (data, type, row, meta) {
@@ -271,12 +287,13 @@ div.race-insights-chart {
 					}, {
 						data : "performance",
 						render : function(data, type, row, meta) {
-							if (measurementUnitType == "3") {
+							if (race.resultUnitTypeId == "3") {
 								return Number(data).toLocaleString();
 							}
 
 							return ipswichjaffarc.secondsToTime(row.performance);
 						},
+						name: 'performance',
 						className : 'text-right'
 					}, {
 						data : "isPersonalBest",
@@ -313,27 +330,49 @@ div.race-insights-chart {
 						data : "categoryCode"
 					}, {
 						data : "standardType",
-						visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false
+						//visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
+						name : "standardType"
 					}, {
 						data : "info"
 					}, {
 						data : "percentageGrading",
-						visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
+						//visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
 						render : function (data, type, row, meta) {
 							var html = data > 0 ? data + '%' : '';
 							if (row.percentageGradingBest == 1) {
 								html += ' <i style="color: #e88112;" class="fa fa-star" aria-hidden="true" title="New percenatge grading personal best"></i>'
 							}
 							return html;
-						}
+						},
+						name : "percentageGrading"
 					}
 				],
+				footerCallback: function ( row, data, start, end, display ) {
+					// Hide column if value is all zeroes / empty
+					var api = this.api();
+					var nonEmpty = (x) => x != '' && x != undefined;
+					var nonZero = (x) => x > 0;
+					showHideColumn(api, 'performance:name', nonZero);
+					showHideColumn(api, 'percentageGrading:name', nonZero);
+					showHideColumn(api, 'position:name', nonZero);
+					showHideColumn(api, 'standardType:name', nonEmpty);
+				},
 				processing : true,
 				autoWidth : false,
 				scrollX : true,
 				order : [[0, "asc"], [2, "asc"]],
 				ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/race/' + race.id)
 			});
+		}
+
+		function showHideColumn(api, columnName, expression) {
+			var visible = api
+				.column( columnName, { page: 'current'} )
+				.data()
+				.toArray()
+				.some(expression);
+					
+			$(api.column(columnName).visible(visible));
 		}
 
 		function getResultImprovement(previousTimeInSeconds, newTimeInSeconds) {
@@ -376,14 +415,14 @@ div.race-insights-chart {
 			var showPanel = false;
 			var distanceData = getDistinctRaceDistanceData(raceData);
 			distanceData.forEach(distance => {
-				if (distance.data.length > 4 && distance.distance != null) {
+				if (distance.data.length > 4) {
 					createRaceInsightsChart(distance.data, distance.distance);
 					showPanel = true;
-				}		
+				}
 			});
 
 			if (showPanel) {
-				$('#race-insights-panel').show();			
+				$('#race-insights-panel').show();
 			}
 		}
 
@@ -419,7 +458,7 @@ div.race-insights-chart {
 		function createRaceInsightsChart(data, distance) {
 			$('#race-insights-panel').show();
 
-			var containerDiv = document.createElement('div');    
+			var containerDiv = document.createElement('div');
 			containerDiv.id = "distance-" + distance;
 			containerDiv.className = "race-insights-chart";
 			document.getElementById('race-insights-chart').appendChild(containerDiv);
@@ -438,13 +477,13 @@ div.race-insights-chart {
 				});
 
 				// Create chart
-				var chart = root.container.children.push(am5xy.XYChart.new(root, {	
+				var chart = root.container.children.push(am5xy.XYChart.new(root, {
 					panX: false,
 					panY: false,
 					wheelY: "none",
-					pinchZoomX:true
-				}));	
-				chart.zoomOutButton.set("forceHidden", true);		
+					pinchZoomX: true
+				}));
+				chart.zoomOutButton.set("forceHidden", true);
 
 				// Create axes
 				// https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
@@ -470,7 +509,7 @@ div.race-insights-chart {
 					tooltip: am5.Tooltip.new(root, {})
 				}));
 
-				// Duration series (seconds) axis 				
+				// Duration series (seconds) axis
 				var timeYAxisRenderer = am5xy.AxisRendererY.new(root, {opposite: true});
 				timeYAxisRenderer.grid.template.set("forceHidden", true);
 				var timeYAxis = chart.yAxes.push(am5xy.DurationAxis.new(root, {
@@ -479,9 +518,9 @@ div.race-insights-chart {
 					renderer: timeYAxisRenderer
 				}));
 
-				timeYAxisRenderer.grid.template.set("forceHidden", true);				
+				timeYAxisRenderer.grid.template.set("forceHidden", true);
 
-				// Create series for count				
+				// Create series for count
 				var countSeries = chart.series.push(am5xy.ColumnSeries.new(root, {
 					xAxis: yearXAxis,
 					yAxis: countYAxis,
@@ -494,10 +533,13 @@ div.race-insights-chart {
 					pointerOrientation: "horizontal"
 				}));
 
-				if (selectedRaceCourseTypeId == 1 || selectedRaceCourseTypeId == 2 || selectedRaceCourseTypeId == 3) {
-					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}\n[width: 140px]Mean time[/] {mean}\n[width: 140px]Fastest time[/] {min}\n[width: 140px]Last finisher time[/] {max}"
+				if (distance) {
+					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}\n"
+					+"[width: 140px]Mean time[/] {meanPerformance.formatDuration('hh:mm:ss')}\n"
+					+"[width: 140px]Fastest time[/] {minPerformance.formatDuration('hh:mm:ss')}\n"
+					+"[width: 140px]Last finisher time[/] {maxPerformance.formatDuration('hh:mm:ss')}";
 				} else {
-					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}"
+					tooltipText = "[bold]{categoryX}:[/]\n[width: 140px]Finishers[/] {count}";
 				}
 
 				tooltip.label.setAll({
@@ -544,15 +586,15 @@ div.race-insights-chart {
 						
 						return am5.Bullet.new(root, {
 							sprite: graphics
-						});	
+						});
 					});
 
 					lineSeries.data.setAll(data);
 					lineSeries.appear(1000);
-				}								
+				}
 
-				// Only display times for road (1),  MT (2) and track races (3)
-				if (selectedRaceCourseTypeId == 1 || selectedRaceCourseTypeId == 2 || selectedRaceCourseTypeId == 3) {
+				// Only display times for defined distance races.
+				if (distance) {
 					createTimeSeries("meanPerformance");
 					createTimeSeries("minPerformance");
 					createTimeSeries("maxPerformance");
@@ -566,8 +608,14 @@ div.race-insights-chart {
 				
 				cursor.lineX.set("visible", false);
 
+				var chartTitle = '';
+				if (distance) {
+					chartTitle = "Race distance " + distance;
+				} else {
+					chartTitle = "Race distance undefined/inaccurate";
+				}
 				chart.children.unshift(am5.Label.new(root, {
-					text: "Race distance "+ distance,
+					text: chartTitle,
 					fontSize: 18,
 					fontWeight: "500",
 					textAlign: "center",
@@ -588,5 +636,4 @@ div.race-insights-chart {
 				}); // end am5.ready()
 		}
 	});
-	<?php endif;?>
 </script>

@@ -124,7 +124,7 @@ class LatestResultsWidget extends \WP_Widget
 		 for ($i = 0; $i < count($results) && $i < $numberOfResults; $i++)
 		 {
 			echo '<li>';
-			echo '<p class="result"><a href="'.$linkUrl.'?eventId='.$results[$i]->id.'&date='.$results[$i]->lastRaceDate.'" title="Click for full results.">'.$results[$i]->name.'</a> from the '.$this->formatDate($results[$i]->lastRaceDate).'.</p>';
+			echo '<p class="result"><a href="'.$linkUrl.'?raceId='.$results[$i]->lastRaceId.'" title="Click for full results.">'.$results[$i]->name.'</a> from the '.$this->formatDate($results[$i]->lastRaceDate).'.</p>';
 			echo '</li>';
 		}
 
@@ -145,11 +145,11 @@ class LatestResultsWidget extends \WP_Widget
 
 	private function getLatestResults()
 	{
-		$url = esc_url( home_url() ).'/wp-json/ipswich-jaffa-api/v2/events';
+		$url = esc_url(home_url()).'/wp-json/ipswich-jaffa-api/v2/events?time=' . time();
 		$curl = curl_init($url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Cache-Control: no-cache"));
-		$response = curl_exec($curl);			
+		$response = curl_exec($curl);
 		curl_close($curl);
 		$decoded = json_decode($response);
 		if (isset($decoded->response->status) && $decoded->response->status == 'ERROR') {
