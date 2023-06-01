@@ -412,7 +412,7 @@ div.race-insights-chart {
 					});
 		}
 
-		function showEventTopAttendees(raceData) {
+		function showEventTopAttendees(data) {
 			var containerDiv = document.createElement('div');
 			containerDiv.id = "event-attendees";
 			containerDiv.className = "event-attendees-chart";
