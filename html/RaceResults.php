@@ -445,9 +445,9 @@ div.race-insights-chart {
 					paddingRight: 15
 				});
 
-				var yearXAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+				var nameXAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
 					maxDeviation: 0.3,
-					categoryField: "year",
+					categoryField: "name",
 					renderer: xRenderer
 				}));
 
@@ -493,7 +493,7 @@ div.race-insights-chart {
 
 				// Add cursor
 				var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
-					xAxis: yearXAxis,
+					xAxis: nameXAxis,
   					yAxis: countYAxis
 				}));
 				
@@ -511,7 +511,7 @@ div.race-insights-chart {
   					paddingBottom: 0
 				}));
 
-				yearXAxis.data.setAll(data);
+				nameXAxis.data.setAll(data);
 				countSeries.data.setAll(data);
 
 				// Make stuff animate on load
