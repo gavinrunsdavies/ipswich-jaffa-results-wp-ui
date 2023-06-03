@@ -8,8 +8,11 @@
 .site-content {
 	padding-top: 0;
 }
-
 div.race-insights-chart {
+	height: 350px;
+	margin-bottom: 5em;
+}
+div.event-attendees-chart {
 	height: 350px;
 	margin-bottom: 5em;
 }
@@ -18,9 +21,9 @@ div.race-insights-chart {
 	<h2 id="jaffa-event-title"></h2>
 	<div id="jaffa-race-results">
 	</div>
-	<div id="race-insights-panel" style="margin: 3em 0; display: none">
-		<h3>Race Insights: Yearly comparison</h3>
-		<div id="race-insights-chart" style="clear: both;"></div>
+	<div id="race-insights-panel" style="margin: 3em 0; display: none; text-align: center">
+		<h3>Event and Race Insights</h3>
+		<div id="race-insights" style="clear: both;"></div>
 	</div>
 	<div class="formRankCriteria">
 		<label for="jaffa-other-race-results">Other race results</label>
@@ -405,25 +408,130 @@ div.race-insights-chart {
 			$.ajax(
 				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/' + eventId + '/insights'))
 					.done(function(data) {
-						showRaceInsightsData(data.years);
-						showEventInsightsData(data.distance);
+						$('#race-insights-panel').show();
+						showRaceInsights(data.years);
+						showEventInsights(data.distance);
+						showEventTopAttendees(data.attendees)
 					});
 		}
 
-		function showRaceInsightsData(raceData) {
-			
-			var showPanel = false;
+		function showEventTopAttendees(data) {
+			var containerDiv = document.createElement('div');
+			containerDiv.id = "event-attendees";
+			containerDiv.className = "event-attendees-chart";
+			document.getElementById('race-insights').appendChild(containerDiv);
+
+			am5.ready(function() {
+
+				var root = am5.Root.new(containerDiv.id);
+
+				root.setThemes([
+					am5themes_Animated.new(root)
+				]);
+
+				// Create chart
+				var chart = root.container.children.push(am5xy.XYChart.new(root, {
+					panX: false,
+					panY: false,
+					wheelY: "none",
+					pinchZoomX: true
+				}));
+				chart.zoomOutButton.set("forceHidden", true);
+
+				// Create axes
+				// https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+				var xRenderer = am5xy.AxisRendererX.new(root, { minGridDistance: 30 });
+				xRenderer.labels.template.setAll({
+					rotation: -90,
+					centerY: am5.p50,
+					centerX: am5.p100,
+					paddingRight: 15
+				});
+
+				var nameXAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+					maxDeviation: 0.3,
+					categoryField: "name",
+					renderer: xRenderer
+				}));
+
+				var countAxisRenderer = am5xy.AxisRendererY.new(root, {});
+				countAxisRenderer.grid.template.set("forceHidden", true);
+				var countYAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+					maxDeviation: 0.3,
+					renderer: countAxisRenderer,
+					tooltip: am5.Tooltip.new(root, {})
+				}));
+
+				// Create series for count
+				var countSeries = chart.series.push(am5xy.ColumnSeries.new(root, {
+					xAxis: nameXAxis,
+					yAxis: countYAxis,
+					valueYField: "count",
+					sequencedInterpolation: true,
+					categoryXField: "name"
+				}));
+
+				var tooltip = countSeries.set("tooltip", am5.Tooltip.new(root, {
+					pointerOrientation: "horizontal"
+				}));
+
+				var tooltipText = "[bold]{categoryX}:[/] {count} races. Last race {lastRaceDate}";
+
+				tooltip.label.setAll({
+					text: tooltipText
+				});
+
+				countSeries.data.processor = am5.DataProcessor.new(root, {
+					numericFields: ["count"]
+				});
+
+				countSeries.columns.template.setAll({ cornerRadiusTL: 5, cornerRadiusTR: 5 });
+				countSeries.columns.template.adapters.add("fill", function(fill, target) {
+					return chart.get("colors").getIndex(countSeries.columns.indexOf(target));
+				});
+
+				countSeries.columns.template.adapters.add("stroke", function(stroke, target) {
+					return chart.get("colors").getIndex(countSeries.columns.indexOf(target));
+				});
+
+				// Add cursor
+				var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
+					xAxis: nameXAxis,
+  					yAxis: countYAxis
+				}));
+				
+				cursor.lineX.set("visible", false);
+
+				var chartTitle = 'Event top 10 attendees';
+				chart.children.unshift(am5.Label.new(root, {
+					text: chartTitle,
+					fontSize: 18,
+					fontWeight: "500",
+					textAlign: "center",
+					x: am5.percent(50),
+					centerX: am5.percent(50),
+					paddingTop: 0,
+  					paddingBottom: 0
+				}));
+
+				nameXAxis.data.setAll(data);
+				countSeries.data.setAll(data);
+
+				// Make stuff animate on load
+				// https://www.amcharts.com/docs/v5/concepts/animations/
+				countSeries.appear(1000);
+				chart.appear(1000, 100);
+
+			}); // end am5.ready()
+		}
+
+		function showRaceInsights(raceData) {
 			var distanceData = getDistinctRaceDistanceData(raceData);
 			distanceData.forEach(distance => {
 				if (distance.data.length > 4) {
 					createRaceInsightsChart(distance.data, distance.distance);
-					showPanel = true;
 				}
 			});
-
-			if (showPanel) {
-				$('#race-insights-panel').show();
-			}
 		}
 
 		function getDistinctRaceDistanceData(data) {
@@ -440,12 +548,12 @@ div.race-insights-chart {
 			return distinct;
 		}
 
-		function showEventInsightsData(insights) {
+		function showEventInsights(insights) {
 			$('#race-insights-panel').append('<h4>Event Records</h5>');
 			$('#race-insights-panel').append('<p><small>Please note these are the Ipswich JAFFA Event records and are independent of course which may have changed over the duration of our event results.</small></p>');
 			insights.forEach(distance => {
 				$('#race-insights-panel').append('<h5>Distance: ' + distance.distance + '</h5>');
-				$('#race-insights-panel').append('<p>Total results: <strong>' + distance.count +
+				$('#race-insights-panel').append('<p style="text-align: left">Total results: <strong>' + distance.count +
 					'</strong>, average time: <strong>' + ipswichjaffarc.secondsToTime(distance.meanPerformance) +
 					'</strong>, fastest time: <strong>' + ipswichjaffarc.secondsToTime(distance.minPerformance) +
 					'</strong> was achieved by <strong><a href="<?php echo $memberResultsPageUrl; ?>?runner_id=' + distance.fastestRunnerId + '">' + distance.fastestRunnerName +
@@ -456,12 +564,10 @@ div.race-insights-chart {
 		}
 
 		function createRaceInsightsChart(data, distance) {
-			$('#race-insights-panel').show();
-
 			var containerDiv = document.createElement('div');
 			containerDiv.id = "distance-" + distance;
 			containerDiv.className = "race-insights-chart";
-			document.getElementById('race-insights-chart').appendChild(containerDiv);
+			document.getElementById('race-insights').appendChild(containerDiv);
 
 			am5.ready(function() {
 
