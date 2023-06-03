@@ -8,8 +8,11 @@
 .site-content {
 	padding-top: 0;
 }
-
 div.race-insights-chart {
+	height: 350px;
+	margin-bottom: 5em;
+}
+div.event-attendees-chart {
 	height: 350px;
 	margin-bottom: 5em;
 }
@@ -18,9 +21,9 @@ div.race-insights-chart {
 	<h2 id="jaffa-event-title"></h2>
 	<div id="jaffa-race-results">
 	</div>
-	<div id="race-insights-panel" style="margin: 3em 0; display: none">
-		<h3>Race Insights: Yearly comparison</h3>
-		<div id="race-insights-chart" style="clear: both;"></div>
+	<div id="race-insights-panel" style="margin: 3em 0; display: none; text-align: center">
+		<h3>Event and Race Insights</h3>
+		<div id="race-insights" style="clear: both;"></div>
 	</div>
 	<div class="formRankCriteria">
 		<label for="jaffa-other-race-results">Other race results</label>
@@ -416,7 +419,7 @@ div.race-insights-chart {
 			var containerDiv = document.createElement('div');
 			containerDiv.id = "event-attendees";
 			containerDiv.className = "event-attendees-chart";
-			document.getElementById('race-insights-chart').appendChild(containerDiv);
+			document.getElementById('race-insights').appendChild(containerDiv);
 
 			am5.ready(function() {
 
@@ -461,7 +464,7 @@ div.race-insights-chart {
 
 				// Create series for count
 				var countSeries = chart.series.push(am5xy.ColumnSeries.new(root, {
-					xAxis: yearXAxis,
+					xAxis: nameXAxis,
 					yAxis: countYAxis,
 					valueYField: "count",
 					sequencedInterpolation: true,
@@ -499,7 +502,7 @@ div.race-insights-chart {
 				
 				cursor.lineX.set("visible", false);
 
-				var chartTitle = 'Event top 10 attendess';
+				var chartTitle = 'Event top 10 attendees';
 				chart.children.unshift(am5.Label.new(root, {
 					text: chartTitle,
 					fontSize: 18,
@@ -550,7 +553,7 @@ div.race-insights-chart {
 			$('#race-insights-panel').append('<p><small>Please note these are the Ipswich JAFFA Event records and are independent of course which may have changed over the duration of our event results.</small></p>');
 			insights.forEach(distance => {
 				$('#race-insights-panel').append('<h5>Distance: ' + distance.distance + '</h5>');
-				$('#race-insights-panel').append('<p>Total results: <strong>' + distance.count +
+				$('#race-insights-panel').append('<p style="text-align: left">Total results: <strong>' + distance.count +
 					'</strong>, average time: <strong>' + ipswichjaffarc.secondsToTime(distance.meanPerformance) +
 					'</strong>, fastest time: <strong>' + ipswichjaffarc.secondsToTime(distance.minPerformance) +
 					'</strong> was achieved by <strong><a href="<?php echo $memberResultsPageUrl; ?>?runner_id=' + distance.fastestRunnerId + '">' + distance.fastestRunnerName +
@@ -564,7 +567,7 @@ div.race-insights-chart {
 			var containerDiv = document.createElement('div');
 			containerDiv.id = "distance-" + distance;
 			containerDiv.className = "race-insights-chart";
-			document.getElementById('race-insights-chart').appendChild(containerDiv);
+			document.getElementById('race-insights').appendChild(containerDiv);
 
 			am5.ready(function() {
 
