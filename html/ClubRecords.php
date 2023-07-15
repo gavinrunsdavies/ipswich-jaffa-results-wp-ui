@@ -343,6 +343,8 @@
 				],
 				ajax: getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/records/distance/' + distanceId)
 			});
+
+			$('#custom-category-club-records').show();
 		});
 
 		$('.club-records').each(function(index, value) {
