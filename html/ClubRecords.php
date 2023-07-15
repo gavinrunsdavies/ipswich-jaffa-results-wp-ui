@@ -121,8 +121,8 @@
 			for (let i = 0; i < distanceSelect.length; i++) {
 				distanceSelect[i].options.length = 0;
 
-				for (var i = 0; i < data.length; i++) {
-					distanceSelect[i].options.add(new Option(data[i].text, data[i].id));
+				for (var j = 0; j < data.length; j++) {
+					distanceSelect[i].options.add(new Option(data[j].text, data[j].id));
 				}
 			}
 
