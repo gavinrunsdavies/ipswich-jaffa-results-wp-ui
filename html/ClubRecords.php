@@ -36,7 +36,7 @@
 			<label for="distances">Select alternative distances (multiple sections allowed).</label>
 			<select id="club-records-distances" class="distance" name="distance" size="5" title="Select distance" multiple>
 			</select>
-			<input id="club-records-submit" class="distance-select" type="button" value="Get Records" disabled="disabled"/>
+			<input id="club-records-submit" class="distance-submit" type="button" value="Get Records" disabled="disabled"/>
 		</div>
 		<div id="custom-club-records" style="display:none; margin-bottom: 2em;">	
 			<table class="display" id="custom-club-records-table">
@@ -91,7 +91,7 @@
 		<label for="distances">Select an alternative distances for full category record holders.</label>
 		<select id="club-category-records-distance" class="distance" name="distance" size="5" title="Select distance">
 		</select>
-		<input id="club-category-records-submit" class="distance-select" type="button" value="Get Category Records" disabled="disabled"/>
+		<input id="club-category-records-submit" class="distance-submit" type="button" value="Get Category Records" disabled="disabled"/>
 	</div>
 	<div id="custom-category-club-records" style="display:none; margin-bottom: 2em;">	
 		<table class="display" id="custom-category-club-records-table">
