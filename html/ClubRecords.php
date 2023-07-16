@@ -19,6 +19,7 @@
 		margin-top: 2em;
 	}
 </style>
+<p><a href="#overall-club-records">Main Club Records</a> | <a href="#club-records-distances">Other Club Records</a> | <a href="#category-club-records">Main Category Records</a> | <a href="#custom-category-club-records">Other Category Records</a></p>
 <div class="section" id="club-records-top">
 	<div>
 		<table class="display" id="overall-club-records">
@@ -65,7 +66,7 @@
 		}
 		?>
 	</h4>
-	<div>
+	<div id="category-club-records">
 		<?php
 		foreach ($distances as $text => $distanceId) {
 		?>
