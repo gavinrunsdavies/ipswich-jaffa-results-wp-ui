@@ -300,6 +300,7 @@
 					}
 				},
 				pageLength: 50,
+				destroy : true,
 				serverSide: false,
 				paging: false,
 				searching: false,
