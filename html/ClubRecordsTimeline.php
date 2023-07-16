@@ -1,180 +1,254 @@
-<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
-<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
-<script src="https://cdn.amcharts.com/lib/4/plugins/timeline.js"></script>
-<script src="https://cdn.amcharts.com/lib/4/plugins/bullets.js"></script>
-<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script>
+  jQuery(document).ready(function($) {
 
-jQuery(document).ready(function($) {	
-	
-  $.getJSON(
-    '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/categories',
-    function(data) {
-      var select, option;
+    $.getJSON(
+      '<?php echo esc_url(home_url()); ?>/wp-json/ipswich-jaffa-api/v2/categories',
+      function(data) {
+        var select = $('#ageCategory')[0];
 
-      select = $('#ageCategory')[0];
+        select.options.length = 0;
+        select.options.add(new Option('Please select...', 0));
 
-      select.options.length = 0;
-      select.options.add(new Option('Please select...', 0));
-      
-      for (var i = 0; i < data.length; i++) {
-        select.options.add(new Option(data[i].description + ' (' + data[i].code + ')', data[i].id));
+        for (var i = 0; i < data.length; i++) {
+          select.options.add(new Option(data[i].description + ' (' + data[i].code + ')', data[i].id));
+        }
       }
-    }
-  );
+    );
 
-  $('#ageCategory').change(function () {
-			var ageCategoryId = $('#ageCategory').val();
-			if (ageCategoryId == 0)
-				return;
+    $.getJSON(
+      '<?php echo esc_url(home_url()); ?>/wp-json/ipswich-jaffa-api/v2/distances',
+      function(data) {
+        var select = $('#distance')[0];
 
-      $('#ageCategoryTitle').html($("#ageCategory option:selected").text());
-      $.ajax('<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/historicrecords/category/' + ageCategoryId)
-	      .done(function(data) {
-		      createTimelineChart(data);
-	    });	
-  });
+        select.options.length = 0;
+        select.options.add(new Option('Please select...', 0));
 
-  function createTimelineChart(data) {    
+        for (var i = 0; i < data.length; i++) {
+            // Only show fixed distance events.
+            if (data[i].resultUnitTypeId == "2" && data[i].name != "Ultra") {
+          select.options.add(new Option(data[i].name, data[i].id));
+            }
+        }
+      }
+    );
 
-    // Themes begin
-    am4core.useTheme(am4themes_animated);
-    // Themes end
+   var root;
 
-    var chart = am4core.create("chartdiv", am4plugins_timeline.SerpentineChart);
-    chart.curveContainer.padding(50, 20, 200, 200);
-    chart.levelCount = 15;
-    chart.yAxisRadius = am4core.percent(-10);
-    chart.yAxisInnerRadius = am4core.percent(-45);
-    chart.maskBullets = false;
+    $('#ageCategory').change(function() {
+      var ageCategoryId = $('#ageCategory').val();
+      if (ageCategoryId == 0)
+        return;
 
-    // var colorSet = new am4core.ColorSet();
-
-    // colorSet.saturation = 0.5;
-    chart.colors.list = [
-      am4core.color("#845EC2"),
-      am4core.color("#D65DB1"),
-      am4core.color("#FF6F91"),
-      am4core.color("#FF9671"),
-      am4core.color("#FFC75F"),
-      am4core.color("#F9F871")
-    ];
-
-    chart.data = data;
-
-    chart.dateFormatter.dateFormat = "yyyy-MM-dd";
-    chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
-    chart.fontSize = 15;
-
-    var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
-    categoryAxis.dataFields.category = "distance";
-    categoryAxis.renderer.grid.template.disabled = true;
-    categoryAxis.renderer.labels.template.paddingRight = 25;
-    categoryAxis.renderer.minGridDistance = 10;
-    categoryAxis.renderer.innerRadius = -60;
-    categoryAxis.renderer.radius = 60;
-
-    var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-    dateAxis.renderer.minGridDistance = 70;
-    dateAxis.baseInterval = { count: 1, timeUnit: "day" };
-    dateAxis.renderer.tooltipLocation = 0;
-    dateAxis.startLocation = -0.5;
-    dateAxis.renderer.line.strokeDasharray = "1,4";
-    dateAxis.renderer.line.strokeOpacity = 0.6;
-    dateAxis.tooltip.background.fillOpacity = 0.2;
-    dateAxis.tooltip.background.cornerRadius = 5;
-    dateAxis.tooltip.label.fill = new am4core.InterfaceColorSet().getFor("alternativeBackground");
-    dateAxis.tooltip.label.paddingTop = 7;
-
-    var labelTemplate = dateAxis.renderer.labels.template;
-    labelTemplate.verticalCenter = "middle";
-    labelTemplate.fillOpacity = 0.7;
-    labelTemplate.background.fill = new am4core.InterfaceColorSet().getFor("background");
-    labelTemplate.background.fillOpacity = 1;
-    labelTemplate.padding(7, 7, 7, 7);
-
-    var series = chart.series.push(new am4plugins_timeline.CurveColumnSeries());
-    series.columns.template.height = am4core.percent(20);
-    //series.columns.template.tooltipText = "[bold]{runnerName} - {eventName}, {time}[/]: {openDateX} - {dateX}";
-
-    series.dataFields.openDateX = "startDate";
-    series.dataFields.dateX = "endDate";
-    series.dataFields.categoryY = "distance";
-    //series.columns.template.propertyFields.fill = "color"; // get color from data
-    //series.columns.template.propertyFields.stroke = "color";
-    series.columns.template.strokeOpacity = 0;
-
-    // as by default columns of the same series are of the same color, we add adapter which takes colors from chart.colors color set
-    series.columns.template.adapter.add("fill", (fill, target) => {
-      return target.dataItem ? chart.colors.getIndex(target.dataItem.index) : fill;
+      $('#recordTitle').html("Club record for age category " + $("#ageCategory option:selected").text());
+      $('#distance').prop('selectedIndex', 0);
+      $.ajax('<?php echo esc_url(home_url()); ?>/wp-json/ipswich-jaffa-api/v2/results/historicrecords/category/' + ageCategoryId)
+        .done(function(data) {
+          createTimelineChart(data, "Category");
+        });
     });
+
+    $('#distance').change(function() {
+      var distanceId = $('#distance').val();
+      if (distanceId == 0)
+        return;
+
+      $('#recordTitle').html("Club records for distance " + $("#distance option:selected").text());
+      $('#ageCategory').prop('selectedIndex', 0);
+      $.ajax('<?php echo esc_url(home_url()); ?>/wp-json/ipswich-jaffa-api/v2/results/historicrecords/distance/' + distanceId)
+        .done(function(data) {
+          createTimelineChart(data, "Distance");
+        });
+    });
+
+    function createTimelineChart(data, titlePrefix) {
+
+      am5.ready(function() {
+         
+          if (root) {
+          root.dispose();
+          }
+                  // Create root element
+        // https://www.amcharts.com/docs/v5/getting-started/#Root_element 
+         root = am5.Root.new("chartdiv");
+
+        // Set themes
+        // https://www.amcharts.com/docs/v5/concepts/themes/ 
+        root.setThemes([
+          am5themes_Animated.new(root)
+        ]);
+
+        // Create chart
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/
+        var chart = root.container.children.push(am5xy.XYChart.new(root, {
+          panX: true,
+          panY: true,
+          wheelX: "panX",
+          wheelY: "zoomX",
+          pinchZoomX: true
+        }));
+
+        chart.leftAxesContainer.set("layout", root.verticalLayout);
         
-      series.bulletsContainer.parent = chart.seriesContainer;		
 
-    var bullet2 = series.bullets.push(new am4charts.CircleBullet());
-    bullet2.circle.radius = 10;
-    bullet2.circle.strokeOpacity = 0;
-    bullet2.propertyFields.fill = "color";
-    bullet2.locationX = 1;
+        // Create axes
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+        var xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
+          maxDeviation: 0.1,
+          groupData: false,
+          baseInterval: {
+            timeUnit: "day",
+            count: 1
+          },
+          extraMax: 0.05,
+          extraMin: 0.01,
+          renderer: am5xy.AxisRendererX.new(root, {
+            minGridDistance: 100
+          }),
+          tooltip: am5.Tooltip.new(root, {})
+        }));
 
-          // Creating a bullet
-      var bullet = series.bullets.push(new am4plugins_bullets.FlagBullet());
-
-      // Setting label to display values from data
-      bullet.label.text = "{categoryY}\n[bold]{runnerName} - {eventName}[/]\n{time}\n{openDateX} - {dateX}";
-      bullet.label.textAlign = "middle";
-      bullet.locationX = 1;
-      bullet.poleHeight = 50;
-      bullet.pole.propertyFields.stroke = "bulletColor"; // TODO
-        bullet.fillOpacity = 0.5;
-        bullet.strokeOpacity = 0.5;
-      bullet.scale = 0.2;		
-
-        bullet.setStateOnChildren = true;
-    bullet.states.create("hover").properties.scale = 1.2;
-    bullet.label.states.create("hover").properties.fillOpacity = 1.0;
-        bullet.label.states.create("hover").properties.zIndex = 1000;
+xAxis.children.push(
+  am5.Label.new(root, {
+    text: "Year",
+    x: am5.p50,
+    centerX:am5.p50
+  })
+);
         
-      // Background is a WavedRectangle, which we configure, as well as instruct
-      // it to get its fill and border color from data field "bulletColor"
-      bullet.background.waveLength = 15;
-      bullet.background.fillOpacity = 1;
-      //bullet.background.propertyFields.fill = "bulletColor";
-      //bullet.background.propertyFields.stroke = "bulletColor";
+        // Add series
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+        //for (var i = 0; i < data.length; i++) {
+        $.each(data, function(i, item) {
+            
+          var yRenderer = am5xy.AxisRendererY.new(root, {});
+          yRenderer.labels.template.set('visible', false);
+          
+          var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+            maxDeviation: 0.1,
+            renderer: yRenderer
+          }));
 
-    chart.scrollbarX = new am4core.Scrollbar();
-    chart.scrollbarX.align = "center"
-    chart.scrollbarX.width = am4core.percent(85);
+          yAxis.axisHeader.children.push(am5.Label.new(root, {
+            text: titlePrefix + ": " + item.code,
+            fontWeight: "300"
+          }));
 
-    var cursor = new am4plugins_timeline.CurveCursor();
-    chart.cursor = cursor;
-    cursor.xAxis = dateAxis;
-    cursor.yAxis = categoryAxis;
-    cursor.lineY.disabled = true;
-    cursor.lineX.strokeDasharray = "1,4";
-    cursor.lineX.strokeOpacity = 1;
+          yAxis.axisHeader.set("paddingTop", 20);
 
-    categoryAxis.cursorTooltipEnabled = true;
-		
-  } // end function createTimelineChart()
-});
+          var series = chart.series.push(am5xy.LineSeries.new(root, {
+            minBulletDistance: 10,
+            name: titlePrefix + ": " + item.code,
+            xAxis: xAxis,
+            yAxis: yAxis,
+            valueYField: "performance",
+            valueXField: "date",
+            tooltip: am5.Tooltip.new(root, {
+              pointerOrientation: "horizontal",
+              labelText: "{runnerName}, {time}, {eventName}"
+            })
+
+          }));
+
+          series.data.processor = am5.DataProcessor.new(root, {
+            dateFormat: "yyyy-MM-dd",
+            dateFields: ["date"],
+            numericFields: ["performance"]
+          });
+
+          // Make stuff animate on load
+          // https://www.amcharts.com/docs/v5/concepts/animations/
+          series.data.setAll(item.records);
+
+          var currentDataItem;
+          series.on("tooltipDataItem", function(dataItem) {
+            if (currentDataItem) {
+              am5.array.each(currentDataItem.bullets, function(bullet) {
+                bullet.get("sprite").unhover();
+              });
+            }
+            currentDataItem = dataItem;
+            if (currentDataItem) {
+              am5.array.each(currentDataItem.bullets, function(bullet) {
+                bullet.get("sprite").hover();
+              });
+            }
+          });
+
+          series.bullets.push(function() {
+            var sprite = am5.Container.new(root, {
+              interactive: true,
+              setStateOnChildren: true
+            });
+
+            sprite.states.create("hover", {});
+
+            var outer = sprite.children.push(am5.Circle.new(root, {
+              radius: 7,
+              fillOpacity: 0,
+              stroke: series.get("fill"),
+              strokeWidth: 2,
+              strokeOpacity: 0
+            }));
+
+            outer.states.create("hover", {
+              strokeOpacity: 1
+            });
+
+            var inner = sprite.children.push(am5.Circle.new(root, {
+              radius: 5,
+              fill: series.get("fill"),
+              stroke: root.interfaceColors.get("background"),
+              strokeWidth: 2
+            }));
+
+            return am5.Bullet.new(root, {
+              sprite: sprite
+            });
+          });
+          series.appear(1000, 100);
+
+          // Add cursor
+          // https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/
+          var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
+            xAxis: xAxis,
+            snapToSeries: chart.series.values
+          }));
+          cursor.lineY.set("visible", false);
+
+          // Add scrollbar
+          // https://www.amcharts.com/docs/v5/charts/xy-chart/scrollbars/
+          chart.set("scrollbarX", am5.Scrollbar.new(root, {
+            orientation: "horizontal"
+          }));
+
+          // Make stuff animate on load
+          // https://www.amcharts.com/docs/v5/concepts/animations/
+          chart.appear(1000, 100);
+        });
+      }); // end am5.ready()
+    }
+  });
 </script>
 <style>
-
-#chartdiv {
-  width: 100%;
-  height: 6000px;
-}
-
+  #chartdiv {
+    width: 100%;
+    height: 4000px;
+  }
 </style>
-<div class="section"> 
-	<div class="formRankCriteria">
-		<p>Here you can select and then view a graphical timeline representation of our club records and when they were broken. Select the age category and the history of club records will be displayed below.</p>
-		
-		<label for="ageCategory">Age Category</label>
-		<select id="ageCategory" name="ageCategory" size="1" title="Select category">
-		</select>			 						     				
-	</div>
-  <h1 id="ageCategoryTitle"></h1>
+<div class="section">
+  <div class="formRankCriteria">
+    <p>Here you can view a graphical timeline representation of our club records and when they were broken. Either select the age category to view the history of club records for all distances and disaplines or a distance to view the records across all age categories.</p>
+    <p>Charts will be displayed below after selection.</p>
+    <label for="ageCategory">Age Category</label>
+    <select id="ageCategory" name="ageCategory" size="1" title="Select age category">
+    </select>
+    <label for="distance">Distance</label>
+    <select id="distance" name="distance" size="1" title="Select distance">
+    </select>
+  </div>
+  <h3 id="recordTitle"></h3>
 </div>
 <div id="chartdiv"></div>
