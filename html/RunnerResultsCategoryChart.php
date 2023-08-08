@@ -16,29 +16,8 @@ jQuery(document).ready(function($) {
 
       var root = am5.Root.new("chartdiv");
 
-      const myTheme = am5.Theme.new(root);
-
-      myTheme.rule("RoundedRectangle", ["hierarchy", "node", "shape", "depth1"]).setAll({
-        strokeWidth: 2
-      });
-
-      myTheme.rule("RoundedRectangle", ["hierarchy", "node", "shape", "depth2"]).setAll({
-        fillOpacity: 0,
-        strokeWidth: 1,
-        strokeOpacity: 0.2
-      });
-
-      myTheme.rule("Label", ["node", "depth1"]).setAll({
-        forceHidden: true
-      });
-
-      myTheme.rule("Label", ["node", "depth2"]).setAll({
-        fontSize: 10
-      });
-
       root.setThemes([
-        am5themes_Animated.new(root),
-        myTheme
+        am5themes_Animated.new(root)
       ]);
 
       // Create wrapper container
@@ -54,20 +33,18 @@ jQuery(document).ready(function($) {
       // https://www.amcharts.com/docs/v5/charts/hierarchy/#Adding
       var series = container.children.push(
         am5hierarchy.Treemap.new(root, {
-          sort: "descending",
-          singleBranchOnly: false,
+         // sort: "descending",
+         // singleBranchOnly: false,
           downDepth: 1,
           upDepth: 0,
           initialDepth: 1,
           valueField: "count",
           categoryField: "name",
           childDataField: "courseTypes",
-          nodePaddingOuter: 0,
-          nodePaddingInner: 0
+          nodePaddingOuter: 20,
+          nodePaddingInner: 10
         })
       );
-
-      series.get("colors").set("step", 1);
 
       container.children.moveValue(
         am5hierarchy.BreadcrumbBar.new(root, {
@@ -76,7 +53,7 @@ jQuery(document).ready(function($) {
       );
 
       // {
-      // "categoryName":"LU20",
+      // "name":"LU20",
       // "courseTypes":[
       //    {
       //       "name":"Undefined",
@@ -90,21 +67,17 @@ jQuery(document).ready(function($) {
 function processData(data) {
 
   return [{
-    name: "Root",
+    name: "Result Categories",
     courseTypes: data
   }];
 }
 
 series.data.setAll(processData(data));
 series.set("selectedDataItem", series.dataItems[0]);
-series.appear(1000, 100);
 
 }); // end am5.ready()
   } // end function createRunnerResultsCountChart()
 });
-</script>
-<script>
-
 </script>
 <div> 
 	<div id="chartdiv" style="width: 100%; height: 700px; max-width:100%; clear: both;"></div>
