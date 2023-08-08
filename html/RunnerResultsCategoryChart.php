@@ -88,7 +88,6 @@ jQuery(document).ready(function($) {
       //    },
 
 function processData(data) {
-  var treeData = [];
 
   return [{
     name: "Root",
@@ -98,6 +97,7 @@ function processData(data) {
 
 series.data.setAll(processData(data));
 series.set("selectedDataItem", series.dataItems[0]);
+series.appear(1000, 100);
 
 }); // end am5.ready()
   } // end function createRunnerResultsCountChart()
