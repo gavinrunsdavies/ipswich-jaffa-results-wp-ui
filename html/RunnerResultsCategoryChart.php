@@ -69,7 +69,6 @@ jQuery(document).ready(function($) {
 
       series.get("colors").set("step", 1);
 
-
       container.children.moveValue(
         am5hierarchy.BreadcrumbBar.new(root, {
           series: series
@@ -92,31 +91,13 @@ function processData(data) {
   var treeData = [];
 
   return [{
-    name: "Home",
+    name: "Root",
     courseTypes: data
   }];
 }
 
 series.data.setAll(processData(data));
 series.set("selectedDataItem", series.dataItems[0]);
-
-series.bullets.push(function (root, series, dataItem) {
-  var depth = dataItem.get("depth");
-
-  if (depth == 1) {
-    var picture = am5.Picture.new(root, {
-      src: "https://www.amcharts.com/wp-content/uploads/assets/logos/" + dataItem.dataContext.name.toLowerCase() + ".png",
-      centerX: am5.p50,
-      centerY: am5.p50,
-      width: am5.percent(30),
-      isMeasured: true
-    });
-
-    picture.states.lookup("default").setAll({ opacity: 0.15 });
-
-    return am5.Bullet.new(root, { sprite: picture });
-  }
-});
 
 }); // end am5.ready()
   } // end function createRunnerResultsCountChart()
