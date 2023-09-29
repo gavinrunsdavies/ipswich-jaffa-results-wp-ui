@@ -29,29 +29,37 @@ am5.ready(function() {
 				}));
 
 				var title = container.children.push(am5.Label.new(root, {
-					text: "Most common programming languages",
+					text: "Runner with the most current club records",
 					fontSize: 20,
 					x: am5.percent(50),
 					centerX: am5.percent(50)
 				}));
 
-				// https://www.amcharts.com/docs/v5/charts/word-cloud/
-				var series = root.container.children.push(am5wc.WordCloud.new(root, {
+				var series = container.children.push(am5wc.WordCloud.new(root, {
 					categoryField: "name",
 					valueField: "count",
-					maxFontSize: am5.percent(15)
+					maxFontSize: am5.percent(50)
 				}));
+				
+				series.data.processor = am5.DataProcessor.new(root, {
+					numericFields: ["count"]
+				});
 
 				series.labels.template.setAll({
+					paddingTop: 5,
+					paddingBottom: 5,
+					paddingLeft: 5,
+					paddingRight: 5,
 					fontFamily: "Courier New",
-					tooltipText: "{name}: [bold]{value}[/]"
+					tooltipText: "{name}: [bold]{value}[/]",
+					cursorOverStyle: "pointer",
+					fill: am5.color(0xe88112)
 				});
 
 				// Add click event on words
-				// https://www.amcharts.com/docs/v5/charts/word-cloud/#Events
 				series.labels.template.events.on("click", function(ev) {
-					const id  = ev.target.dataItem.get("id");
-					window.open("<?php echo $memberResultsPageUrl; ?>?runner_id={id}");
+					const id  = ev.target.dataItem.dataContext.id;
+					window.open("<?php echo $memberResultsPageUrl; ?>?runner_id=" + id);
 				});
 
 				series.data.setAll(data);	
