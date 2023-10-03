@@ -31,6 +31,7 @@ am5.ready(function() {
 				var title = container.children.push(am5.Label.new(root, {
 					text: "Runner with the most current club records",
 					fontSize: 20,
+					fill: am5.color(0xffffff),
 					x: am5.percent(50),
 					centerX: am5.percent(50)
 				}));
@@ -38,7 +39,7 @@ am5.ready(function() {
 				var series = container.children.push(am5wc.WordCloud.new(root, {
 					categoryField: "name",
 					valueField: "count",
-					maxFontSize: am5.percent(50)
+					maxFontSize: am5.percent(100)
 				}));
 				
 				series.data.processor = am5.DataProcessor.new(root, {
@@ -59,7 +60,7 @@ am5.ready(function() {
 				// Add click event on words
 				series.labels.template.events.on("click", function(ev) {
 					const id  = ev.target.dataItem.dataContext.id;
-					window.open("<?php echo $memberResultsPageUrl; ?>?runner_id=" + id);
+					window.open("<?php echo $memberResultsPageUrl; ?>?runner_id=" + id, "_self");
 				});
 
 				series.data.setAll(data);	
