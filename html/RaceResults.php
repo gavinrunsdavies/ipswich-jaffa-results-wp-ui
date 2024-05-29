@@ -401,7 +401,7 @@ div.event-attendees-chart {
 			return improvementHtml;
 		}
 
-		function getResultImprovementFormatForDistance(previousTimeInMeters, ) {
+		function getResultImprovementFormatForDistance(previousTimeInMeters, newTimeInMeters) {
 
 			var metersImprovment = parseFloat(newTimeInMeters) - parseFloat(previousTimeInMeters);
 			metersImprovment = Math.round((metersImprovment + Number.EPSILON) * 100) / 100;
