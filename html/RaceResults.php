@@ -305,13 +305,13 @@ div.event-attendees-chart {
 							if (data == 1) {
 								var improvementHtml = '';
 								if (row.previousPersonalBestPerformance != undefined) {
-									var improvement = getResultImprovement(row.previousPersonalBestPerformance, row.performance);
-									improvementHtml = '<span style="font-size:smaller; vertical-align: middle; font-family: Courier New; font-style: italic;"> -';
-									if (improvement.length > 1)
-										improvementHtml += improvement[0] + '\'' + improvement[1] + '\'\'';
-									else if (improvement.length > 0)
-										improvementHtml += improvement[0] + '\'\'';
-									improvementHtml += '</span>';
+									if (race.resultUnitTypeId == "2") {
+										// Seconds
+										improvementHtml = getResultImprovementFormatForTime(row.previousPersonalBestPerformance, row.performance);
+									} else if (race.resultUnitTypeId == "3") {
+										// Meters
+										improvementHtml = getResultImprovementFormatForDistance(row.previousPersonalBestPerformance, row.performance);
+									}
 								}
 
 								return '<i class="fa fa-check" aria-hidden="true"></i>' + improvementHtml;
@@ -378,19 +378,39 @@ div.event-attendees-chart {
 			$(api.column(columnName).visible(visible));
 		}
 
-		function getResultImprovement(previousTimeInSeconds, newTimeInSeconds) {
+		function getResultImprovementFormatForTime(previousTimeInSeconds, newTimeInSeconds) {
 
 			var secondsImprovment = parseFloat(previousTimeInSeconds) - parseFloat(newTimeInSeconds);
+			var improvement = [];
 			
-			var result = [];
 			if (secondsImprovment > 60) {
-				result.push(Math.floor(secondsImprovment / 60));
-				result.push(Math.round(((secondsImprovment % 60) + Number.EPSILON) * 100) / 100);
+				improvement.push(Math.floor(secondsImprovment / 60));
+				improvement.push(Math.round(((secondsImprovment % 60) + Number.EPSILON) * 100) / 100);
 			} else {
-				result.push(Math.round((secondsImprovment + Number.EPSILON) * 100) / 100);
+				improvement.push(Math.round((secondsImprovment + Number.EPSILON) * 100) / 100);
 			}
 
-			return result;
+			var improvementHtml = '<span style="font-size:smaller; vertical-align: middle; font-family: Courier New; font-style: italic;"> -';
+			if (improvement.length > 1) {
+				improvementHtml += improvement[0] + '\'' + improvement[1] + '\'\'';
+			} else if (improvement.length > 0) {
+				improvementHtml += improvement[0] + '\'\'';
+			}
+			improvementHtml += '</span>';
+
+			return improvementHtml;
+		}
+
+		function getResultImprovementFormatForDistance(previousTimeInMeters, newTimeInMeters) {
+
+			var metersImprovment = parseFloat(newTimeInMeters) - parseFloat(previousTimeInMeters);
+			metersImprovment = Math.round((metersImprovment + Number.EPSILON) * 100) / 100;
+
+			var improvementHtml = '<span style="font-size:smaller; vertical-align: middle; font-family: Courier New; font-style: italic;"> -';
+			improvementHtml += metersImprovment + 'm'
+			improvementHtml += '</span>';
+
+			return improvementHtml;
 		}
 
 		function getAjaxRequest(url) {
