@@ -332,15 +332,7 @@ div.event-attendees-chart {
 						className : 'text-center'
 					}, {
 						data : "isSeasonBest",
-                        visible: false,
-						visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
-						render : function (data, type, row, meta) {
-							if (data == 1) {
-								return '<i class="fa fa-check" aria-hidden="true"></i>';
-							}
-							return '';
-						},
-						className : 'text-center'
+                        visible: false
 					}, {
 						data : "categoryCode",
                         render : function (data, type, row, meta) {
