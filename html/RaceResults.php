@@ -344,10 +344,13 @@ div.event-attendees-chart {
 					}, {
 						data : "categoryCode",
                         render : function (data, type, row, meta) {
-                            if (row.standardType == '')
-								return data.categoryCode;							
+                            if (!row.standardType)
+								return data;							
 
-                            return '${data.categoryCode}<br><span class="jaffa-standard">${row.standardType}</span>';
+                            return `
+                                ${data}<br>
+                                <span class="jaffa-standard">${row.standardType}</span>
+                                `;
                         }
 					}, {
 						data : "standardType",
