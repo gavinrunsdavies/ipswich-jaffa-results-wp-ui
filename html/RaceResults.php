@@ -16,9 +16,17 @@ div.event-attendees-chart {
 	height: 350px;
 	margin-bottom: 5em;
 }
-.jaffa-standard {
+.jaffa-standard, .jaffa-results {
     font-size: smaller;
     font-style: italic;
+    color: #888;
+}
+.jaffa-position {
+    font-size: xx-large;
+    text-align: center;
+}
+.jaffa-name {
+    text-decoration-line: none;
 }
 </style>
 <div class="section">
@@ -242,7 +250,7 @@ div.event-attendees-chart {
 				var raceReport = '<p>' + race.report + '</p>';
 				$('#jaffa-race-results').append(raceReport);
 			}
-			var tableRow = '<tr><th data-priority="2">Position</th><th data-priority="1">Name</th><th data-priority="3">' + resultColumnTitle + '</th><th>Personal Best</th><th>Season Best</th><th>Category</th><th>Standard</th><th  data-priority="5">Info</th><th data-priority="4">Age Grading</th></tr>';
+			var tableRow = '<tr><th data-priority="2">Position</th><th data-priority="1">Name</th><th data-priority="3">' + resultColumnTitle + '</th><th>Personal Best</th><th>Category</th><th data-priority="5">Info</th><th data-priority="4">Age Grading</th></tr>';
 			var tableHtml = '<table class="display" id="' + tableName + race.id + '">';
 			tableHtml += '<caption>' + title + '</caption>';
 			tableHtml += '<thead>';
@@ -275,11 +283,12 @@ div.event-attendees-chart {
 				serverSide : false,
 				columns : [{
 						data : "position",
-						name : "position"
+						name : "position",
+                        className: "jaffa-position"
 					}, {
 						data : "runnerName",
 						render : function (data, type, row, meta) {
-							var html = '<a href="<?php echo $memberResultsPageUrl; ?>?runner_id=' + row.runnerId + '">' + data + '</a>';
+							var html = '<a class="jaffa-name" href="<?php echo $memberResultsPageUrl; ?>?runner_id=' + row.runnerId + '">' + data + '</a>';
 							if (row.team > 0) {
 								var tooltip = '';
 								if (row.team == 1)
@@ -287,8 +296,10 @@ div.event-attendees-chart {
 								else
 									tooltip = "Part of the scoring team finishing in " + row.team;
 
-								html += ' <i class="fa fa-certificate" aria-hidden="true" title="' + tooltip + '"></i>'
+								html += ' <i class="fa fa-certificate" aria-hidden="true" title="' + tooltip + '"></i>';
 							}
+
+                            html += `<div class="jaffa-results">${row.runnerTotalResults} results | </div>`
 							return html;
 						}
 					}, {
@@ -302,7 +313,7 @@ div.event-attendees-chart {
                             }
                             
                             if (row.isSeasonBest == 1 && courseTypeIdsToDisplayImprovements.includes(race.courseTypeId)) {
-                                result  += '<br><span class="jaffa-standard">SB</span>';
+                                result  += '<div class="jaffa-standard">SB</div>';
                             }
 
                             return result;
