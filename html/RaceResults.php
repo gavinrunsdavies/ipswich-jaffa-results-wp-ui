@@ -344,7 +344,6 @@ div.event-attendees-chart {
 					}, {
 						data : "categoryCode",
                         render : function (data, type, row, meta) {
-							var html = ;
                             if (row.standardType == '')
 								return data.categoryCode;							
 
@@ -357,7 +356,6 @@ div.event-attendees-chart {
 						data : "info"
 					}, {
 						data : "percentageGrading",
-						//visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
 						render : function (data, type, row, meta) {
 							var html = data > 0 ? data + '%' : '';
 							if (row.percentageGradingBest == 1) {
