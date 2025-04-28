@@ -16,6 +16,10 @@ div.event-attendees-chart {
 	height: 350px;
 	margin-bottom: 5em;
 }
+.jaffa-standard {
+    font-size: smaller;
+    font-style: italic;
+}
 </style>
 <div class="section">
 	<h2 id="jaffa-event-title"></h2>
@@ -290,11 +294,18 @@ div.event-attendees-chart {
 					}, {
 						data : "performance",
 						render : function(data, type, row, meta) {
+                            var result;
 							if (race.resultUnitTypeId == "3") {
-								return Number(data).toLocaleString();
-							}
+								result = Number(data).toLocaleString();
+							} else {
+							    result = ipswichjaffarc.secondsToTime(row.performance);                            
+                            }
+                            
+                            if (row.isSeasonBest == 1 && courseTypeIdsToDisplayImprovements.includes(race.courseTypeId)) {
+                                result  += '<br><span class="jaffa-standard">SB</span>';
+                            }
 
-							return ipswichjaffarc.secondsToTime(row.performance);
+                            return result;
 						},
 						name: 'performance',
 						className : 'text-right'
@@ -321,6 +332,7 @@ div.event-attendees-chart {
 						className : 'text-center'
 					}, {
 						data : "isSeasonBest",
+                        visible: false,
 						visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
 						render : function (data, type, row, meta) {
 							if (data == 1) {
@@ -330,11 +342,17 @@ div.event-attendees-chart {
 						},
 						className : 'text-center'
 					}, {
-						data : "categoryCode"
+						data : "categoryCode",
+                        render : function (data, type, row, meta) {
+							var html = ;
+                            if (row.standardType == '')
+								return data.categoryCode;							
+
+                            return '${data.categoryCode}<br><span class="jaffa-standard">${row.standardType}</span>';
+                        }
 					}, {
 						data : "standardType",
-						//visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
-						name : "standardType"
+                        visible: false
 					}, {
 						data : "info"
 					}, {
