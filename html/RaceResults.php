@@ -373,8 +373,7 @@ div.event-attendees-chart {
 					var nonZero = (x) => x > 0;
 					showHideColumn(api, 'performance:name', nonZero);
 					showHideColumn(api, 'percentageGrading:name', nonZero);
-					showHideColumn(api, 'position:name', nonZero);
-					showHideColumn(api, 'standardType:name', nonEmpty);
+					showHideColumn(api, 'position:name', nonZero);					
 				},
 				processing : true,
 				autoWidth : false,
