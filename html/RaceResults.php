@@ -48,6 +48,10 @@ td.jaffa-position {
 <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script type="text/javascript">
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=calendar_month,groups,landscape_2,laps,sprint,travel_explore';
+    document.head.appendChild(link);
 	
 	jQuery(document).ready(function ($) {
 
@@ -300,7 +304,7 @@ td.jaffa-position {
 								html += ' <i class="fa fa-certificate" aria-hidden="true" title="' + tooltip + '"></i>';
 							}
 
-                            html += `<div class="jaffa-results">${row.runnerTotalResults} results | </div>`
+                            html += `<div class="jaffa-results">${row.runnerTotalResults} results | <span class="material-symbols-outlined md-18">sprint</span><span class="material-symbols-outlined md-18">laps</span><span class="material-symbols-outlined md-18">travel_explore</span><span class="material-symbols-outlined md-18">landscape_2</span></div>`;
 							return html;
 						}
 					}, {
