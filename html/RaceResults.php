@@ -16,10 +16,13 @@ div.event-attendees-chart {
 	height: 350px;
 	margin-bottom: 5em;
 }
-.jaffa-standard, .jaffa-results {
+.jaffa-standard, .jaffa-badges {
     font-size: smaller;
     font-style: italic;
     color: #888;
+}
+.jaffa-badges {
+    vertical-align: middle;
 }
 td.jaffa-position {
     font-size: xx-large;
@@ -27,6 +30,9 @@ td.jaffa-position {
 	color: var(--primary-color);
 }
 .jaffa-name {
+    text-decoration-line: none;
+}
+	.jaffa-name {
     text-decoration-line: none;
 }
 </style>
@@ -304,7 +310,7 @@ td.jaffa-position {
 								html += ' <i class="fa fa-certificate" aria-hidden="true" title="' + tooltip + '"></i>';
 							}
 
-                            html += `<div class="jaffa-results">${row.runnerTotalResults} results | <span class="material-symbols-outlined md-18">sprint</span><span class="material-symbols-outlined md-18">laps</span><span class="material-symbols-outlined md-18">travel_explore</span><span class="material-symbols-outlined md-18">landscape_2</span></div>`;
+                            html += `<div class="jaffa-badges">${row.runnerTotalResults ?? Math.floor(Math.random() * (Math.ceil(400) - Math.floor(1) + 1)) + 1} results | <span class="material-symbols-outlined md-18">sprint</span><span class="material-symbols-outlined md-18">laps</span><span class="material-symbols-outlined md-18">travel_explore</span><span class="material-symbols-outlined md-18">landscape_2</span></div>`;
 							return html;
 						}
 					}, {
