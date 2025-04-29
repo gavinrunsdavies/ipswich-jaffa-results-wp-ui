@@ -21,7 +21,7 @@ div.event-attendees-chart {
     font-style: italic;
     color: #888;
 }
-.jaffa-badges {
+.jaffa-badges .material-symbols-outlined {
     vertical-align: middle;
 }
 td.jaffa-position {
@@ -30,9 +30,6 @@ td.jaffa-position {
 	color: var(--primary-color);
 }
 .jaffa-name {
-    text-decoration-line: none;
-}
-	.jaffa-name {
     text-decoration-line: none;
 }
 </style>
