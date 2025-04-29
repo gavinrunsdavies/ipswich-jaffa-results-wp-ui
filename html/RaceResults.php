@@ -29,7 +29,7 @@ td.jaffa-position {
     text-align: center;
 	color: var(--primary-color);
 }
-.jaffa-name a {
+a.jaffa-name {
     text-decoration-line: none;
 }
 </style>
