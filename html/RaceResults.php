@@ -61,7 +61,7 @@ a.jaffa-name {
 	
 	jQuery(document).ready(function ($) {
 
-		getMeetingDetails(<?php echo $_GET['raceId']; ?>, true);
+		getMeetingDetails(<?php echo $_GET["raceId"]; ?>, true);
 
 		// Get race - get meeting details for event and date
 		// Returns - races, teams/team results, event, meeting (report, dates)
@@ -310,7 +310,7 @@ a.jaffa-name {
 								html += ' <i class="fa fa-certificate" aria-hidden="true" title="' + tooltip + '"></i>';
 							}
 
-                            html += `<div class="jaffa-badges">${row.runnerTotalResults ?? Math.floor(Math.random() * (Math.ceil(400) - Math.floor(1) + 1)) + 1} results | <span class="material-symbols-outlined md-18">sprint</span><span class="material-symbols-outlined md-18">laps</span><span class="material-symbols-outlined md-18">travel_explore</span><span class="material-symbols-outlined md-18">landscape_2</span></div>`;
+                            html += `<div class="jaffa-badges">${row.runnerTotalResults} results | <span class="material-symbols-outlined md-18">sprint</span><span class="material-symbols-outlined md-18">laps</span><span class="material-symbols-outlined md-18">travel_explore</span><span class="material-symbols-outlined md-18">landscape_2</span></div>`;
 							return html;
 						}
 					}, {
