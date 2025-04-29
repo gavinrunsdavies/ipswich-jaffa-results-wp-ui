@@ -24,6 +24,9 @@ div.event-attendees-chart {
 .jaffa-badges .material-symbols-outlined {
     vertical-align: middle;
 }
+.jaffa-badges .material-symbols-outlined:hover {
+    color: var(--primary-color);
+}
 td.jaffa-position {
     font-size: xx-large;
     text-align: center;
