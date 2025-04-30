@@ -56,7 +56,7 @@ a.jaffa-name {
 <script type="text/javascript">
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=calendar_month,groups,landscape_2,laps,sprint,travel_explore';
+    link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=calendar_month,groups,landscape_2,laps,run_circle,sports,sprint,travel_explore';
     document.head.appendChild(link);
 	
 	jQuery(document).ready(function ($) {
@@ -312,22 +312,22 @@ a.jaffa-name {
                         // Build badge icons based on runnerBadges
                         let badgesHtml = `${row.runnerTotalResults} results | `;
                         if (row.runnerBadges?.includes("track")) {
-                          badgesHtml += `<span class="material-symbols-outlined md-18">laps</span>`;
+                          badgesHtml += `<span class="material-symbols-outlined md-18" title="Completed a track race">laps</span>`;
                         }
                         if (row.runnerBadges?.includes("international")) {
-                          badgesHtml += `<span class="material-symbols-outlined md-18">travel_explore</span>`;
+                          badgesHtml += `<span class="material-symbols-outlined md-18" title="Ran outside of the UK">travel_explore</span>`;
                         }
                         if (row.runnerBadges?.includes("cross-country")) {
-                          badgesHtml += `<span class="material-symbols-outlined md-18">landscape_2</span>`;
+                          badgesHtml += `<span class="material-symbols-outlined md-18" title="Completed a cross-country race">landscape_2</span>`;
                         }
                         if (row.runnerBadges?.includes("committee")) {
-                          badgesHtml += `<span class="material-symbols-outlined md-18">groups</span>`;
+                          badgesHtml += `<span class="material-symbols-outlined md-18" title="Has been a club committee member">groups</span>`;
                         }
                         if (row.runnerBadges?.includes("coach")) {
-                          badgesHtml += `<span class="material-symbols-outlined md-18">sports</span>`;
+                          badgesHtml += `<span class="material-symbols-outlined md-18" title="Has been a club coach">sports</span>`;
                         }
                         if (row.runnerBadges?.includes("marathon")) {
-                          badgesHtml += `<span class="material-symbols-outlined md-18">run_circle</span>`;
+                          badgesHtml += `<span class="material-symbols-outlined md-18" title="Completed a marathon">run_circle</span>`;
                         }
                     
                         html += `<div class="jaffa-badges">${badgesHtml}</div>`;
