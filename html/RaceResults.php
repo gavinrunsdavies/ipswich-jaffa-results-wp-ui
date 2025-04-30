@@ -27,6 +27,11 @@ div.event-attendees-chart {
 .jaffa-badges .material-symbols-outlined:hover {
     color: var(--primary-color);
 }
+@media screen and (max-width: 600px) {
+  .responsive-hide-badges {
+    display: none !important;
+  }
+}
 td.jaffa-position {
     font-size: xx-large;
     text-align: center;
@@ -35,6 +40,11 @@ td.jaffa-position {
 a.jaffa-name {
     text-decoration-line: none;
 }
+.jaffa-pb-improvement {
+	font-size: smaller; 
+    vertical-align: middle;
+    font-family: Courier New;
+    font-style: italic;
 </style>
 <div class="section">
 	<h2 id="jaffa-event-title"></h2>
@@ -330,7 +340,8 @@ a.jaffa-name {
                           badgesHtml += `<span class="material-symbols-outlined md-18" title="Completed a marathon">run_circle</span>`;
                         }
                     
-                        html += `<div class="jaffa-badges">${badgesHtml}</div>`;
+                        html += `<div class="jaffa-badges responsive-hide-badges">${badgesHtml}</div>`;
+
                         return html;
                       }
                     }, {
@@ -436,7 +447,7 @@ a.jaffa-name {
 				improvement.push(Math.round((secondsImprovment + Number.EPSILON) * 100) / 100);
 			}
 
-			var improvementHtml = '<span style="font-size:smaller; vertical-align: middle; font-family: Courier New; font-style: italic;"> -';
+			var improvementHtml = '<span class="jaffa-pb-improvement"> -';
 			if (improvement.length > 1) {
 				improvementHtml += improvement[0] + '\'' + improvement[1] + '\'\'';
 			} else if (improvement.length > 0) {
@@ -452,7 +463,7 @@ a.jaffa-name {
 			var metersImprovment = parseFloat(newTimeInMeters) - parseFloat(previousTimeInMeters);
 			metersImprovment = Math.round((metersImprovment + Number.EPSILON) * 100) / 100;
 
-			var improvementHtml = '<span style="font-size:smaller; vertical-align: middle; font-family: Courier New; font-style: italic;"> +';
+			var improvementHtml = '<span class="jaffa-pb-improvement"> +';
 			improvementHtml += metersImprovment + 'm'
 			improvementHtml += '</span>';
 
