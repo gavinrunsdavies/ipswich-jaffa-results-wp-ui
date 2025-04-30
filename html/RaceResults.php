@@ -296,24 +296,44 @@ a.jaffa-name {
 						data : "position",
 						name : "position",
                         className: "jaffa-position"
-					}, {
-						data : "runnerName",
-						render : function (data, type, row, meta) {
-							var html = '<a class="jaffa-name" href="<?php echo $memberResultsPageUrl; ?>?runner_id=' + row.runnerId + '">' + data + '</a>';
-							if (row.team > 0) {
-								var tooltip = '';
-								if (row.team == 1)
-									tooltip = "Part of the winning team";
-								else
-									tooltip = "Part of the scoring team finishing in " + row.team;
-
-								html += ' <i class="fa fa-certificate" aria-hidden="true" title="' + tooltip + '"></i>';
-							}
-
-                            html += `<div class="jaffa-badges">${row.runnerTotalResults} results | <span class="material-symbols-outlined md-18">sprint</span><span class="material-symbols-outlined md-18">laps</span><span class="material-symbols-outlined md-18">travel_explore</span><span class="material-symbols-outlined md-18">landscape_2</span></div>`;
-							return html;
-						}
-					}, {
+					},{
+                      data: "runnerName",
+                      render: function (data, type, row, meta) {
+                        let html = '<a class="jaffa-name" href="<?php echo $memberResultsPageUrl; ?>?runner_id=' + row.runnerId + '">' + data + '</a>';
+                    
+                        if (row.team > 0) {
+                          let tooltip = row.team == 1
+                            ? "Part of the winning team"
+                            : "Part of the scoring team finishing in " + row.team;
+                    
+                          html += ' <i class="fa fa-certificate" aria-hidden="true" title="' + tooltip + '"></i>';
+                        }
+                    
+                        // Build badge icons based on runnerBadges
+                        let badgesHtml = `${row.runnerTotalResults} results | `;
+                        if (row.runnerBadges?.includes("track")) {
+                          badgesHtml += `<span class="material-symbols-outlined md-18">laps</span>`;
+                        }
+                        if (row.runnerBadges?.includes("international")) {
+                          badgesHtml += `<span class="material-symbols-outlined md-18">travel_explore</span>`;
+                        }
+                        if (row.runnerBadges?.includes("cross-country")) {
+                          badgesHtml += `<span class="material-symbols-outlined md-18">landscape_2</span>`;
+                        }
+                        if (row.runnerBadges?.includes("committee")) {
+                          badgesHtml += `<span class="material-symbols-outlined md-18">groups</span>`;
+                        }
+                        if (row.runnerBadges?.includes("coach")) {
+                          badgesHtml += `<span class="material-symbols-outlined md-18">sports</span>`;
+                        }
+                        if (row.runnerBadges?.includes("marathon")) {
+                          badgesHtml += `<span class="material-symbols-outlined md-18">run_circle</span>`;
+                        }
+                    
+                        html += `<div class="jaffa-badges">${badgesHtml}</div>`;
+                        return html;
+                      }
+                    }, {
 						data : "performance",
 						render : function(data, type, row, meta) {
                             var result;
