@@ -261,7 +261,7 @@ a.jaffa-name {
 				var raceReport = '<p>' + race.report + '</p>';
 				$('#jaffa-race-results').append(raceReport);
 			}
-			var tableRow = '<tr><th data-priority="2">Position</th><th data-priority="1">Name</th><th data-priority="3">' + resultColumnTitle + '</th><th>Personal Best</th><th>SB</th><th>Category</th><th>Standard</th><th data-priority="5">Info</th><th data-priority="4">Age Grading</th></tr>';
+			var tableRow = '<tr><th data-priority="2">Position</th><th data-priority="1">Name</th><th data-priority="3">' + resultColumnTitle + '</th><th>Personal Best</th><th>Category</th><th data-priority="5">Info</th><th data-priority="4">Age Grading</th></tr>';
 			var tableHtml = '<table class="display" id="' + tableName + race.id + '">';
 			tableHtml += '<caption>' + title + '</caption>';
 			tableHtml += '<thead>';
@@ -353,9 +353,6 @@ a.jaffa-name {
 						},
 						className : 'text-center'
 					}, {
-						data : "isSeasonBest",
-                        visible: false
-					}, {
 						data : "categoryCode",
                         render : function (data, type, row, meta) {
                             if (!row.standardType)
@@ -366,9 +363,6 @@ a.jaffa-name {
                                 <span class="jaffa-standard">${row.standardType}</span>
                                 `;
                         }
-					}, {
-						data : "standardType",
-                        visible: false
 					}, {
 						data : "info"
 					}, {
