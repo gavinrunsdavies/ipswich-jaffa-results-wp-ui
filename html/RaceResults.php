@@ -316,7 +316,7 @@ a.jaffa-name {
                             ? "Part of the winning team"
                             : "Part of the scoring team finishing in " + row.team;
                     
-                          html += ` <span class="material-icons-outlined md-18" title="${tooltip}">workspace_premium</span>`;
+                          html += ` <span class="material-symbols-outlined md-18" title="${tooltip}">workspace_premium</span>`;
                         }
                     
                         // Build badge icons based on runnerBadges
