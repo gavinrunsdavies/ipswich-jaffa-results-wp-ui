@@ -66,7 +66,7 @@ a.jaffa-name {
 <script type="text/javascript">
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=calendar_month,groups,landscape_2,laps,run_circle,sports,sprint,travel_explore';
+    link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=calendar_month,groups,landscape_2,laps,run_circle,sports,sprint,travel_explore,workspace_premium';
     document.head.appendChild(link);
 	
 	jQuery(document).ready(function ($) {
@@ -316,7 +316,7 @@ a.jaffa-name {
                             ? "Part of the winning team"
                             : "Part of the scoring team finishing in " + row.team;
                     
-                          html += ' <i class="fa fa-certificate" aria-hidden="true" title="' + tooltip + '"></i>';
+                          html += ` <span class="material-icons-outlined md-18" title="${tooltip}">workspace_premium</span>`;
                         }
                     
                         // Build badge icons based on runnerBadges
