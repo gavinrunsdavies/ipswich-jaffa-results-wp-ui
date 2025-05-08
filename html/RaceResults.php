@@ -16,6 +16,35 @@ div.event-attendees-chart {
 	height: 350px;
 	margin-bottom: 5em;
 }
+.jaffa-standard, .jaffa-badges {
+    font-size: smaller;
+    font-style: italic;
+    color: #888;
+}
+.jaffa-badges .material-symbols-outlined {
+    vertical-align: middle;
+}
+.jaffa-badges .material-symbols-outlined:hover {
+    color: var(--primary-color);
+}
+@media screen and (max-width: 600px) {
+  .responsive-hide-badges {
+    display: none !important;
+  }
+}
+td.jaffa-position {
+    font-size: xx-large;
+    text-align: center;
+	color: var(--primary-color);
+}
+a.jaffa-name {
+    text-decoration-line: none;
+}
+.jaffa-pb-improvement {
+	font-size: smaller; 
+    vertical-align: middle;
+    font-family: Courier New;
+    font-style: italic;
 </style>
 <div class="section">
 	<h2 id="jaffa-event-title"></h2>
@@ -35,10 +64,14 @@ div.event-attendees-chart {
 <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script type="text/javascript">
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=calendar_month,groups,landscape_2,laps,run_circle,sports,sprint,travel_explore,workspace_premium';
+    document.head.appendChild(link);
 	
 	jQuery(document).ready(function ($) {
 
-		getMeetingDetails(<?php echo $_GET['raceId']; ?>, true);
+		getMeetingDetails(<?php echo $_GET["raceId"]; ?>, true);
 
 		// Get race - get meeting details for event and date
 		// Returns - races, teams/team results, event, meeting (report, dates)
@@ -238,7 +271,7 @@ div.event-attendees-chart {
 				var raceReport = '<p>' + race.report + '</p>';
 				$('#jaffa-race-results').append(raceReport);
 			}
-			var tableRow = '<tr><th data-priority="2">Position</th><th data-priority="1">Name</th><th data-priority="3">' + resultColumnTitle + '</th><th>Personal Best</th><th>Season Best</th><th>Category</th><th>Standard</th><th  data-priority="5">Info</th><th data-priority="4">Age Grading</th></tr>';
+			var tableRow = '<tr><th data-priority="2">Position</th><th data-priority="1">Name</th><th data-priority="3">' + resultColumnTitle + '</th><th>Personal Best</th><th>Category</th><th data-priority="5">Info</th><th data-priority="4">Age Grading</th></tr>';
 			var tableHtml = '<table class="display" id="' + tableName + race.id + '">';
 			tableHtml += '<caption>' + title + '</caption>';
 			tableHtml += '<thead>';
@@ -271,30 +304,61 @@ div.event-attendees-chart {
 				serverSide : false,
 				columns : [{
 						data : "position",
-						name : "position"
-					}, {
-						data : "runnerName",
-						render : function (data, type, row, meta) {
-							var html = '<a href="<?php echo $memberResultsPageUrl; ?>?runner_id=' + row.runnerId + '">' + data + '</a>';
-							if (row.team > 0) {
-								var tooltip = '';
-								if (row.team == 1)
-									tooltip = "Part of the winning team";
-								else
-									tooltip = "Part of the scoring team finishing in " + row.team;
+						name : "position",
+                        className: "jaffa-position"
+					},{
+                      data: "runnerName",
+                      render: function (data, type, row, meta) {
+                        let html = '<a class="jaffa-name" href="<?php echo $memberResultsPageUrl; ?>?runner_id=' + row.runnerId + '">' + data + '</a>';
+                    
+                        if (row.team > 0) {
+                          let tooltip = row.team == 1
+                            ? "Part of the winning team"
+                            : "Part of the scoring team finishing in " + row.team;
+                    
+                          html += ` <span class="material-symbols-outlined md-18" title="${tooltip}">workspace_premium</span>`;
+                        }
+                    
+                        // Build badge icons based on runnerBadges
+                        let badgesHtml = `${row.runnerTotalResults} results | `;
+                        if (row.runnerBadges?.includes("track")) {
+                          badgesHtml += `<span class="material-symbols-outlined md-18" title="Completed a track race">laps</span>`;
+                        }
+                        if (row.runnerBadges?.includes("international")) {
+                          badgesHtml += `<span class="material-symbols-outlined md-18" title="Ran outside of the UK">travel_explore</span>`;
+                        }
+                        if (row.runnerBadges?.includes("cross-country")) {
+                          badgesHtml += `<span class="material-symbols-outlined md-18" title="Completed a cross-country race">landscape_2</span>`;
+                        }
+                        if (row.runnerBadges?.includes("committee")) {
+                          badgesHtml += `<span class="material-symbols-outlined md-18" title="Has been a club committee member">groups</span>`;
+                        }
+                        if (row.runnerBadges?.includes("coach")) {
+                          badgesHtml += `<span class="material-symbols-outlined md-18" title="Has been a club coach">sports</span>`;
+                        }
+                        if (row.runnerBadges?.includes("marathon")) {
+                          badgesHtml += `<span class="material-symbols-outlined md-18" title="Completed a marathon">run_circle</span>`;
+                        }
+                    
+                        html += `<div class="jaffa-badges responsive-hide-badges">${badgesHtml}</div>`;
 
-								html += ' <i class="fa fa-certificate" aria-hidden="true" title="' + tooltip + '"></i>'
-							}
-							return html;
-						}
-					}, {
+                        return html;
+                      }
+                    }, {
 						data : "performance",
 						render : function(data, type, row, meta) {
+                            var result;
 							if (race.resultUnitTypeId == "3") {
-								return Number(data).toLocaleString();
-							}
+								result = Number(data).toLocaleString();
+							} else {
+							    result = ipswichjaffarc.secondsToTime(row.performance);                            
+                            }
+                            
+                            if (row.isSeasonBest == 1 && courseTypeIdsToDisplayImprovements.includes(race.courseTypeId)) {
+                                result  += '<div class="jaffa-standard">SB</div>';
+                            }
 
-							return ipswichjaffarc.secondsToTime(row.performance);
+                            return result;
 						},
 						name: 'performance',
 						className : 'text-right'
@@ -320,26 +384,20 @@ div.event-attendees-chart {
 						},
 						className : 'text-center'
 					}, {
-						data : "isSeasonBest",
-						visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
-						render : function (data, type, row, meta) {
-							if (data == 1) {
-								return '<i class="fa fa-check" aria-hidden="true"></i>';
-							}
-							return '';
-						},
-						className : 'text-center'
-					}, {
-						data : "categoryCode"
-					}, {
-						data : "standardType",
-						//visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
-						name : "standardType"
+						data : "categoryCode",
+                        render : function (data, type, row, meta) {
+                            if (!row.standardType)
+								return data;							
+
+                            return `
+                                ${data}<br>
+                                <span class="jaffa-standard">${row.standardType}</span>
+                                `;
+                        }
 					}, {
 						data : "info"
 					}, {
 						data : "percentageGrading",
-						//visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
 						render : function (data, type, row, meta) {
 							var html = data > 0 ? data + '%' : '';
 							if (row.percentageGradingBest == 1) {
@@ -357,8 +415,7 @@ div.event-attendees-chart {
 					var nonZero = (x) => x > 0;
 					showHideColumn(api, 'performance:name', nonZero);
 					showHideColumn(api, 'percentageGrading:name', nonZero);
-					showHideColumn(api, 'position:name', nonZero);
-					showHideColumn(api, 'standardType:name', nonEmpty);
+					showHideColumn(api, 'position:name', nonZero);					
 				},
 				processing : true,
 				autoWidth : false,
@@ -390,7 +447,7 @@ div.event-attendees-chart {
 				improvement.push(Math.round((secondsImprovment + Number.EPSILON) * 100) / 100);
 			}
 
-			var improvementHtml = '<span style="font-size:smaller; vertical-align: middle; font-family: Courier New; font-style: italic;"> -';
+			var improvementHtml = '<span class="jaffa-pb-improvement"> -';
 			if (improvement.length > 1) {
 				improvementHtml += improvement[0] + '\'' + improvement[1] + '\'\'';
 			} else if (improvement.length > 0) {
@@ -406,7 +463,7 @@ div.event-attendees-chart {
 			var metersImprovment = parseFloat(newTimeInMeters) - parseFloat(previousTimeInMeters);
 			metersImprovment = Math.round((metersImprovment + Number.EPSILON) * 100) / 100;
 
-			var improvementHtml = '<span style="font-size:smaller; vertical-align: middle; font-family: Courier New; font-style: italic;"> +';
+			var improvementHtml = '<span class="jaffa-pb-improvement"> +';
 			improvementHtml += metersImprovment + 'm'
 			improvementHtml += '</span>';
 
