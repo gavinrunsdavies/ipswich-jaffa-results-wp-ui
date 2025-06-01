@@ -45,6 +45,10 @@ a.jaffa-name {
     vertical-align: middle;
     font-family: Courier New;
     font-style: italic;
+}
+.jaffa-orange {
+	color: #e88112;
+}
 </style>
 <div class="section">
 	<h2 id="jaffa-event-title"></h2>
@@ -66,7 +70,7 @@ a.jaffa-name {
 <script type="text/javascript">
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=calendar_month,groups,landscape_2,laps,run_circle,sports,sprint,travel_explore,workspace_premium';
+    link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=calendar_month,check_small,groups,landscape_2,laps,run_circle,sports,sprint,star,travel_explore,workspace_premium';
     document.head.appendChild(link);
 	
 	jQuery(document).ready(function ($) {
@@ -378,7 +382,7 @@ a.jaffa-name {
 									}
 								}
 
-								return '<i class="fa fa-check" aria-hidden="true"></i>' + improvementHtml;
+								return '<span class="material-symbols-outlined md-18">check_small</span>' + improvementHtml;
 							}
 							return '';
 						},
@@ -401,8 +405,9 @@ a.jaffa-name {
 						render : function (data, type, row, meta) {
 							var html = data > 0 ? data + '%' : '';
 							if (row.percentageGradingBest == 1) {
-								html += ' <i style="color: #e88112;" class="fa fa-star" aria-hidden="true" title="New percenatge grading personal best"></i>'
+								html += ` <span class="material-symbols-outlined md-18 jaffa-orange" title="New percenatge grading personal best">star</span>`;
 							}
+
 							return html;
 						},
 						name : "percentageGrading"
