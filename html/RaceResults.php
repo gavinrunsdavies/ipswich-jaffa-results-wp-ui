@@ -49,6 +49,21 @@ a.jaffa-name {
 .jaffa-orange {
 	color: #e88112;
 }
+/* Datatables.net responsive design. Change expand and collapse arrows */
+td.dtr-control::before {
+    font-family: 'Material Symbols Outlined';
+    content: 'keyboard_arrow_down';
+    font-size: 24px;
+    vertical-align: middle;
+    cursor: pointer;
+    margin-right: 8px;
+    color: #555;
+}
+
+/* When row is expanded, show up arrow */
+tr.dtr-hasChild td.dtr-control::before {
+    content: 'keyboard_arrow_up';
+}
 </style>
 <div class="section">
 	<h2 id="jaffa-event-title"></h2>
@@ -70,7 +85,7 @@ a.jaffa-name {
 <script type="text/javascript">
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=calendar_month,check_small,groups,landscape_2,laps,run_circle,sports,sprint,star,travel_explore,workspace_premium';
+    link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=calendar_month,check_small,groups,keyboard_arrow_down,keyboard_arrow_up,landscape_2,laps,run_circle,sports,sprint,star,travel_explore,workspace_premium';
     document.head.appendChild(link);
 	
 	jQuery(document).ready(function ($) {
