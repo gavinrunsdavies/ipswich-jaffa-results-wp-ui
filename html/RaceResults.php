@@ -285,6 +285,7 @@ a.jaffa-name {
 			$('#jaffa-race-results').append(tableHtml);
 
 			var table = $('#'+tableName + race.id).DataTable({
+				responsive: true,
 				// responsive: {
 				// 	details: {
 				// 		renderer: function ( api, rowIdx, columns ) {
