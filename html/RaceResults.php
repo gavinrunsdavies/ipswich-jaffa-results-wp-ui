@@ -21,6 +21,9 @@ div.event-attendees-chart {
     font-style: italic;
     color: #888;
 }
+.material-symbols-outlined {
+    vertical-align: text-bottom;
+}
 .jaffa-badges .material-symbols-outlined {
     vertical-align: middle;
 }
@@ -42,7 +45,7 @@ a.jaffa-name {
 }
 .jaffa-pb-improvement {
 	font-size: smaller; 
-    vertical-align: middle;
+    vertical-align: top;
     font-family: Courier New;
     font-style: italic;
 }
