@@ -23,6 +23,7 @@ class Program
 	const JQUERY_HANDLE = 'jquery';
 	const JQUERY_DATATABLES_HANDLE = 'jquery.dataTables.min';
 	const JQUERY_DATATABLES_RESPONSIVE_HANDLE = 'dataTables.responsive.min';
+    const DATATABLES_RESPONSIVE_HANDLE = 'responsive.dataTables';
 
 	public function __construct()
 	{
@@ -112,6 +113,14 @@ class Program
 		wp_enqueue_script(
 			self::JQUERY_DATATABLES_RESPONSIVE_HANDLE,
 			'https://cdn.datatables.net/responsive/3.0.4/js/dataTables.responsive.min.js',
+			array(self::JQUERY_DATATABLES_HANDLE),
+			null,
+			true
+		);
+
+		wp_enqueue_script(
+			self::DATATABLES_RESPONSIVE_HANDLE,
+			'https://cdn.datatables.net/responsive/3.0.4/js/responsive.dataTables.js',
 			array(self::JQUERY_DATATABLES_HANDLE),
 			null,
 			true
