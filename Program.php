@@ -21,7 +21,7 @@ $go = new Program();
 class Program
 {
 	const JQUERY_HANDLE = 'jquery';
-	const JQUERY_DATATABLES_HANDLE = 'jquery.dataTables.min';
+	const JQUERY_DATATABLES_HANDLE = 'jquery.dataTables.min?';
 	const JQUERY_DATATABLES_RESPONSIVE_HANDLE = 'dataTables.responsive.min';
     const DATATABLES_RESPONSIVE_HANDLE = 'responsive.dataTables';
 
@@ -106,7 +106,7 @@ class Program
 			self::JQUERY_DATATABLES_HANDLE,
 			'https://cdn.datatables.net/2.3.1/js/dataTables.min.js',
 			array(self::JQUERY_HANDLE),
-			null,
+			'2.3.1',
 			true
 		);
 
