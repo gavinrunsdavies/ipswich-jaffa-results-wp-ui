@@ -461,7 +461,7 @@ a.to-top {
 			const top8Ids = Object.entries(counts)
 				.sort((a, b) => b[1] - a[1])
 				.slice(0, 8)
-				.map(entry => entry[0]);
+				.map(entry => parseInt(entry[0], 10));
 
 			// Get distances and sort by miles
 			const distanceData = await Promise.all(
