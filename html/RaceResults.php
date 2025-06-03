@@ -428,7 +428,7 @@ a.jaffa-name {
 				},
 				processing : true,
 				autoWidth : false,
-				scrollX : true,
+				scrollX : false,
 				order : [[0, "asc"], [2, "asc"]],
 				ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/race/' + race.id)
 			});
