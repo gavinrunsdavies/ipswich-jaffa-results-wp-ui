@@ -451,7 +451,7 @@ a.to-top {
 
 			// Count valid distanceIds only
 			$.each(data, function(_, item) {
-				if (item.distanceId !== null && item.distanceId !== undefined) {
+				if (item.distanceId !== null && item.distanceId !== undefined && item.distanceId != "0") {
 					const id = item.distanceId.toString();
 					counts[id] = (counts[id] || 0) + 1;
 				}
@@ -467,13 +467,13 @@ a.to-top {
 			const distanceData = await Promise.all(
 				top8Ids.map(async id => {
 					const result = await getDistance(id);
-					return { id, text: result.text, miles: result.miles };
+					return { id, text: result.text, units: result.units };
 				})
 			);
 
 			// Sort and return the final result
 			return distanceData
-				.sort((a, b) => a.miles - b.miles)
+				.sort((a, b) => a.units - b.units)
 				.map(({ id, text }) => ({ id, text }));
 		}
 
