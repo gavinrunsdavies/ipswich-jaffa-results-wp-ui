@@ -180,16 +180,6 @@ a.to-top {
 	<table class="display" id="member-seasonal-best-results-table">
 	<caption>The best known performances for <span class="runnerName"></span></caption>
 		<thead>
-			<tr>
-				<th>Year</th>
-				<th>5k</th>
-				<th>5m</th>
-				<th>10k</th>
-				<th>10m</th>
-				<th>HM</th>
-				<th>20m</th>
-				<th>M</th>
-			</tr>
 		</thead>
 		<tbody>
 		</tbody>
@@ -229,7 +219,7 @@ a.to-top {
 		$.getJSON(
 			'<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/runners/<?php echo $_GET['runner_id']; ?>',
 			function(data) {	
-				// {"id":"116","name":"Gavin Davies","sexId":"2","dateOfBirth":"1980-05-16","isCurrentMember":"1","sex":"Male","certificates": array[], "rankings" : array[]}
+				// {"id":"116","name":"Gavin Davies","sexId":"2","dateOfBirth":"YYYY-MM-DD","isCurrentMember":"1","sex":"Male","certificates": array[], "rankings" : array[]}
 				$('.runnerName').text(data.name);
 				$('.runnerAgeCategory').text(data.ageCategory);
 				$('.runnerGender').text(data.sex);
@@ -239,7 +229,8 @@ a.to-top {
 			}
 		);	
 					
-		var supportedDistanceIds = [1,2,3,4,5,7,8];
+		var defaultDistanceIds = [1,2,3,4,5,7,8];
+		var runnerDistanceIds = [];
 		var results;
 		var allDistances;
 		$.when(
@@ -302,7 +293,7 @@ a.to-top {
 				else 
 					distanceId = parseInt(distanceId);
 					
-				if (supportedDistanceIds.indexOf(distanceId) == -1 && distanceId != 0) {
+				if (defaultDistanceIds.indexOf(distanceId) == -1 && distanceId != 0) {
 					otherRaceDistanceCount++;
 				}
 				
@@ -322,7 +313,8 @@ a.to-top {
 					percentageGradingData.push(result);
 				}
 			});
-							
+				
+			runnerDistanceIds = getTopDistances(data);
 			populateRaceCountTable(raceDistanceCount, otherRaceDistanceCount);
 			populateSeaonalBestTable(seasonalBest);
 			populateLatestRacePredictorTable(seasonalBest, data[0].date.substring(0, 4));
@@ -348,7 +340,7 @@ a.to-top {
 			var tableBody = $(tableId + ' tbody');
 							
 			var rows = '<tr>';						
-			$.each(supportedDistanceIds, function(i, distanceId) {	
+			$.each(defaultDistanceIds, function(i, distanceId) {	
 				var matched = false;									
 				$.each(rankings, function(j, rank) {		
 					if (distanceId == rank.distanceId) {
@@ -381,12 +373,12 @@ a.to-top {
 				
 			var rows = '';
 					
-			$.each(supportedDistanceIds, function(k, distanceId) {                  
+			$.each(defaultDistanceIds, function(k, distanceId) {                  
           		var distance = getDistance(distanceId);
           		if (distance != null) {
 					rows += '<tr>';	
             		rows += '<td>' +distance.text+ '</td>';				
-					$.each(supportedDistanceIds, function(k2, distanceId2) {							
+					$.each(defaultDistanceIds, function(k2, distanceId2) {							
 					if (data[year] !== undefined) {
 						if (data[year][distanceId] !== undefined) {
 							if (distanceId == distanceId2) {
@@ -423,12 +415,12 @@ a.to-top {
 			
 			var rows = '';
 						
-			$.each(supportedDistanceIds, function(k, distanceId) {
+			$.each(defaultDistanceIds, function(k, distanceId) {
 				var distance = getDistance(distanceId);
 				if (distance != null) {
 					rows += '<tr>';	
 					rows += '<td>' +distance.text+ '</td>';				
-					$.each(supportedDistanceIds, function(k2, distanceId2) {							
+					$.each(defaultDistanceIds, function(k2, distanceId2) {							
 						if (data[distanceId] !== undefined) {
 							if (distanceId == distanceId2) {
 								rows += '<td class="success"><strong>' + ipswichjaffarc.formatTime(data[distanceId].result) + '</strong></td>';
@@ -453,10 +445,51 @@ a.to-top {
 				info: false						
 			});
 		}
+
+		async function getTopDistances(data) {
+			const counts = {};
+
+			// Count valid distanceIds only
+			$.each(data, function(_, item) {
+				if (item.distanceId !== null && item.distanceId !== undefined) {
+					const id = item.distanceId.toString();
+					counts[id] = (counts[id] || 0) + 1;
+				}
+			});
+
+			// Top 8 most frequent IDs
+			const top8Ids = Object.entries(counts)
+				.sort((a, b) => b[1] - a[1])
+				.slice(0, 8)
+				.map(entry => entry[0]);
+
+			// Get distances and sort by miles
+			const distanceData = await Promise.all(
+				top8Ids.map(async id => {
+					const result = await getDistance(id);
+					return { id, text: result.text, miles: result.miles };
+				})
+			);
+
+			// Sort and return the final result
+			return distanceData
+				.sort((a, b) => a.miles - b.miles)
+				.map(({ id, text }) => ({ id, text }));
+		}
+
 		
 		function populateSeaonalBestTable(data) {
 			var tableId = '#member-seasonal-best-results-table'
 			var tableBody = $(tableId + ' tbody');
+			var tableHead = $(tableId + ' thead');
+
+			var headers = '<tr><th>Year</th>';
+			for	(var i = 0; i < runnerDistanceIds.length; i++) {
+            	headers += '<td>' + runnerDistanceIds[$i].text + '</td>';
+			}
+			headers += '</tr>';
+
+			tableHead.append(headers);
 				
 			var rows = '';
 						
@@ -468,9 +501,9 @@ a.to-top {
 				rows += '<tr>';
 				rows += '<td>' + year + '</td>';
 				
-				$.each(supportedDistanceIds, function(k, distanceId) {
-					if (data[year][distanceId] !== undefined) {
-						rows += '<td>' + ipswichjaffarc.formatTime(data[year][distanceId].time) + '</td>';
+				$.each(runnerDistanceIds, function(k, distance) {
+					if (data[year][distance.id] !== undefined) {
+						rows += '<td>' + ipswichjaffarc.formatTime(data[year][distance.id].time) + '</td>';
 					} else {
 						rows += '<td></td>';
 					}
@@ -515,8 +548,8 @@ a.to-top {
 			var sum  = data.reduce(function(a, b) { return a + b; }, 0);
 			var rows = '<tr>';				
 			rows += '<td>Count</td>';
-			for(var i = 0; i < supportedDistanceIds.length; i++) {
-				var count = data[supportedDistanceIds[i]] === undefined ? 0 : data[supportedDistanceIds[i]];
+			for(var i = 0; i < defaultDistanceIds.length; i++) {
+				var count = data[defaultDistanceIds[i]] === undefined ? 0 : data[defaultDistanceIds[i]];
 				rows += '<td>' + count + '</td>';
 			}
 						
@@ -528,19 +561,19 @@ a.to-top {
 						
 			rows += '<tr>';	
 			rows += '<td>Distance (miles)</td>';
-			for(var i = 0; i < supportedDistanceIds.length; i++) {
+			for(var i = 0; i < defaultDistanceIds.length; i++) {
 				var miles;
-				if (data[supportedDistanceIds[i]] === undefined)
+				if (data[defaultDistanceIds[i]] === undefined)
 					miles = 0;
 				else
-					miles = getTotalRaceDistanceInMiles(supportedDistanceIds[i], data[supportedDistanceIds[i]]).toFixed(2);
+					miles = getTotalRaceDistanceInMiles(defaultDistanceIds[i], data[defaultDistanceIds[i]]).toFixed(2);
 				rows += '<td>' + miles + '</td>';
 			}		
 
 			var otherDistanceMilesSum = 0;
 			for (var distanceId in data) {
 				distanceId = parseInt(distanceId);
-				if (supportedDistanceIds.indexOf(distanceId) == -1 && distanceId != 0) {
+				if (defaultDistanceIds.indexOf(distanceId) == -1 && distanceId != 0) {
 					otherDistanceMilesSum += getTotalRaceDistanceInMiles(distanceId, data[distanceId]);
 				}
 			}
