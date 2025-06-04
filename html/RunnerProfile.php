@@ -454,7 +454,7 @@ a.to-top {
 				if (item.distanceId !== null && 
 					item.distanceId !== undefined && 
 					item.distanceId != "0" &&
-					item.performance > 0) {
+					item.performance != "0.000") {
 					const id = item.distanceId.toString();
 					counts[id] = (counts[id] || 0) + 1;
 				}
