@@ -254,7 +254,7 @@ a.to-top {
 			 processResults(results, allDistances);
 		});
 				
-		function processResults(data, distances) {	
+		async function processResults(data, distances) {	
 			
 			// Get PBs by year. Data returned sorted by date (descending)
 			var seasonalBest = [];
@@ -314,7 +314,7 @@ a.to-top {
 				}
 			});
 				
-			runnerDistanceIds = getTopDistances(data);
+			runnerDistanceIds = await getTopDistances(data);
 			populateRaceCountTable(raceDistanceCount, otherRaceDistanceCount);
 			populateSeaonalBestTable(seasonalBest);
 			populateLatestRacePredictorTable(seasonalBest, data[0].date.substring(0, 4));
