@@ -451,7 +451,10 @@ a.to-top {
 
 			// Count valid distanceIds only
 			$.each(data, function(_, item) {
-				if (item.distanceId !== null && item.distanceId !== undefined && item.distanceId != "0") {
+				if (item.distanceId !== null && 
+					item.distanceId !== undefined && 
+					item.distanceId != "0" &&
+					item.performance > 0) {
 					const id = item.distanceId.toString();
 					counts[id] = (counts[id] || 0) + 1;
 				}
@@ -485,7 +488,7 @@ a.to-top {
 
 			var headers = '<tr><th>Year</th>';
 			for	(var i = 0; i < runnerDistanceIds.length; i++) {
-            	headers += '<td>' + runnerDistanceIds[i].text + '</td>';
+            	headers += '<th>' + runnerDistanceIds[i].text + '</th>';
 			}
 			headers += '</tr>';
 
