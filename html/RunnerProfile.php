@@ -485,7 +485,7 @@ a.to-top {
 
 			var headers = '<tr><th>Year</th>';
 			for	(var i = 0; i < runnerDistanceIds.length; i++) {
-            	headers += '<td>' + runnerDistanceIds[$i].text + '</td>';
+            	headers += '<td>' + runnerDistanceIds[i].text + '</td>';
 			}
 			headers += '</tr>';
 
