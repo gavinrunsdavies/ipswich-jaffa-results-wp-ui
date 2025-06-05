@@ -28,7 +28,7 @@
 }
 
 .section, .center-panel  {
-   margin-bottom: 1em;
+   	margin-bottom: 1em;
 	clear: both;
 }
 
@@ -133,7 +133,7 @@ a.to-top {
 	</div>			
 	<a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
 </div>
-<div class="section">
+<div class="section seniorsOnly">
 	<div id="member-race-predictions-current">
 		<table class="display" id="member-race-predictions-current-table">			
 			<caption>Race predictions based on best known performances for last year of competition (<span class="lastYearOfCompetition"></span>)</caption>
@@ -216,14 +216,15 @@ a.to-top {
 	jQuery(document).ready(function($) {	
 		
 		var rankings;
+		var ageAtLastRace;
 		$.getJSON(
 			'<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/runners/<?php echo $_GET['runner_id']; ?>',
-			function(data) {	
-				// {"id":"116","name":"Gavin Davies","sexId":"2","dateOfBirth":"YYYY-MM-DD","isCurrentMember":"1","sex":"Male","certificates": array[], "rankings" : array[]}
+			function(data) {					
 				$('.runnerName').text(data.name);
 				$('.runnerAgeCategory').text(data.ageCategory);
 				$('.runnerGender').text(data.sex);
 				rankings = data.rankings;
+				ageAtLastRace = data.ageAtLastRace;
 				populateCertificatesTable(data.name, data.certificates);
 				populateRankingsTable(data.rankings);
 			}
@@ -317,12 +318,17 @@ a.to-top {
 			runnerDistanceIds = await getTopDistances(data);
 			populateRaceCountTable(raceDistanceCount, otherRaceDistanceCount);
 			populateSeaonalBestTable(seasonalBest);
-			populateLatestRacePredictorTable(seasonalBest, data[0].date.substring(0, 4));
-			populateAllTimeRacePredictorTable(personalBest);
 			createRaceDistancePieChart(raceDistanceCount, otherRaceDistanceCount);
 			createCourseTypePieChart(courseTypeCount);
 			createPercentageGradingChart(percentageGradingData.reverse());
 			createInsightsRaceDistancePanel(Object.keys(raceDistanceCount), distances);
+
+			if (ageAtLastRace >= 16) {
+				populateLatestRacePredictorTable(seasonalBest, data[0].date.substring(0, 4));
+				populateAllTimeRacePredictorTable(personalBest);
+			} else {
+				$('.seniorsOnly').hide();
+			}
 		}
 		
 		function getDistance(distanceId) {
