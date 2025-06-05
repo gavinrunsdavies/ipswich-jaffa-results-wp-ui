@@ -546,7 +546,7 @@ a.to-top {
 
 			var headers = '<tr><th></th>';
 			for	(var i = 0; i < distanceIds.length; i++) {
-            	headers += '<th>' + distanceIds[i].text + '</th>';
+            	headers += '<th>' + getDistance(distanceIds[i]).text + '</th>';
 			}
 			headers += '<th>Other</th><th>Not Measured</th><th>Total</th>';
 			headers += '</tr>';
