@@ -101,19 +101,6 @@ a.to-top {
 	<table class="display" id="member-race-count-table">
 		<caption>Race distance breakdown for <span class="runnerName"></span></caption>
 		<thead>
-			<tr>			
-				<th></th>
-				<th>5k</th>
-				<th>5m</th>
-				<th>10k</th>
-				<th>10m</th>
-				<th>HM</th>
-				<th>20m</th>
-				<th>M</th>
-				<th>Other</th>
-				<th>Not Measured</th>
-				<th>Total</th>
-			</tr>
 		</thead>
 		<tbody>
 		</tbody>
@@ -230,7 +217,9 @@ a.to-top {
 			}
 		);	
 					
-		var defaultDistanceIds = [1,2,3,4,5,7,8];
+		const seniorDistanceIds = [14,1,2,3,4,5,7,8];
+		const juniorDistanceIds = [10,11,12,21,13,14,1,2];
+		var distanceIds = ageAtLastRace >=16 ? seniorDistanceIds : juniorDistanceIds;
 		var runnerDistanceIds = [];
 		var results;
 		var allDistances;
@@ -294,7 +283,7 @@ a.to-top {
 				else 
 					distanceId = parseInt(distanceId);
 					
-				if (defaultDistanceIds.indexOf(distanceId) == -1 && distanceId != 0) {
+				if (distanceIds.indexOf(distanceId) == -1 && distanceId != 0) {
 					otherRaceDistanceCount++;
 				}
 				
@@ -346,7 +335,7 @@ a.to-top {
 			var tableBody = $(tableId + ' tbody');
 							
 			var rows = '<tr>';						
-			$.each(defaultDistanceIds, function(i, distanceId) {	
+			$.each(distanceIds, function(i, distanceId) {	
 				var matched = false;									
 				$.each(rankings, function(j, rank) {		
 					if (distanceId == rank.distanceId) {
@@ -379,12 +368,12 @@ a.to-top {
 				
 			var rows = '';
 					
-			$.each(defaultDistanceIds, function(k, distanceId) {                  
+			$.each(distanceIds, function(k, distanceId) {                  
           		var distance = getDistance(distanceId);
           		if (distance != null) {
 					rows += '<tr>';	
             		rows += '<td>' +distance.text+ '</td>';				
-					$.each(defaultDistanceIds, function(k2, distanceId2) {							
+					$.each(distanceIds, function(k2, distanceId2) {							
 					if (data[year] !== undefined) {
 						if (data[year][distanceId] !== undefined) {
 							if (distanceId == distanceId2) {
@@ -421,12 +410,12 @@ a.to-top {
 			
 			var rows = '';
 						
-			$.each(defaultDistanceIds, function(k, distanceId) {
+			$.each(distanceIds, function(k, distanceId) {
 				var distance = getDistance(distanceId);
 				if (distance != null) {
 					rows += '<tr>';	
 					rows += '<td>' +distance.text+ '</td>';				
-					$.each(defaultDistanceIds, function(k2, distanceId2) {							
+					$.each(distanceIds, function(k2, distanceId2) {							
 						if (data[distanceId] !== undefined) {
 							if (distanceId == distanceId2) {
 								rows += '<td class="success"><strong>' + ipswichjaffarc.formatTime(data[distanceId].result) + '</strong></td>';
@@ -553,12 +542,22 @@ a.to-top {
 		function populateRaceCountTable(data, otherRaceDistanceCount) {
 			var tableId = '#member-race-count-table';
 			var tableBody = $(tableId + ' tbody');
-						
+			var tableHead = $(tableId + ' thead');
+
+			var headers = '<tr><th></th>';
+			for	(var i = 0; i < distanceIds.length; i++) {
+            	headers += '<th>' + distanceIds[i].text + '</th>';
+			}
+			headers += '<th>Other</th><th>Not Measured</th><th>Total</th>';
+			headers += '</tr>';
+
+			tableHead.append(headers);
+			
 			var sum  = data.reduce(function(a, b) { return a + b; }, 0);
 			var rows = '<tr>';				
 			rows += '<td>Count</td>';
-			for(var i = 0; i < defaultDistanceIds.length; i++) {
-				var count = data[defaultDistanceIds[i]] === undefined ? 0 : data[defaultDistanceIds[i]];
+			for(var i = 0; i < distanceIds.length; i++) {
+				var count = data[distanceIds[i]] === undefined ? 0 : data[distanceIds[i]];
 				rows += '<td>' + count + '</td>';
 			}
 						
@@ -570,19 +569,19 @@ a.to-top {
 						
 			rows += '<tr>';	
 			rows += '<td>Distance (miles)</td>';
-			for(var i = 0; i < defaultDistanceIds.length; i++) {
+			for(var i = 0; i < distanceIds.length; i++) {
 				var miles;
-				if (data[defaultDistanceIds[i]] === undefined)
+				if (data[distanceIds[i]] === undefined)
 					miles = 0;
 				else
-					miles = getTotalRaceDistanceInMiles(defaultDistanceIds[i], data[defaultDistanceIds[i]]).toFixed(2);
+					miles = getTotalRaceDistanceInMiles(distanceIds[i], data[distanceIds[i]]).toFixed(2);
 				rows += '<td>' + miles + '</td>';
 			}		
 
 			var otherDistanceMilesSum = 0;
 			for (var distanceId in data) {
 				distanceId = parseInt(distanceId);
-				if (defaultDistanceIds.indexOf(distanceId) == -1 && distanceId != 0) {
+				if (distanceIds.indexOf(distanceId) == -1 && distanceId != 0) {
 					otherDistanceMilesSum += getTotalRaceDistanceInMiles(distanceId, data[distanceId]);
 				}
 			}
