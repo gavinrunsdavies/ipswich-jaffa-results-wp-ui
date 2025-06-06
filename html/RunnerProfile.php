@@ -119,16 +119,6 @@
         <table class="display" id="member-race-predictions-current-table">
             <caption>Race predictions based on best known performances for last year of competition (<span class="lastYearOfCompetition"></span>)</caption>
             <thead>
-                <tr>
-                    <th></th>
-                    <th>5k</th>
-                    <th>5m</th>
-                    <th>10k</th>
-                    <th>10m</th>
-                    <th>HM</th>
-                    <th>20m</th>
-                    <th>M</th>
-                </tr>
             </thead>
             <tbody>
             </tbody>
@@ -138,16 +128,6 @@
         <table class="display" id="member-race-predictions-best-table">
             <caption>Race predictions based on best known performances.</caption>
             <thead>
-                <tr>
-                    <th></th>
-                    <th>5k</th>
-                    <th>5m</th>
-                    <th>10k</th>
-                    <th>10m</th>
-                    <th>HM</th>
-                    <th>20m</th>
-                    <th>M</th>
-                </tr>
             </thead>
             <tbody>
             </tbody>
@@ -346,12 +326,15 @@
         function populateLatestRacePredictorTable(distanceIds, data, year) {
             var tableId = '#member-race-predictions-current-table';
             var tableBody = $(tableId + ' tbody');
+            var tableHead = $(tableId + ' thead');
 
             var rows = '';
+            var headers = '<tr><th></th>';
 
             $.each(distanceIds, function(k, distanceId) {
                 var distance = getDistance(distanceId);
                 if (distance != null) {
+                    headers += '<th>' + distance.text + '</th>';
                     rows += '<tr>';
                     rows += '<td>' + distance.text + '</td>';
                     $.each(distanceIds, function(k2, distanceId2) {
@@ -372,7 +355,9 @@
                     rows += '</tr>';
                 }
             });
+            headers += '</tr>';
 
+            tableHead.append(headers);
             tableBody.append(rows);
             $('.lastYearOfCompetition').text(year);
 
@@ -388,12 +373,15 @@
         function populateAllTimeRacePredictorTable(distanceIds, data) {
             var tableId = '#member-race-predictions-best-table';
             var tableBody = $(tableId + ' tbody');
+            var tableHead = $(tableId + ' thead');
 
             var rows = '';
+            var headers = '<tr><th></th>';
 
             $.each(distanceIds, function(k, distanceId) {
                 var distance = getDistance(distanceId);
                 if (distance != null) {
+                    headers += '<th>' + distance.text + '</th>';
                     rows += '<tr>';
                     rows += '<td>' + distance.text + '</td>';
                     $.each(distanceIds, function(k2, distanceId2) {
@@ -410,7 +398,9 @@
                     rows += '</tr>';
                 }
             });
+            headers += '</tr>';
 
+            tableHead.append(headers);
             tableBody.append(rows);
 
             $(tableId).DataTable({
