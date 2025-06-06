@@ -539,8 +539,8 @@
             rows += '<td>Count</td>';
 
             for (var i = 0; i < distanceIds.length; i++) {
-                headers += '<th>' + getDistance(distanceIds[i]).text + '</th>';
-                var count = data[distanceIds[i]] === undefined ? 0 : data[distanceIds[i]];
+                headers += '<th>' + distanceIds[i].text + '</th>';
+                var count = data[distanceIds[i].id] === undefined ? 0 : data[distanceIds[i].id];
                 rows += '<td>' + count + '</td>';
             }
             headers += '<th>Other</th><th>Not Measured</th><th>Total</th>';
@@ -562,10 +562,10 @@
             rows += '<td>Distance (miles)</td>';
             for (var i = 0; i < distanceIds.length; i++) {
                 var miles;
-                if (data[distanceIds[i]] === undefined)
+                if (data[distanceIds[i].id] === undefined)
                     miles = 0;
                 else
-                    miles = getTotalRaceDistanceInMiles(distanceIds[i], data[distanceIds[i]]).toFixed(2);
+                    miles = getTotalRaceDistanceInMiles(distanceIds[i].id, data[distanceIds[i].id]).toFixed(2);
                 rows += '<td>' + miles + '</td>';
             }
 
