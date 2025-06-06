@@ -325,7 +325,7 @@
             var headers = '<tr>';
             var rows = '<tr>';
             $.each(rankings, function(j, ranking) {
-                headers += '<th>' + getDistance(ranking.distanceId).text + '</th>';
+                headers += '<th>' + getDistance(parseInt(ranking.distanceId, 10)).text + '</th>';
                 rows += '<td><strong>' + ranking.rank + '</strong><br/><small>' + ranking.event + ', ' + ranking.date + ', ' + ipswichjaffarc.formatTime(ranking.result) + '</small></td>';
             });
             headers += '</tr>';
