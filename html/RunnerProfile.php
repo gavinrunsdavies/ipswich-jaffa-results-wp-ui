@@ -287,7 +287,7 @@
             });
 
             var runnerDistanceIds = await getTopDistances(data);
-            populateRaceCountTable(raceDistanceCount, otherRaceDistanceCount);
+            populateRaceCountTable(raceDistanceCount, otherRaceDistanceCount, runnerDistanceIds);
             populateSeasonalBestTable(seasonalBest, runnerDistanceIds);
             createRaceDistancePieChart(raceDistanceCount, otherRaceDistanceCount);
             createCourseTypePieChart(courseTypeCount);
