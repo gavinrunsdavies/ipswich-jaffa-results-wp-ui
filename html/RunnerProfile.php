@@ -272,7 +272,7 @@
             createRaceDistancePieChart(raceDistanceCount, otherRaceDistanceCount);
             createCourseTypePieChart(courseTypeCount);
             createPercentageGradingChart(percentageGradingData.reverse());
-            createInsightsRaceDistancePanel(Object.keys(raceDistanceCount));
+            createInsightsRaceDistancePanel(runnerDistanceIds);
 
             if (seniorDataOnly) {
                 populateLatestRacePredictorTable(distanceIds, seasonalBest, data[0].date.substring(0, 4));
@@ -860,11 +860,14 @@
             }
 
             var selectList = $('#insights-race-distance-selection');
-
+			selectList.append($('<option>', {
+                    value: 0,
+                    text: "Please select..."
+            }));
             $.each(distancesIds, function(i, item) {
                 selectList.append($('<option>', {
                     value: item,
-                    text: getDistance(item)?.text ?? "Please select..."
+                    text: getDistance(item).text
                 }));
             });
 
@@ -881,7 +884,7 @@
 
             // Set initial value to first in the list
             setInsightsRaceDistanceChartData(chart, distancesIds[1]);
-            selectList.val(distancesIds[1]);
+            selectList.val(distancesIds[0]);
             $('#runner-insights-race-distance-text').text(selectList.find("option:selected").text());
         }
 
