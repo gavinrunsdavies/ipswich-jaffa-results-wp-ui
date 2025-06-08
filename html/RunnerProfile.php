@@ -269,7 +269,7 @@
             var runnerDistanceIds = await getTopDistances(data);
             populateRaceCountTable(raceDistanceCount, otherRaceDistanceCount, runnerDistanceIds);
             populateSeasonalBestTable(seasonalBest, runnerDistanceIds);
-            createRaceDistancePieChart(raceDistanceCount, otherRaceDistanceCount);
+            createRaceDistancePieChart(raceDistanceCount, otherRaceDistanceCount, runnerDistanceIds);
             createCourseTypePieChart(courseTypeCount);
             createPercentageGradingChart(percentageGradingData.reverse());
             createInsightsRaceDistancePanel(runnerDistanceIds);
@@ -717,18 +717,20 @@
             return (value == null || value == "") ? "" : " - " + value;
         }
 
-        function createRaceDistancePieChart(raceDistanceCount, otherRaceDistanceCount) {
+        function createRaceDistancePieChart(raceDistanceCount, otherRaceDistanceCount, distanceIds) {
             am4core.ready(function() {
                 am4core.useTheme(am4themes_animated);
 
                 var chart = am4core.create("race-distance-chart", am4charts.PieChart);
 
-                $.each(raceDistanceCount, function(distanceId, count) {
-                    chart.data.push({
-                        "distance": getDistance(distanceId)?.text ?? "Unclassified",
+				for (var i = 0; i < distanceIds.length; i++) {
+					var count = data[distanceIds[i].id] === undefined ? 0 : data[distanceIds[i].id];
+					chart.data.push({
+                        "distance": distanceIds[i].text,
                         "count": count
                     });
-                });
+				}
+
                 chart.data.push({
                     "distance": "Other",
                     "count": otherRaceDistanceCount
@@ -746,6 +748,8 @@
                 pieSeries.slices.template.strokeModifier = rgm;
                 pieSeries.slices.template.strokeOpacity = 0.4;
                 pieSeries.slices.template.strokeWidth = 0;
+
+				pieSeries.labels.template.fontSize = 12;
             });
         }
 
@@ -798,6 +802,8 @@
                 pieSeries.slices.template.strokeModifier = rgm;
                 pieSeries.slices.template.strokeOpacity = 0.4;
                 pieSeries.slices.template.strokeWidth = 0;
+
+				pieSeries.labels.template.fontSize = 12;
             });
         }
 
@@ -885,7 +891,7 @@
             });
 
             // Set initial value to first in the list
-            setInsightsRaceDistanceChartData(chart, distancesIds[1]);
+            setInsightsRaceDistanceChartData(chart, distancesIds[0].id);
             selectList.val(distancesIds[0].id);
             $('#runner-insights-race-distance-text').text(selectList.find("option:selected").text());
         }
