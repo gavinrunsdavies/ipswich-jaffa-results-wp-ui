@@ -724,7 +724,7 @@
                 var chart = am4core.create("race-distance-chart", am4charts.PieChart);
 
 				for (var i = 0; i < distanceIds.length; i++) {
-					var count = raceDistanceCount[distanceIds[i].id] === undefined ? 0 : data[distanceIds[i].id];
+					var count = raceDistanceCount[distanceIds[i].id] === undefined ? 0 : raceDistanceCount[distanceIds[i].id];
 					chart.data.push({
                         "distance": distanceIds[i].text,
                         "count": count
