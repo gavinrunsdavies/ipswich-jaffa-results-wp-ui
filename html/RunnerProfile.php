@@ -561,8 +561,8 @@
 
             var otherDistanceMilesSum = 0;
             for (var distanceId in data) {
-                distanceId = parseInt(distanceId);
-                if (distanceIds.indexOf(distanceId) == -1 && distanceId != 0) {
+                distanceId = parseInt(distanceId);                
+				if (!distanceIds.some(d => d.id === distanceId) && distanceId != 0) {
                     otherDistanceMilesSum += getTotalRaceDistanceInMiles(distanceId, data[distanceId]);
                 }
             }
@@ -784,6 +784,8 @@
                     "count": courses[0]
                 }];
 
+				chart.data = chart.data.filter(item => item.count > 0);
+
                 // Add and configure Series
                 var pieSeries = chart.series.push(new am4charts.PieSeries());
                 pieSeries.dataFields.value = "count";
@@ -866,8 +868,8 @@
             }));
             $.each(distancesIds, function(i, item) {
                 selectList.append($('<option>', {
-                    value: item,
-                    text: getDistance(item).text
+                    value: item.id,
+                    text: item.text
                 }));
             });
 
@@ -884,7 +886,7 @@
 
             // Set initial value to first in the list
             setInsightsRaceDistanceChartData(chart, distancesIds[1]);
-            selectList.val(distancesIds[0]);
+            selectList.val(distancesIds[0].id);
             $('#runner-insights-race-distance-text').text(selectList.find("option:selected").text());
         }
 
