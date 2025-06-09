@@ -119,7 +119,7 @@
     </div> 
 </div>
 <div class="section" id="member-race-and-course-summary">
-    <div class="row"></div>
+    <div class="row">
         <div class="col-50">
             <h3>Race distance summary</h3>
             <div id="race-distance-chart" style="height: 250px;"></div>
