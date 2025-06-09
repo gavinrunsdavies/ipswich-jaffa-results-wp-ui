@@ -29,56 +29,63 @@
         text-align: center;
     }
 
-    .section,
-    .center-panel {
+    .section {
         margin-bottom: 1em;
         clear: both;
+        display: flex;
+        flex-direction: column;
     }
 
     table.display th {
         text-align: left;
     }
 
-    a.to-top {
-        float: right;
+    div.to-top {
+        text-align: right;
         font-size: small;
     }
+
+    #member-ranking-table td {
+        vertical-align: top;
+    }
 </style>
-<div class="center-panel">
+<div class="section center-panel">
     <h2>My Results: <span class="runnerName"></span></h2>
     <h5 class="runnerAgeCategory"></h5>
     <h4><a href="#age-grading-chart">Age Grading Performances</a> | <a href="#certificates-panel">Certificates</a> | <a href="#insights-distance-panel">Runner Insights</a> | <span id="member-ranking-table-label"><a href="#member-ranking-table">Club rankings</a> | </span><a href="#member-race-count-table">Race distance breakdown</a> | <a href="#member-race-and-course-summary">Race & course summary</a> | <span class="seniors-only"><a href="#member-race-predictions-current">Race predictions</a> | </span><a href="#member-seasonal-best-results-table">Best known performances</a> | <a href="#member-results-table">All Results</a></h4>
 </div>
-<div class="center-panel">
+<div class="section center-panel">
     <h3>Age Grading Performances</h3>
     <div id="age-grading-chart" style="height: 350px;"></div>
-    <a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    <div class="to-top">
+        <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    </div> 
 </div>
-<div class="section">
-    <div id="certificates-panel">
-        <table class="display" id="member-certificates-table">
-            <caption>7 Star Standard certificates achieved by <span class="runnerName"></span>.</caption>
-            <caption style="font-size:smaller">All certificates are for races from 2017 onwards. Click on the standard to view or download your certificate.</caption>
-            <thead>
-                <tr>
-                    <th>Standard</th>
-                    <th>Distance</th>
-                    <th>Details</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
-    <a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+<div class="section" id="certificates-panel">
+    <table class="display" id="member-certificates-table">
+        <caption>7 Star Standard certificates achieved by <span class="runnerName"></span>.</caption>
+        <caption style="font-size:smaller">All certificates are for races from 2017 onwards. Click on the standard to view or download your certificate.</caption>
+        <thead>
+            <tr>
+                <th>Standard</th>
+                <th>Distance</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div class="to-top">
+        <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    </div>    
 </div>
-<div class="center-panel">
-    <div id="insights-distance-panel">
-        <h3>Runner Insights: Race distance <span id="runner-insights-race-distance-text"></span></h3>
-        <select id="insights-race-distance-selection" style="font-size: 10px; float: right;"></select>
-        <div id="insights-race-distance-chart" style="height: 350px;clear: both;"></div>
-    </div>
-    <a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+<div class="section center-panel" id="insights-distance-panel">    
+    <h3>Runner Insights: Race distance <span id="runner-insights-race-distance-text"></span></h3>
+    <select id="insights-race-distance-selection" style="font-size: 10px; float: right;"></select>
+    <div id="insights-race-distance-chart" style="height: 350px;clear: both;"></div>
+    <div class="to-top">
+        <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    </div>    
 </div>
 <div class="section">
     <table class="display" id="member-ranking-table">
@@ -89,7 +96,9 @@
         </tbody>
     </table>
     <p style="font-size: smaller">The above Ipswich JAFFA Running Club rankings show where <span class="runnerName"></span> ranks among other Ipswich JAFFA members (past and present). Ranking category: <span class="runnerGender"></span>.</p>
-    <a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    <div class="to-top">
+        <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    </div> 
 </div>
 <div class="section">
     <table class="display" id="member-race-count-table">
@@ -101,7 +110,9 @@
     </table>
     <p style="font-size: smaller">The above totals are only valid for measured race distances (e.g. those that can count towards a personal best).</p>
     <p style="font-size: smaller">The total distance covered calculation is only approximate and the accuracy of older results is not guaranteed.</p>
-    <a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    <div class="to-top">
+        <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    </div> 
 </div>
 <div class="row" id="member-race-and-course-summary">
     <div class="col-50">
@@ -112,30 +123,31 @@
         <h3>Course type summary</h3>
         <div id="course-type-chart" style="height: 250px;"></div>
     </div>
-    <a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    <div class="to-top">
+        <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    </div> 
 </div>
-<div class="section seniors-only">
-    <div id="member-race-predictions-current">
-        <table class="display" id="member-race-predictions-current-table">
-            <caption>Race predictions based on best known performances for last year of competition (<span class="lastYearOfCompetition"></span>)</caption>
-            <thead>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
-    <div id="member-race-predictions-best">
-        <table class="display" id="member-race-predictions-best-table">
-            <caption>Race predictions based on best known performances.</caption>
-            <thead>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
+<div class="section seniors-only" id="member-race-predictions-current">
+    <table class="display" id="member-race-predictions-current-table">
+        <caption>Race predictions based on best known performances for last year of competition (<span class="lastYearOfCompetition"></span>)</caption>
+        <thead>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<div class="section seniors-only" id="member-race-predictions-best">
+    <table class="display" id="member-race-predictions-best-table">
+        <caption>Race predictions based on best known performances.</caption>
+        <thead>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
     <p style="font-size: smaller">The above race predictions are based on the known performances and calculated using the formula: T2 = T1 x (D2/D1)^1.06, where D1 is known distance, D2 is target distance, T1 is result for distance D1 and T2 is predicted time for target distance D2. Read predictions in columns not rows. Entries in bold show the achieved time (T1).</p>
-    <a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
-    <br />
+    <div class="to-top">
+        <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    </div> 
 </div>
 <div class="section">
     <table class="display" id="member-seasonal-best-results-table">
@@ -145,7 +157,9 @@
         <tbody>
         </tbody>
     </table>
-    <a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    <div class="to-top">
+        <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    </div> 
 </div>
 <div class="section">
     <table class="display" id="member-results-table">
@@ -166,7 +180,9 @@
         <tbody>
         </tbody>
     </table>
-    <a class="to-top" href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    <div class="to-top">
+        <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    </div> 
 </div>
 
 <!-- amCharts javascript sources -->
