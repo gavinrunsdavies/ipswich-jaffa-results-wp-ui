@@ -7,22 +7,17 @@
         padding-top: 0;
     }
 
-    .row * {
-        box-sizing: border-box;
-    }
-
-    /* Create two equal columns that floats next to each other */
     .col-50 {
-        float: left;
-        width: 50%;
-        padding: 10px;
+        flex: 0 0 50%;
+        box-sizing: border-box;
+        padding: 1rem;
     }
 
-    /* Clear floats after the columns */
-    .row:after {
-        content: "";
-        display: table;
-        clear: both;
+     /* Stack columns on small screens */
+    @media (max-width: 600px) {
+        .col-50 {
+          flex: 0 0 100%;
+        }
     }
 
     .center-panel {
@@ -34,6 +29,7 @@
         clear: both;
         display: flex;
         flex-direction: column;
+        flex-wrap: wrap;
     }
 
     table.display th {
@@ -81,7 +77,9 @@
 </div>
 <div class="section center-panel" id="insights-distance-panel">    
     <h3>Runner Insights: Race distance <span id="runner-insights-race-distance-text"></span></h3>
-    <select id="insights-race-distance-selection" style="font-size: 10px; float: right;"></select>
+    <div style="text-align: right">
+        <select id="insights-race-distance-selection" style="font-size: 10px; width: fit-content"></select>
+    </div>
     <div id="insights-race-distance-chart" style="height: 350px;clear: both;"></div>
     <div class="to-top">
         <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
@@ -114,7 +112,7 @@
         <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
     </div> 
 </div>
-<div class="row" id="member-race-and-course-summary">
+<div class="section" id="member-race-and-course-summary">
     <div class="col-50">
         <h3>Race distance summary</h3>
         <div id="race-distance-chart" style="height: 250px;"></div>
@@ -123,6 +121,8 @@
         <h3>Course type summary</h3>
         <div id="course-type-chart" style="height: 250px;"></div>
     </div>
+</div>
+<div class="section">
     <div class="to-top">
         <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
     </div> 
