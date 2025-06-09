@@ -32,6 +32,12 @@
         flex-wrap: wrap;
     }
 
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+    }
+
     table.display th {
         text-align: left;
     }
@@ -113,16 +119,16 @@
     </div> 
 </div>
 <div class="section" id="member-race-and-course-summary">
-    <div class="col-50">
-        <h3>Race distance summary</h3>
-        <div id="race-distance-chart" style="height: 250px;"></div>
+    <div class="row"></div>
+        <div class="col-50">
+            <h3>Race distance summary</h3>
+            <div id="race-distance-chart" style="height: 250px;"></div>
+        </div>
+        <div class="col-50">
+            <h3>Course type summary</h3>
+            <div id="course-type-chart" style="height: 250px;"></div>
+        </div>
     </div>
-    <div class="col-50">
-        <h3>Course type summary</h3>
-        <div id="course-type-chart" style="height: 250px;"></div>
-    </div>
-</div>
-<div class="section">
     <div class="to-top">
         <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
     </div> 
