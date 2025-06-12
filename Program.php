@@ -21,7 +21,7 @@ $go = new Program();
 class Program
 {
 	const JQUERY_HANDLE = 'jquery';
-	const JQUERY_DATATABLES_HANDLE = 'jquery.dataTables.min?v2.3.2';
+	const JQUERY_DATATABLES_HANDLE = 'jquery.dataTables.min';
 	const JQUERY_DATATABLES_RESPONSIVE_HANDLE = 'dataTables.responsive.min';
 
 	public function __construct()
@@ -47,7 +47,7 @@ class Program
 
 		wp_enqueue_style(
 			'dataTables.dataTables.min.css',
-			'https://cdn.datatables.net/2.3.1/css/dataTables.dataTables.min.css'
+			'https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css'
 		);
 
 		wp_enqueue_style(
