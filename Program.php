@@ -21,9 +21,8 @@ $go = new Program();
 class Program
 {
 	const JQUERY_HANDLE = 'jquery';
-	const JQUERY_DATATABLES_HANDLE = 'jquery.dataTables.min?v2.3.1';
+	const JQUERY_DATATABLES_HANDLE = 'jquery.dataTables.min?v2.3.2';
 	const JQUERY_DATATABLES_RESPONSIVE_HANDLE = 'dataTables.responsive.min';
-    const DATATABLES_RESPONSIVE_HANDLE = 'responsive.dataTables';
 
 	public function __construct()
 	{
@@ -104,7 +103,7 @@ class Program
 
 		wp_enqueue_script(
 			self::JQUERY_DATATABLES_HANDLE,
-			'https://cdn.datatables.net/2.3.1/js/dataTables.min.js',
+			'https://cdn.datatables.net/2.3.2/js/dataTables.min.js',
 			array(self::JQUERY_HANDLE),
 			null,
 			true
@@ -113,14 +112,6 @@ class Program
 		wp_enqueue_script(
 			self::JQUERY_DATATABLES_RESPONSIVE_HANDLE,
 			'https://cdn.datatables.net/responsive/3.0.4/js/dataTables.responsive.min.js',
-			array(self::JQUERY_DATATABLES_HANDLE),
-			null,
-			true
-		);
-
-		wp_enqueue_script(
-			self::DATATABLES_RESPONSIVE_HANDLE,
-			'https://cdn.datatables.net/responsive/3.0.4/js/responsive.dataTables.js',
 			array(self::JQUERY_DATATABLES_HANDLE),
 			null,
 			true
