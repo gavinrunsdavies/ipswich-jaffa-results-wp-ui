@@ -26,10 +26,6 @@
 
     .section {
         margin-bottom: 1em;
-        clear: both;
-        display: flex;
-        flex-direction: column;
-        flex-wrap: wrap;
     }
 
     .row {
@@ -64,7 +60,7 @@
     </div> 
 </div>
 <div class="section" id="certificates-panel">
-    <table class="display" id="member-certificates-table">
+    <table class="display responsive nowrap" id="member-certificates-table">
         <caption>7 Star Standard certificates achieved by <span class="runnerName"></span>.</caption>
         <caption style="font-size:smaller">All certificates are for races from 2017 onwards. Click on the standard to view or download your certificate.</caption>
         <thead>
@@ -92,7 +88,7 @@
     </div>    
 </div>
 <div class="section">
-    <table class="display" id="member-ranking-table">
+    <table class="display responsive nowrap" id="member-ranking-table">
         <caption>Club rankings for <span class="runnerName"></span></caption>
         <thead>
         </thead>
@@ -105,7 +101,7 @@
     </div> 
 </div>
 <div class="section">
-    <table class="display" id="member-race-count-table">
+    <table class="display responsive nowrap" id="member-race-count-table">
         <caption>Race distance breakdown for <span class="runnerName"></span></caption>
         <thead>
         </thead>
@@ -134,7 +130,7 @@
     </div> 
 </div>
 <div class="section seniors-only" id="member-race-predictions-current">
-    <table class="display" id="member-race-predictions-current-table">
+    <table class="display responsive nowrap" id="member-race-predictions-current-table">
         <caption>Race predictions based on best known performances for last year of competition (<span class="lastYearOfCompetition"></span>)</caption>
         <thead>
         </thead>
@@ -143,7 +139,7 @@
     </table>
 </div>
 <div class="section seniors-only" id="member-race-predictions-best">
-    <table class="display" id="member-race-predictions-best-table">
+    <table class="display responsive nowrap" id="member-race-predictions-best-table">
         <caption>Race predictions based on best known performances.</caption>
         <thead>
         </thead>
@@ -156,7 +152,7 @@
     </div> 
 </div>
 <div class="section">
-    <table class="display" id="member-seasonal-best-results-table">
+    <table class="display responsive nowrap" id="member-seasonal-best-results-table">
         <caption>The best known performances for <span class="runnerName"></span></caption>
         <thead>
         </thead>
@@ -168,7 +164,7 @@
     </div> 
 </div>
 <div class="section">
-    <table class="display" id="member-results-table">
+    <table class="display responsive nowrap" id="member-results-table">
         <caption>All race results for <span class="runnerName"></span></caption>
         <thead>
             <tr>
@@ -648,24 +644,6 @@
 
         function createResultsDataTable(data) {
             $('#member-results-table').DataTable({
-                responsive: {
-                    details: {
-                        renderer: function(api, rowIdx, columns) {
-                            var data = $.map(columns, function(col, i) {
-                                return col.hidden ?
-                                    '<tr data-dt-row="' + col.rowIndex + '" data-dt-column="' + col.columnIndex + '">' +
-                                    '<td>' + col.title + ':' + '</td> ' +
-                                    '<td>' + col.data + '</td>' +
-                                    '</tr>' :
-                                    '';
-                            }).join('');
-
-                            return data ?
-                                $('<table/>').append(data) :
-                                false;
-                        }
-                    }
-                },
                 pageLength: 20,
                 serverSide: false,
                 processing: true,
