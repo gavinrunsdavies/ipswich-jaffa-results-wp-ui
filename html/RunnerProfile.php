@@ -49,7 +49,6 @@
 
     #member-results-table .text-wrap {
       white-space: normal;
-      word-break: break-word;
       max-width: 400px;
     }
 </style>
@@ -177,8 +176,8 @@
                 <th>Race Id</th>
                 <th data-priority="1">Race</th>
                 <th data-priority="3">Date</th>
-                <th data-priority="4">Position</th>
-                <th data-priority="3">Result</th>
+                <th data-priority="2">Position</th>
+                <th data-priority="2">Result</th>
                 <th data-priority="6">Personal Best</th>
                 <th data-priority="7">Standard</th>
                 <th data-priority="8">Info</th>
