@@ -47,7 +47,7 @@
         vertical-align: top;
     }
 
-    member-results-table .text-wrap {
+    #member-results-table .text-wrap {
       white-space: normal;
       word-break: break-word;
       max-width: 400px;
