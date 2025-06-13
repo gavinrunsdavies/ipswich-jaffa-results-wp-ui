@@ -46,6 +46,12 @@
     #member-ranking-table td {
         vertical-align: top;
     }
+
+    member-results-table .text-wrap {
+      white-space: normal;
+      word-break: break-word;
+      max-width: 400px;
+    }
 </style>
 <div class="section center-panel">
     <h2>My Results: <span class="runnerName"></span></h2>
@@ -169,8 +175,8 @@
         <thead>
             <tr>
                 <th>Race Id</th>
-                <th data-priority="2">Race</th>
-                <th data-priority="1">Date</th>
+                <th data-priority="1">Race</th>
+                <th data-priority="3">Date</th>
                 <th data-priority="4">Position</th>
                 <th data-priority="3">Result</th>
                 <th data-priority="6">Personal Best</th>
@@ -665,7 +671,8 @@
                             anchor += '?raceId=' + row.raceId;
                             anchor += '">' + row.eventName + nullToEmptyString(data) + '</a>';
                             return anchor;
-                        }
+                        },
+                        className: 'text-wrap'
                     },
                     {
                         data: "date"
