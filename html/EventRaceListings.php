@@ -129,15 +129,18 @@
 			var icon = $(this);
 			var icon_fa_icon = icon.attr('data-icon');
             var nTr = this.parentNode.parentNode;
-			
-			if (icon_fa_icon === "chevron-up") {
-				eventTable.fnClose( nTr );
+
+			let row = table.row(this);
+
+			if (row.child.isShown()) {
+				row.child.hide();
+				$(this).removeClass('shown');
 				icon.attr('data-icon', 'chevron-down');
 			} else {
-				var newTr = eventTable.fnOpen( nTr, 'Loading data...', 'details' );
-			    var aData = eventTable.fnGetData( nTr );
-			    fnSetEventDetails(eventTable, newTr, aData.id, aData.eventName);
+				row.child('<div>Loading...</div>').show();
+				fnSetEventDetails(eventTable, row, aData.id, aData.eventName);
 				icon.attr('data-icon', 'chevron-up');
+				$(this).addClass('shown');
 			}
 		});
 		
