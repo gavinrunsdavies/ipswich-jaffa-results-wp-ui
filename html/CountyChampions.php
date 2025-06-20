@@ -21,24 +21,7 @@
 			$('#jaffa-race-results').append(tableHtml);
 			
 			var table = $('#'+tableName).DataTable({
-				responsive: {
-					details: {
-						renderer: function ( api, rowIdx, columns ) {
-							var data = $.map( columns, function ( col, i ) {
-								return col.hidden ?
-									'<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
-										'<td>'+col.title+':'+'</td> '+
-										'<td>'+col.data+'</td>'+
-									'</tr>' :
-									'';
-							} ).join('');
-
-							return data ?
-								$('<table/>').append( data ) :
-								false;
-						}
-					}
-				},							
+				responsive: true,							
 				paging : false,
 				searching: true,
 				serverSide : false,
@@ -101,7 +84,7 @@
 				],
 				processing : true,
 				autoWidth : false,
-				scrollX : true,				
+				scrollX : false,				
 				ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/county'),
 				drawCallback: function ( settings ) {
 				var api = this.api();
