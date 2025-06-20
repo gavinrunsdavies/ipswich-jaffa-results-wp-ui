@@ -116,31 +116,14 @@
 
 			var ladiesTableElement = $('#ladies-ranking-results-table');			
 			ladiesTableElement.DataTable({	
-				responsive: {
-					details: {
-						renderer: function ( api, rowIdx, columns ) {
-							var data = $.map( columns, function ( col, i ) {
-								return col.hidden ?
-									'<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
-										'<td>'+col.title+':'+'</td> '+
-										'<td>'+col.data+'</td>'+
-									'</tr>' :
-									'';
-							} ).join('');
-
-							return data ?
-								$('<table/>').append( data ) :
-								false;
-						}
-					}
-				},			
+				responsive: true,			
 				pageLength : 20,
 				paging : true,
 				destroy : true,	
 				processing : true,
 				searching: true,
 				autoWidth : false,
-				scrollX: true,
+				scrollX: false,
 				columns: [
 				{ 
 					data: "rank" 
@@ -204,31 +187,14 @@
 			
 			var mensTableElement = $('#mens-ranking-results-table');			
 			mensTableElement.DataTable({
-				responsive: {
-					details: {
-						renderer: function ( api, rowIdx, columns ) {
-							var data = $.map( columns, function ( col, i ) {
-								return col.hidden ?
-									'<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
-										'<td>'+col.title+':'+'</td> '+
-										'<td>'+col.data+'</td>'+
-									'</tr>' :
-									'';
-							} ).join('');
-
-							return data ?
-								$('<table/>').append( data ) :
-								false;
-						}
-					}
-				},
+				responsive: true,
 				pageLength : 20,
 				paging : true,
-				destroy	   : true,	
-				processing    : true,
+				destroy : true,	
+				processing : true,
 				searching: true,
-				autoWidth     : false,
-				scrollX: true,
+				autoWidth : false,
+				scrollX: false,
 				columns: [
 				{ 
 					data: "rank" 
