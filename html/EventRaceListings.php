@@ -124,25 +124,23 @@
 			
 		  return countryName;
 		}
-		
-		$(document).on("click", '#event-listings-table tbody td .showHideRaces', function () {
-			var icon = $(this);
-			var icon_fa_icon = icon.attr('data-icon');
-            var nTr = this.parentNode.parentNode;
 
+		$('#event-listings-table tbody').on('click', 'tr', function () {
 			let row = table.row(this);
+			let data = row.data();
 
 			if (row.child.isShown()) {
+				// This row is already open - close it
 				row.child.hide();
 				$(this).removeClass('shown');
-				icon.attr('data-icon', 'chevron-down');
 			} else {
-				row.child('<div>Loading...</div>').show();
-				fnSetEventDetails(eventTable, row, aData.id, aData.eventName);
-				icon.attr('data-icon', 'chevron-up');
+				// Open this row
+				row.child('<div>Extra row content goes here</div>').show();
+				setEventDetails(eventTable, row, data.id);
 				$(this).addClass('shown');
 			}
 		});
+		
 		
 		$(document).on('click', 'a.toggle-vis', function(){
 			var tableName = $(this).attr('data-table');
@@ -155,7 +153,7 @@
 		});
 		
 		/* Formating function for row details */
-		function fnSetEventDetails ( oTable, nTr, iEventId, sEventName)
+		function setEventDetails (oTable, nTr, iEventId)
 		{		
 			$.ajax(
 				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/'+ iEventId + '/races'))			
