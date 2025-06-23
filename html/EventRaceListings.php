@@ -17,6 +17,17 @@
 	jQuery(document).ready(function($) {	
 
 		var tableElement = $('#event-listings-table');
+
+        const isMobile = window.innerWidth <= 768;
+
+        const responsiveDisplay = isMobile
+          ? DataTable.Responsive.display.modal({
+              header: function (row) {
+                const data = row.data();
+                return 'Details for ' + data[0];
+              }
+            })
+          : DataTable.Responsive.display.childRow();
 		
 		var eventTable = tableElement.DataTable({
 			pageLength : 25,
@@ -66,7 +77,12 @@
 			autoWidth : false,	
 			order: [[ 3, "desc" ]],
 			scrollX: true,
-			responsive: true,
+			responsive: {
+                details: {
+                    display: responsiveDisplay,
+                    renderer: DataTable.Responsive.renderer.tableAll()
+                }
+            },
 			ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events')
 		});
 		
