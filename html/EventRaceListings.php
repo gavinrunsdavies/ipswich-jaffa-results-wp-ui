@@ -64,8 +64,9 @@
 			],
 			processing : true,
 			autoWidth : false,	
-			order: [[ 4, "desc" ]],
+			order: [[ 3, "desc" ]],
 			scrollX: true,
+			responsive: true,
 			ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events')
 		});
 		
