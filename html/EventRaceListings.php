@@ -126,7 +126,7 @@
 		}
 
 		$('#event-listings-table tbody').on('click', 'tr', function () {
-			let row = table.row(this);
+			let row = eventTable.row(this);
 			let data = row.data();
 
 			if (row.child.isShown()) {
