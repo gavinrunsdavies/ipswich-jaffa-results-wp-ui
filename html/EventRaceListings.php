@@ -27,7 +27,7 @@
                 return 'Details for ' + data[0];
               }
             })
-          : DataTable.Responsive.display.childRow();
+          : new DataTable.Responsive.display.childRow();
 		
 		var eventTable = tableElement.DataTable({
 			pageLength : 25,
