@@ -29,7 +29,7 @@
 
 		var tableElement = $('#event-listings-table');
 		
-		var eventTable = tableElement.dataTable({
+		var eventTable = tableElement.DataTable({
 			pageLength : 25,
 			columns:[
 			 {
