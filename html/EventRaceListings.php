@@ -2,7 +2,6 @@
 	<table class="display" id="event-listings-table">
 		<thead>
 			<tr>
-				<th data-hide="always"></th>
 				<th></th>
 				<th>Event Name</th>
 				<th data-hide="phone,tablet">Website</th>
@@ -14,16 +13,6 @@
 		</tbody>
 	</table>
 </div>
-<style>
-	.showHideRacesCell {
-  		cursor: pointer;
-  		user-select: none;
-	}	
-	
-	.showHideRacesCell:hover {
-		color: var(--primary-color);
-	}
-</style>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {	
 
@@ -33,20 +22,10 @@
 			pageLength : 25,
 			columns:[
 			 {
-				data: "id",
-				visible : false,
-				searchable: false,
-				sortable: false 
-			 },
-			 {
-				data: "name",
-				class: "center showHideRacesCell",
-				searchable: false,
+				className: 'dt-control',
+				data: null,
 				sortable: false,
-				// Member name, add hyperlink to profile
-				render: function ( data, type, row, meta ) {				
-					return '<i class="showHideRaces fa fa-chevron-down"></i>';
-				}		
+				defaultContent: ''
 			 },
 			 {
 				data: "name"
@@ -83,11 +62,11 @@
 				sortable: false 
 			 }
 			],
-			processing    : true,
-			autoWidth     : false,	
+			processing : true,
+			autoWidth : false,	
 			order: [[ 4, "desc" ]],
 			scrollX: true,
-			ajax    : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events')
+			ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events')
 		});
 		
 		getCountryNameJson();
@@ -125,19 +104,15 @@
 		  return countryName;
 		}
 
-		$('#event-listings-table tbody').on('click', 'tr', function () {
-			let row = eventTable.row(this);
+		eventTable.on('click', 'td.dt-control', function (e) {
+			let row = eventTable.row(tr);
 			let data = row.data();
 
 			if (row.child.isShown()) {
-				// This row is already open - close it
 				row.child.hide();
-				$(this).removeClass('shown');
 			} else {
-				// Open this row
-				row.child('<div>Extra row content goes here</div>').show();
+				row.child('<div>Loading...</div>').show();
 				setEventDetails(eventTable, row, data.id);
-				$(this).addClass('shown');
 			}
 		});
 		
@@ -203,8 +178,8 @@
 					}
 					sOut += '</tbody>';
 					sOut += '</table>';
+					nTr.child($(sOut)).show();
 					
-					$('td', nTr).html(sOut);					
 					$('#' + tableName).DataTable({
 						paging : false,
 						searching: false,
