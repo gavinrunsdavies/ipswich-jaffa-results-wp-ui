@@ -105,6 +105,7 @@
 		}
 
 		eventTable.on('click', 'td.dt-control', function (e) {
+            let tr = e.target.closest('tr');
 			let row = eventTable.row(tr);
 			let data = row.data();
 
