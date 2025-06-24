@@ -5,29 +5,27 @@
 				<th></th>
 				<th>Event Name</th>
 				<th data-hide="phone,tablet">Website</th>
-				<th>Last Race Date</th>
-				<th>Total Number of Results</th>
+				<th data-hide="phone,tablet">Last Race Date</th>
+				<th data-hide="phone,tablet">Total Number of Results</th>
 			</tr>
 		</thead>
 		<tbody>
 		</tbody>
 	</table>
 </div>
+<style>
+	.event-detail {
+    font-size: smaller;
+    font-style: italic;
+    color: #888;
+}
+</style>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {	
 
 		var tableElement = $('#event-listings-table');
 
         const isMobile = window.innerWidth <= 768;
-
-        const responsiveDisplay = isMobile
-          ? DataTable.Responsive.display.modal({
-              header: function (row) {
-                const data = row.data();
-                return 'Details for ' + data[0];
-              }
-            })
-          : DataTable.Responsive.display.childRow;
 		
 		var eventTable = tableElement.DataTable({
 			pageLength : 25,
@@ -39,7 +37,17 @@
 				defaultContent: ''
 			 },
 			 {
-				data: "name"
+				data: "name",
+				render: function ( data, type, row, meta ) {		
+					if (!isMobile) return data;
+					
+					let html = data;
+					let website = '';
+					if (row.website) 
+						website = `${row.website} | `;
+					let lastRaceDateAndCount = `Last race: ${row.lastRaceDate}; ${row.count} results`;
+					html += `<div class="event-detail">${website}${lastRaceDateAndCount}</div>`;
+				}
 			 },
 			 {
 				data: "website",
@@ -74,15 +82,9 @@
 			 }
 			],
 			processing : true,
-			autoWidth : false,	
+			autoWidth : true,	
 			order: [[ 3, "desc" ]],
-			scrollX: true,
-			responsive: {
-                details: {
-                    display: responsiveDisplay,
-                    renderer: DataTable.Responsive.renderer.tableAll()
-                }
-            },
+			scrollX: false,
 			ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events')
 		});
 		
