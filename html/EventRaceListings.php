@@ -25,7 +25,7 @@
     link.href = "https://cdn.datatables.net/rowgroup/1.5.1/css/rowGroup.dataTables.min.css";
     document.head.appendChild(link);
 </script>
-<script type="text/javascript" src="https://cdn.datatables.net/rowgroup/1.5.1/css/rowGroup.dataTables.min.css"/>
+<script src="https://cdn.datatables.net/rowgroup/1.5.1/js/dataTables.rowGroup.min.js" integrity="sha384-T3BVwaNY2bpNuIPnMFf2CxjIZZAkCXv6+GxwAs50oId58u5/TIAvrY1eR3+aAHjH" crossorigin="anonymous"></script>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {	
 
