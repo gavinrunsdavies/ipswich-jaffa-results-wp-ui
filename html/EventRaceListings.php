@@ -45,16 +45,16 @@
 					let html = data;
 					let link = '';
 					if (row.website) {
-						let website = ${row.website};
-                        if (!website.startsWith('http')) {
-							link = 'http://'+website;
+                        if (!row.website.startsWith('http')) {
+							link = 'http://'+row.wwebsite;
 						} else {
-							link = website;
+							link = row.website;
 						}
 						
-						link = `<a href="${link}" target="_blank">${website}</a>`;
+						link = `<a href="${link}" target="_blank">${row.website}</a>`;
                         html += `<div class="event-detail">${link}</div>`;
-					}                    					
+					}  
+					                  					
                     return html;
 				}
 			 },
