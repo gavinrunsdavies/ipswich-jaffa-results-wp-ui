@@ -1,3 +1,12 @@
+<?php
+	wp_enqueue_script(
+		'dataTables.rowGroup.min',
+		'https://cdn.datatables.net/rowgroup/1.5.1/js/dataTables.rowGroup.min.js',
+		array('jquery.dataTables.min'),
+		null,
+		true
+	);
+?>
 <div class="section"> 
 	<table class="display" id="event-listings-table">
 		<thead>
@@ -25,7 +34,6 @@
     link.href = "https://cdn.datatables.net/rowgroup/1.5.1/css/rowGroup.dataTables.min.css";
     document.head.appendChild(link);
 </script>
-<script src="https://cdn.datatables.net/rowgroup/1.5.1/js/dataTables.rowGroup.min.js" integrity="sha384-T3BVwaNY2bpNuIPnMFf2CxjIZZAkCXv6+GxwAs50oId58u5/TIAvrY1eR3+aAHjH" crossorigin="anonymous"></script>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {	
 
@@ -71,7 +79,7 @@
 			],
 			processing : true,
 			autoWidth : true,	
-			order: [[ 3, "desc" ]],
+			order: [[ 2, "desc" ]],
 			scrollX: false,
 			ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events')
 		});
