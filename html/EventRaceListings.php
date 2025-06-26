@@ -54,11 +54,10 @@
 						link = `<a href="${link}" target="_blank">${row.website}</a>`;
                         html += `<div class="event-detail">${link}</div>`;
 					}  
-					                  					
+
                     return html;
 				}
 			 },
-			 null,
 			 {
 				data: "lastRaceDate",		
 				searchable: false,
