@@ -4,9 +4,8 @@
 			<tr>
 				<th></th>
 				<th>Event Name</th>
-				<th data-hide="phone,tablet">Website</th>
-				<th data-hide="phone,tablet">Last Race Date</th>
-				<th data-hide="phone,tablet">Total Number of Results</th>
+				<th>Last Race</th>
+				<th>Results Count</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -20,13 +19,17 @@
     color: #888;
 }
 </style>
+<script>
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://cdn.datatables.net/rowgroup/1.5.1/css/rowGroup.dataTables.min.css";
+    document.head.appendChild(link);
+</script>
+<script type="text/javascript" src="https://cdn.datatables.net/rowgroup/1.5.1/css/rowGroup.dataTables.min.css"/>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {	
 
-		var tableElement = $('#event-listings-table');
-
-        const isMobile = window.innerWidth <= 768;
-		
+		var tableElement = $('#event-listings-table');		
 		var eventTable = tableElement.DataTable({
 			pageLength : 25,
 			columns:[
@@ -38,38 +41,24 @@
 			 },
 			 {
 				data: "name",
-				render: function ( data, type, row, meta ) {		
-					if (!isMobile) return data;
-					
+				render: function (data, type, row, meta) {									
 					let html = data;
-					let website = '';
-					if (row.website) 
-						website = `${row.website} | `;
-					let lastRaceDateAndCount = `Last race: ${row.lastRaceDate}; ${row.count} results`;
-					html += `<div class="event-detail">${website}${lastRaceDateAndCount}</div>`;
-				}
-			 },
-			 {
-				data: "website",
-				class: "left",
-				searchable: false,
-				render: function ( data, type, row, meta ) {		
-					var sLink = "";
-					var sAddress = row.website;
-					if (sAddress != "" && sAddress != null && sAddress != "null")
-					{
-						if (!sAddress.startsWith('http')) {
-							sLink = 'http://'+sAddress;
+					let link = '';
+					if (row.website) {
+						let website = ${row.website};
+                        if (!website.startsWith('http')) {
+							link = 'http://'+website;
 						} else {
-							sLink = sAddress;
+							link = website;
 						}
 						
-						sLink = '<a href="' + sLink + '" target="_blank">'+sAddress+'</a>';
-					}
-					
-					return sLink;
+						link = `<a href="${link}" target="_blank">${website}</a>`;
+                        html += `<div class="event-detail">${link}</div>`;
+					}                    					
+                    return html;
 				}
 			 },
+			 null,
 			 {
 				data: "lastRaceDate",		
 				searchable: false,
@@ -210,32 +199,9 @@
 								visible: false
 							}
 						],
-						// add meeting Id as grouped rows
-						drawCallback: function ( settings ) {
-							var api = this.api();
-							var rows = api.rows( {page:'current'} ).nodes();
-							var last=null;
-							var meetingIdColumnIndex = 10;
-							api.column(meetingIdColumnIndex, {page:'current'} ).data().each( function ( meetingId, i ) {
-								if (meetingId > 0) {
-									if ( last !== meetingId ) {
-										last = meetingId; // Assume success!
-										$.ajax(
-											getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/'+ iEventId + '/meetings/' + meetingId))			
-											.done(function(meetingData) {	
-												if (meetingData.length > 0) {
-													var meetingDates = meetingData[0].fromDate;
-													if (meetingData[0].fromDate != meetingData[0].toDate) {
-														meetingDates += ' - ' + meetingData[0].toDate;
-													}											
-													$(rows).eq( i ).before(
-														'<tr class="group"><td colspan="11">Meeting: <strong>'+meetingData[0].name+'</strong> ('+meetingDates+')</td></tr>'
-													);							 
-												}												
-											});
-									}
-								}
-							} );
+                        responsive: true,
+                        rowGroup: {
+                            dataSrc: 0
 						}
 					});				
 				}				
