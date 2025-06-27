@@ -166,13 +166,13 @@
                           },
                           { 
                             data: 'isGrandPrixRace',
+                            className: 'dt-center',
                             render: function(data) {
                               return data === "1" ? `<i class="fa fa-check" aria-hidden="true"></i>` : ``;
                             }
                           },
                           { 
-                            data: 'count',
-                            className: 'dt-center',
+                            data: 'count',                            
                             render: function(data, type, row, meta) {
                                 var eventResultsUrl = '<?php echo $eventResultsPageUrl; ?>';
         						var link = `${eventResultsUrl}?raceId=${row.id}`
@@ -209,7 +209,7 @@
                 				if (parts[4]) header += `${parts[4]}, `;
                 				if (parts[5]) header += `${getCountryName(parts[5])}`;
 				                if (parts[3] || parts[4] || parts[5]) header += ` | `;
-                                return `${header} | ${parts[6]}`;
+                                return `${header} ${parts[6]}`;
                             }
 						}
 					});				
