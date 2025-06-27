@@ -147,6 +147,7 @@
 					nTr.child($(sOut)).show();
 					
 					$('#' + tableName).DataTable({
+                        data: data,
 						paging : false,
 						searching: false,
 						order: [[ 4, "desc" ]],
