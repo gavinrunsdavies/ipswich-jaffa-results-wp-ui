@@ -46,13 +46,13 @@ class Program
 		);
 
 		wp_enqueue_style(
-			'jquery.dataTables.min.css',
-			'https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css'
+			'dataTables.dataTables.min.css',
+			'https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css'
 		);
 
 		wp_enqueue_style(
 			'responsive.dataTables.min.css',
-			'https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css'
+			'https://cdn.datatables.net/responsive/3.0.4/css/responsive.dataTables.min.css'
 		);
 	}
 
@@ -103,7 +103,7 @@ class Program
 
 		wp_enqueue_script(
 			self::JQUERY_DATATABLES_HANDLE,
-			'https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js',
+			'https://cdn.datatables.net/2.3.2/js/dataTables.min.js',
 			array(self::JQUERY_HANDLE),
 			null,
 			true
@@ -111,7 +111,7 @@ class Program
 
 		wp_enqueue_script(
 			self::JQUERY_DATATABLES_RESPONSIVE_HANDLE,
-			'https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js',
+			'https://cdn.datatables.net/responsive/3.0.4/js/dataTables.responsive.min.js',
 			array(self::JQUERY_DATATABLES_HANDLE),
 			null,
 			true

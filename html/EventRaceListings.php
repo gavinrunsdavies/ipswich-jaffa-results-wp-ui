@@ -1,13 +1,20 @@
+<?php
+	wp_enqueue_script(
+		'dataTables.rowGroup.min',
+		'https://cdn.datatables.net/rowgroup/1.5.1/js/dataTables.rowGroup.min.js',
+		array('jquery.dataTables.min'),
+		null,
+		true
+	);
+?>
 <div class="section"> 
 	<table class="display" id="event-listings-table">
 		<thead>
 			<tr>
-				<th data-hide="always"></th>
 				<th></th>
 				<th>Event Name</th>
-				<th data-hide="phone,tablet">Website</th>
-				<th>Last Race Date</th>
-				<th>Total Number of Results</th>
+				<th>Last Race</th>
+				<th>Results Count</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -15,61 +22,48 @@
 	</table>
 </div>
 <style>
-	.showHideRacesCell {
-  		cursor: pointer;
-  		user-select: none;
-	}	
-	
-	.showHideRacesCell:hover {
-		color: var(--primary-color);
-	}
+	.event-detail {
+    font-size: smaller;
+    font-style: italic;
+    color: #888;
+}
 </style>
+<script>
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://cdn.datatables.net/rowgroup/1.5.1/css/rowGroup.dataTables.min.css";
+    document.head.appendChild(link);
+</script>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {	
 
-		var tableElement = $('#event-listings-table');
-		
-		var eventTable = tableElement.dataTable({
+		var tableElement = $('#event-listings-table');		
+		var eventTable = tableElement.DataTable({
 			pageLength : 25,
 			columns:[
 			 {
-				data: "id",
-				visible : false,
-				searchable: false,
-				sortable: false 
+				className: 'dt-control',
+				data: null,
+				sortable: false,
+				defaultContent: ''
 			 },
 			 {
 				data: "name",
-				class: "center showHideRacesCell",
-				searchable: false,
-				sortable: false,
-				// Member name, add hyperlink to profile
-				render: function ( data, type, row, meta ) {				
-					return '<i class="showHideRaces fa fa-chevron-down"></i>';
-				}		
-			 },
-			 {
-				data: "name"
-			 },
-			 {
-				data: "website",
-				class: "left",
-				searchable: false,
-				render: function ( data, type, row, meta ) {		
-					var sLink = "";
-					var sAddress = row.website;
-					if (sAddress != "" && sAddress != null && sAddress != "null")
-					{
-						if (!sAddress.startsWith('http')) {
-							sLink = 'http://'+sAddress;
+				render: function (data, type, row, meta) {									
+					let html = data;
+					let link = '';
+					if (row.website) {
+                        if (!row.website.startsWith('http')) {
+							link = 'http://'+row.wwebsite;
 						} else {
-							sLink = sAddress;
+							link = row.website;
 						}
 						
-						sLink = '<a href="' + sLink + '" target="_blank">'+sAddress+'</a>';
-					}
-					
-					return sLink;
+						link = `<a href="${link}" target="_blank">${row.website}</a>`;
+                        html += `<div class="event-detail">${link}</div>`;
+					}  
+
+                    return html;
 				}
 			 },
 			 {
@@ -83,11 +77,11 @@
 				sortable: false 
 			 }
 			],
-			processing    : true,
-			autoWidth     : false,	
-			order: [[ 4, "desc" ]],
-			scrollX: true,
-			ajax    : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events')
+			processing : true,
+			autoWidth : true,	
+			order: [[ 2, "desc" ]],
+			scrollX: false,
+			ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events')
 		});
 		
 		getCountryNameJson();
@@ -124,122 +118,99 @@
 			
 		  return countryName;
 		}
-		
-		$(document).on("click", '#event-listings-table tbody td .showHideRaces', function () {
-			var icon = $(this);
-			var icon_fa_icon = icon.attr('data-icon');
-            var nTr = this.parentNode.parentNode;
-			
-			if (icon_fa_icon === "chevron-up") {
-				eventTable.fnClose( nTr );
-				icon.attr('data-icon', 'chevron-down');
+
+		eventTable.on('click', 'td.dt-control', function (e) {
+            let tr = e.target.closest('tr');
+			let row = eventTable.row(tr);
+			let data = row.data();
+
+			if (row.child.isShown()) {
+				row.child.hide();
 			} else {
-				var newTr = eventTable.fnOpen( nTr, 'Loading data...', 'details' );
-			    var aData = eventTable.fnGetData( nTr );
-			    fnSetEventDetails(eventTable, newTr, aData.id, aData.eventName);
-				icon.attr('data-icon', 'chevron-up');
+				row.child('<div>Loading...</div>').show();
+				setEventDetails(eventTable, row, data.id);
 			}
 		});
 		
-		$(document).on('click', 'a.toggle-vis', function(){
-			var tableName = $(this).attr('data-table');
-			var table = $('#'+tableName).DataTable();
-			var column = table.column( $(this).attr('data-column') );
- 
-			// Toggle the visibility
-			column.visible( ! column.visible() );
-			return false;
-		});
-		
 		/* Formating function for row details */
-		function fnSetEventDetails ( oTable, nTr, iEventId, sEventName)
+		function setEventDetails (oTable, nTr, iEventId)
 		{		
 			$.ajax(
 				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/'+ iEventId + '/races'))			
 				.done(function(data) {	
-					var tableName = 'eventTable'+iEventId;					
-					var sOut = '<div>';
-					sOut += 'Toggle column: ';
-					sOut += '<a class="toggle-vis" data-table="'+tableName+'"data-column="2">Course Type</a> - ';
-					sOut += '<a class="toggle-vis" data-table="'+tableName+'"data-column="3">County</a> - ';
-					sOut += '<a class="toggle-vis" data-table="'+tableName+'"data-column="4">Country</a> - ';
-					sOut += '<a class="toggle-vis" data-table="'+tableName+'"data-column="5">Conditions</a> - ';
-					sOut += '<a class="toggle-vis" data-table="'+tableName+'"data-column="6">Venue</a> - ';
-					sOut += '<a class="toggle-vis" data-table="'+tableName+'"data-column="7">Distance</a> - ';
-					sOut += '<a class="toggle-vis" data-table="'+tableName+'"data-column="8">Grand Prix Race?</a>';
-					sOut += '</div>';
-					sOut += '<table class="table table-condensed" id="' + tableName + '">';
+					var tableName = 'eventTable'+iEventId;
+					sOut = '<table class="display compact" id="' + tableName + '">';
 					sOut += '<thead>';
-					sOut += '<tr><th>Date</th><th>Description</th><th>Course Type</th><th>County</th><th>Country</th><th>Conditions</th><th>Venue</th><th>Distance</th><th>Grand Prix Race?</th><th>Number of Results</th></tr>';
+					sOut += '<tr><th>Description</th><th>Distance</th><th>Grand Prix?</th><th>Count</th><th>Date</th><th>Course Type</th><th>Area</th><th>County</th><th>Country</th><th>Venue</th></tr>';
 					sOut += '</thead>';
-					sOut += '<tbody>';
-					for (var i = 0; i < data.length; i++) {					
-						sOut += '<tr>';
-					
-						var eventResultsUrl = '<?php echo $eventResultsPageUrl; ?>';
-						var anchor = '<a href="' + eventResultsUrl;
-						if (eventResultsUrl.indexOf("?") >= 0) {
-							anchor += '&raceId=' + data[i].id;
-						} else {
-							anchor += '?raceId=' + data[i].id;
-						}
-						anchor += '">' + data[i].date + '</a>';	
-						sOut += '<td>'+ anchor + '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].description)+ '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].courseType) + '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].county) + '</td>';
-						sOut += '<td>' + getCountryName(nullToEmptyString(data[i].countryCode)) + '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].conditions) + '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].venue) + '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].distance) + '</td>';
-						sOut += '<td class="text-center">';
-						if (data[i].isGrandPrixRace == 1)
-							sOut += '<i class="fa fa-check" aria-hidden="true"></i>';
-						sOut += '</td>';
-						sOut += '<td>' + data[i].count + '</td>';
-						sOut += '<td>' + data[i].meetingId + '</td>';
-						sOut += '</tr>';
-					}
-					sOut += '</tbody>';
 					sOut += '</table>';
+					nTr.child($(sOut)).show();
 					
-					$('td', nTr).html(sOut);					
 					$('#' + tableName).DataTable({
+                        data: data,
 						paging : false,
 						searching: false,
-						order: [[ 0, "desc" ]],
-						columnDefs: [
-							{
-								targets: [ 2, 3, 4, 5, 6, 10],
-								visible: false
-							}
-						],
-						// add meeting Id as grouped rows
-						drawCallback: function ( settings ) {
-							var api = this.api();
-							var rows = api.rows( {page:'current'} ).nodes();
-							var last=null;
-							var meetingIdColumnIndex = 10;
-							api.column(meetingIdColumnIndex, {page:'current'} ).data().each( function ( meetingId, i ) {
-								if (meetingId > 0) {
-									if ( last !== meetingId ) {
-										last = meetingId; // Assume success!
-										$.ajax(
-											getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/'+ iEventId + '/meetings/' + meetingId))			
-											.done(function(meetingData) {	
-												if (meetingData.length > 0) {
-													var meetingDates = meetingData[0].fromDate;
-													if (meetingData[0].fromDate != meetingData[0].toDate) {
-														meetingDates += ' - ' + meetingData[0].toDate;
-													}											
-													$(rows).eq( i ).before(
-														'<tr class="group"><td colspan="11">Meeting: <strong>'+meetingData[0].name+'</strong> ('+meetingDates+')</td></tr>'
-													);							 
-												}												
-											});
-									}
-								}
-							} );
+						order: [[ 4, "desc" ]],
+						 columns: [
+                          { 
+                            data: 'description',
+                            render: function(data) {
+                              return nullToEmptyString(data);
+                            }
+                          },
+                          { 
+                            data: 'distance',
+                            render: function(data) {
+                              return  nullToEmptyString(data);
+                            }
+                          },
+                          { 
+                            data: 'isGrandPrixRace',
+                            className: 'dt-center',
+                            render: function(data) {
+                              return data === "1" ? `<i class="fa fa-check" aria-hidden="true"></i>` : ``;
+                            }
+                          },
+                          { 
+                            data: 'count',                            
+                            render: function(data, type, row, meta) {
+                                var eventResultsUrl = '<?php echo $eventResultsPageUrl; ?>';
+        						var link = `${eventResultsUrl}?raceId=${row.id}`
+                                return `<a href="${link}" target="_blank">${data}</a>`;
+                            }
+                          },
+                          // Grouping fields (hidden in table)
+                          { data: 'date', visible: false },
+                          { data: 'courseType', visible: false },
+                          { data: 'area', visible: false },
+                          { data: 'county', visible: false },
+                          { data: 'countryCode', visible: false },
+                          { data: 'venue', visible: false }
+                        ],
+                        responsive: true,
+                        rowGroup: {
+                            dataSrc: function(row) {
+                                return [
+                                  row.name,
+                                  row.date,
+                                  row.courseType,
+                                  row.area,
+                                  row.county,
+                                  row.countryCode,
+                                  row.venue
+                                ].join('|');
+                            },
+                            startRender: function(rows, group) {
+                                const parts = group.split('|');
+                				let header = `${parts[0]}, `;
+                				if (parts[1]) header += `${parts[1]} | `;
+                				if (parts[2]) header += `${parts[2]} | `;
+                				if (parts[3]) header += `${parts[3]}, `;
+                				if (parts[4]) header += `${parts[4]}, `;
+                				if (parts[5]) header += `${getCountryName(parts[5])}`;
+				                if (parts[3] || parts[4] || parts[5]) header += ` | `;
+                                return `${header} ${parts[6]}`;
+                            }
 						}
 					});				
 				}				

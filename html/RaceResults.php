@@ -21,6 +21,9 @@ div.event-attendees-chart {
     font-style: italic;
     color: #888;
 }
+.material-symbols-outlined {
+    vertical-align: text-bottom;
+}
 .jaffa-badges .material-symbols-outlined {
     vertical-align: middle;
 }
@@ -42,9 +45,13 @@ a.jaffa-name {
 }
 .jaffa-pb-improvement {
 	font-size: smaller; 
-    vertical-align: middle;
+    vertical-align: top;
     font-family: Courier New;
     font-style: italic;
+}
+.jaffa-orange {
+	color: #e88112;
+}
 </style>
 <div class="section">
 	<h2 id="jaffa-event-title"></h2>
@@ -66,7 +73,7 @@ a.jaffa-name {
 <script type="text/javascript">
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=calendar_month,groups,landscape_2,laps,run_circle,sports,sprint,travel_explore,workspace_premium';
+    link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=calendar_month,check,groups,landscape_2,laps,run_circle,sports,sprint,star,travel_explore,workspace_premium';
     document.head.appendChild(link);
 	
 	jQuery(document).ready(function ($) {
@@ -281,24 +288,7 @@ a.jaffa-name {
 			$('#jaffa-race-results').append(tableHtml);
 
 			var table = $('#'+tableName + race.id).DataTable({
-				responsive: {
-					details: {
-						renderer: function ( api, rowIdx, columns ) {
-							var data = $.map( columns, function ( col, i ) {
-								return col.hidden ?
-									'<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
-										'<td>'+col.title+':'+'</td> '+
-										'<td>'+col.data+'</td>'+
-									'</tr>' :
-									'';
-							} ).join('');
-
-							return data ?
-								$('<table/>').append( data ) :
-								false;
-						}
-					}
-				},
+				responsive: true,
 				paging : false,
 				searching: false,
 				serverSide : false,
@@ -378,7 +368,7 @@ a.jaffa-name {
 									}
 								}
 
-								return '<i class="fa fa-check" aria-hidden="true"></i>' + improvementHtml;
+								return '<span class="material-symbols-outlined md-18">check</span>' + improvementHtml;
 							}
 							return '';
 						},
@@ -401,8 +391,9 @@ a.jaffa-name {
 						render : function (data, type, row, meta) {
 							var html = data > 0 ? data + '%' : '';
 							if (row.percentageGradingBest == 1) {
-								html += ' <i style="color: #e88112;" class="fa fa-star" aria-hidden="true" title="New percenatge grading personal best"></i>'
+								html += ` <span class="material-symbols-outlined md-18 jaffa-orange" title="New percenatge grading personal best">star</span>`;
 							}
+
 							return html;
 						},
 						name : "percentageGrading"
@@ -419,7 +410,7 @@ a.jaffa-name {
 				},
 				processing : true,
 				autoWidth : false,
-				scrollX : true,
+				scrollX : false,
 				order : [[0, "asc"], [2, "asc"]],
 				ajax : getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/race/' + race.id)
 			});

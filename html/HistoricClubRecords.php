@@ -1,9 +1,8 @@
 <div class="section"> 
 	<div class="formRankCriteria">
-		<p>Here you can find the full history of Ipswich JAFFA club records for various race distances. Select the distance the history of club records will be shown for each race age category.</p>
-		
+		<p>Here you can find the full history of Ipswich JAFFA club records for various race distances and track eventss. Select the distance/event and the history of club records will be shown for each age category.</p>		
 		<label for="distance">Distance</label>
-		<select id="distance" name="distance" size="1" title="Select distance">
+		<select id="distance" name="distance" size="1" title="Select distance/event">
 		</select>			 						     				
 	</div>
 	<div style="display:block;margin-top:1em">			
@@ -75,24 +74,7 @@
 						$('#categoryLinks').append('<a href="#category_' + item.code +'">' + item.code +'</a> | ');
 						$('#chartData').append(tableHtml);	
 						$('#category_' + item.code).DataTable({
-							responsive: {
-								details: {
-									renderer: function ( api, rowIdx, columns ) {
-										var data = $.map( columns, function ( col, i ) {
-											return col.hidden ?
-												'<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
-													'<td>'+col.title+':'+'</td> '+
-													'<td>'+col.data+'</td>'+
-												'</tr>' :
-												'';
-										} ).join('');
-
-										return data ?
-											$('<table/>').append( data ) :
-											false;
-									}
-								}
-							},
+							responsive: true,
 							paging : false,
 							searching: false,							
 							data: dataSet,

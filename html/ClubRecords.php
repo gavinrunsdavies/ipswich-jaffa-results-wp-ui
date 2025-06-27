@@ -139,24 +139,7 @@
 			$('#custom-club-records').hide();
 
 			$('#custom-club-records-table').DataTable({
-				responsive: {
-					details: {
-						renderer: function(api, rowIdx, columns) {
-							var data = $.map(columns, function(col, i) {
-								return col.hidden ?
-									'<tr data-dt-row="' + col.rowIndex + '" data-dt-column="' + col.columnIndex + '">' +
-									'<td>' + col.title + ':' + '</td> ' +
-									'<td>' + col.data + '</td>' +
-									'</tr>' :
-									'';
-							}).join('');
-
-							return data ?
-								$('<table/>').append(data) :
-								false;
-						}
-					}
-				},
+				responsive: true,
 				serverSide: false,
 				paging: false,
 				destroy : true,
@@ -164,7 +147,7 @@
 				processing: true,
 				ordering: false,
 				autoWidth: false,
-				scrollX: true,
+				scrollX: false,
 				columns: [{
 						data: "distance"
 					},
@@ -211,31 +194,14 @@
 		});
 
 		$('#overall-club-records').DataTable({
-			responsive: {
-				details: {
-					renderer: function(api, rowIdx, columns) {
-						var data = $.map(columns, function(col, i) {
-							return col.hidden ?
-								'<tr data-dt-row="' + col.rowIndex + '" data-dt-column="' + col.columnIndex + '">' +
-								'<td>' + col.title + ':' + '</td> ' +
-								'<td>' + col.data + '</td>' +
-								'</tr>' :
-								'';
-						}).join('');
-
-						return data ?
-							$('<table/>').append(data) :
-							false;
-					}
-				}
-			},
+			responsive: true,
 			serverSide: false,
 			paging: false,
 			searching: false,
 			processing: true,
 			ordering: false,
 			autoWidth: false,
-			scrollX: true,
+			scrollX: false,
 			columns: [{
 					data: "distance"
 				},
@@ -282,24 +248,7 @@
 			$('#custom-category-club-records').hide();
 
 			$('#custom-category-club-records-table').DataTable({
-				responsive: {
-					details: {
-						renderer: function(api, rowIdx, columns) {
-							var data = $.map(columns, function(col, i) {
-								return col.hidden ?
-									'<tr data-dt-row="' + col.rowIndex + '" data-dt-column="' + col.columnIndex + '">' +
-									'<td>' + col.title + ':' + '</td> ' +
-									'<td>' + col.data + '</td>' +
-									'</tr>' :
-									'';
-							}).join('');
-
-							return data ?
-								$('<table/>').append(data) :
-								false;
-						}
-					}
-				},
+				responsive: true,
 				pageLength: 50,
 				destroy : true,
 				serverSide: false,
@@ -307,7 +256,7 @@
 				searching: false,
 				processing: true,
 				autoWidth: false,
-				scrollX: true,
+				scrollX: false,
 				columns: [{
 						data: "categoryCode"
 					},
@@ -352,31 +301,14 @@
 		$('.club-records').each(function(index, value) {
 			var table = $(value);
 			table.DataTable({
-				responsive: {
-					details: {
-						renderer: function(api, rowIdx, columns) {
-							var data = $.map(columns, function(col, i) {
-								return col.hidden ?
-									'<tr data-dt-row="' + col.rowIndex + '" data-dt-column="' + col.columnIndex + '">' +
-									'<td>' + col.title + ':' + '</td> ' +
-									'<td>' + col.data + '</td>' +
-									'</tr>' :
-									'';
-							}).join('');
-
-							return data ?
-								$('<table/>').append(data) :
-								false;
-						}
-					}
-				},
+				responsive: true,
 				pageLength: 50,
 				serverSide: false,
 				paging: false,
 				searching: false,
 				processing: true,
 				autoWidth: false,
-				scrollX: true,
+				scrollX: false,
 				columns: [{
 						data: "categoryCode"
 					},
