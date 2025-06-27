@@ -172,6 +172,7 @@
                           },
                           { 
                             data: 'count',
+                            className: 'dt-center',
                             render: function(data, type, row, meta) {
                                 var eventResultsUrl = '<?php echo $eventResultsPageUrl; ?>';
         						var link = `${eventResultsUrl}?raceId=${row.id}`
@@ -201,8 +202,8 @@
                             },
                             startRender: function(rows, group) {
                                 const parts = group.split('|');
-                				let header = `${parts[0]} `;
-                				if (parts[1]) header = `${parts[1]} | `;
+                				let header = `${parts[0]}, `;
+                				if (parts[1]) header += `${parts[1]} | `;
                 				if (parts[2]) header += `${parts[2]} | `;
                 				if (parts[3]) header += `${parts[3]}, `;
                 				if (parts[4]) header += `${parts[4]}, `;
