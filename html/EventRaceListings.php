@@ -139,7 +139,7 @@
 				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/'+ iEventId + '/races'))			
 				.done(function(data) {	
 					var tableName = 'eventTable'+iEventId;
-					sOut = '<table class="table table-condensed" id="' + tableName + '">';
+					sOut = '<table class="display compact" id="' + tableName + '">';
 					sOut += '<thead>';
 					sOut += '<tr><th>Description</th><th>Distance</th><th>Grand Prix?</th><th>Count</th><th>Date</th><th>Course Type</th><th>Area</th><th>County</th><th>Country</th><th>Venue</th></tr>';
 					sOut += '</thead>';
@@ -190,6 +190,7 @@
                         rowGroup: {
                             dataSrc: function(row) {
                                 return [
+                                  row.name,
                                   row.date,
                                   row.courseType,
                                   row.area,
@@ -200,7 +201,14 @@
                             },
                             startRender: function(rows, group) {
                                 const parts = group.split('|');
-                                return `${parts[0]} | ${parts[1]} | ${parts[2]}, ${parts[3]}, ${getCountryName(nullToEmptyString(parts[4]))} | ${parts[5]}`;
+                				let header = `${parts[0]} `;
+                				if (parts[1]) header = `${parts[1]} | `;
+                				if (parts[2]) header += `${parts[2]} | `;
+                				if (parts[3]) header += `${parts[3]}, `;
+                				if (parts[4]) header += `${parts[4]}, `;
+                				if (parts[5]) header += `${getCountryName(parts[5])}`;
+				                if (parts[3] || parts[4] || parts[5]) header += ` | `;
+                                return `${header} | ${parts[6]}`;
                             }
 						}
 					});				
