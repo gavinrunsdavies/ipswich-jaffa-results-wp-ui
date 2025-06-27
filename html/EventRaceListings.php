@@ -166,21 +166,15 @@
                           { 
                             data: 'isGrandPrixRace',
                             render: function(data) {
-                              return data === "1" ? "'<i class="fa fa-check" aria-hidden="true"></i>" : "";
+                              return data === "1" ? `<i class="fa fa-check" aria-hidden="true"></i>` : ``;
                             }
                           },
                           { 
                             data: 'count',
                             render: function(data, type, row, meta) {
                                 var eventResultsUrl = '<?php echo $eventResultsPageUrl; ?>';
-        						var anchor = '<a href="' + eventResultsUrl;
-        						if (eventResultsUrl.indexOf("?") >= 0) {
-        							anchor += '&raceId=' + row.id;
-        						} else {
-        							anchor += '?raceId=' + row.id;
-        						}
-        						anchor += '">' + data + '</a>';	
-                              return anchor;
+        						var link = `${eventResultsUrl}?raceId=${row.id}`
+                                return `<a href="${link}" target="_blank">${data}</a>`;
                             }
                           },
                           // Grouping fields (hidden in table)
