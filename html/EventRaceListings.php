@@ -132,83 +132,81 @@
 			}
 		});
 		
-		
-		$(document).on('click', 'a.toggle-vis', function(){
-			var tableName = $(this).attr('data-table');
-			var table = $('#'+tableName).DataTable();
-			var column = table.column( $(this).attr('data-column') );
- 
-			// Toggle the visibility
-			column.visible( ! column.visible() );
-			return false;
-		});
-		
 		/* Formating function for row details */
 		function setEventDetails (oTable, nTr, iEventId)
 		{		
 			$.ajax(
 				getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/'+ iEventId + '/races'))			
 				.done(function(data) {	
-					var tableName = 'eventTable'+iEventId;					
-					var sOut = '<div>';
-					sOut += 'Toggle column: ';
-					sOut += '<a class="toggle-vis" data-table="'+tableName+'"data-column="2">Course Type</a> - ';
-					sOut += '<a class="toggle-vis" data-table="'+tableName+'"data-column="3">County</a> - ';
-					sOut += '<a class="toggle-vis" data-table="'+tableName+'"data-column="4">Country</a> - ';
-					sOut += '<a class="toggle-vis" data-table="'+tableName+'"data-column="5">Conditions</a> - ';
-					sOut += '<a class="toggle-vis" data-table="'+tableName+'"data-column="6">Venue</a> - ';
-					sOut += '<a class="toggle-vis" data-table="'+tableName+'"data-column="7">Distance</a> - ';
-					sOut += '<a class="toggle-vis" data-table="'+tableName+'"data-column="8">Grand Prix Race?</a>';
-					sOut += '</div>';
-					sOut += '<table class="table table-condensed" id="' + tableName + '">';
+					var tableName = 'eventTable'+iEventId;
+					sOut = '<table class="table table-condensed" id="' + tableName + '">';
 					sOut += '<thead>';
-					sOut += '<tr><th>Date</th><th>Description</th><th>Course Type</th><th>County</th><th>Country</th><th>Conditions</th><th>Venue</th><th>Distance</th><th>Grand Prix Race?</th><th>Number of Results</th></tr>';
+					sOut += '<tr><th>Description</th><th>Distance</th><th>Grand Prix?</th><th>Count</th><th>Date</th><th>Course Type</th><th>Area</th><th>County</th><th>Country</th><th>Venue</th></tr>';
 					sOut += '</thead>';
-					sOut += '<tbody>';
-					for (var i = 0; i < data.length; i++) {					
-						sOut += '<tr>';
-					
-						var eventResultsUrl = '<?php echo $eventResultsPageUrl; ?>';
-						var anchor = '<a href="' + eventResultsUrl;
-						if (eventResultsUrl.indexOf("?") >= 0) {
-							anchor += '&raceId=' + data[i].id;
-						} else {
-							anchor += '?raceId=' + data[i].id;
-						}
-						anchor += '">' + data[i].date + '</a>';	
-						sOut += '<td>'+ anchor + '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].description)+ '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].courseType) + '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].county) + '</td>';
-						sOut += '<td>' + getCountryName(nullToEmptyString(data[i].countryCode)) + '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].conditions) + '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].venue) + '</td>';
-						sOut += '<td>' + nullToEmptyString(data[i].distance) + '</td>';
-						sOut += '<td class="text-center">';
-						if (data[i].isGrandPrixRace == 1)
-							sOut += '<i class="fa fa-check" aria-hidden="true"></i>';
-						sOut += '</td>';
-						sOut += '<td>' + data[i].count + '</td>';
-						sOut += '<td>' + data[i].meetingId + '</td>';
-						sOut += '</tr>';
-					}
-					sOut += '</tbody>';
 					sOut += '</table>';
 					nTr.child($(sOut)).show();
 					
 					$('#' + tableName).DataTable({
 						paging : false,
 						searching: false,
-						order: [[ 0, "desc" ]],
-						columnDefs: [
-							{
-								targets: [ 2, 3, 4, 5, 6, 10],
-								visible: false
-							}
-						],
+						order: [[ 4, "desc" ]],
+						 columns: [
+                          { 
+                            data: 'description',
+                            render: function(data) {
+                              return nullToEmptyString(data);
+                            }
+                          },
+                          { 
+                            data: 'distance',
+                            render: function(data) {
+                              return  nullToEmptyString(data);
+                            }
+                          },
+                          { 
+                            data: 'isGrandPrixRace',
+                            render: function(data) {
+                              return data === "1" ? "'<i class="fa fa-check" aria-hidden="true"></i>" : "";
+                            }
+                          },
+                          { 
+                            data: 'count',
+                            render: function(data, type, row, meta) {
+                                var eventResultsUrl = '<?php echo $eventResultsPageUrl; ?>';
+        						var anchor = '<a href="' + eventResultsUrl;
+        						if (eventResultsUrl.indexOf("?") >= 0) {
+        							anchor += '&raceId=' + row.id;
+        						} else {
+        							anchor += '?raceId=' + row.id;
+        						}
+        						anchor += '">' + data + '</a>';	
+                              return anchor;
+                            }
+                          },
+                          // Grouping fields (hidden in table)
+                          { data: 'date', visible: false },
+                          { data: 'courseType', visible: false },
+                          { data: 'area', visible: false },
+                          { data: 'county', visible: false },
+                          { data: 'countryCode', visible: false },
+                          { data: 'venue', visible: false }
+                        ],
                         responsive: true,
                         rowGroup: {
-                            dataSrc: 0
+                            dataSrc: function(row) {
+                                return [
+                                  row.date,
+                                  row.courseType,
+                                  row.area,
+                                  row.county,
+                                  row.countryCode,
+                                  row.venue
+                                ].join('|');
+                            },
+                            startRender: function(rows, group) {
+                                const parts = group.split('|');
+                                return `${parts[0]} | ${parts[1]} | ${parts[2]}, ${parts[3]}, ${getCountryName(nullToEmptyString(parts[4]))} | ${parts[5]}`;
+                            }
 						}
 					});				
 				}				
