@@ -15,7 +15,7 @@
 		</form>
 	</div>
 	<div id="men-grand-prix-results" style="display:none">		
-		<table class="display grandprix-table" id="men-grand-prix-results-table" style="width:100%">	
+		<table class="display grandprix-table" id="men-grand-prix-results-table" style="width:100%" data-raceIds="mensOrderedRacesIds">	
 			<caption>Men's Grand Prix Current Standings</caption>				
 			<thead>
 				<tr>
@@ -31,7 +31,7 @@
 		</table>		
 	</div>
 	<div id="ladies-grand-prix-results" style="display:none" class="center-panel">
-		<table class="display grandprix-table" id="ladies-grand-prix-results-table" style="width:100%">	
+		<table class="display grandprix-table" id="ladies-grand-prix-results-table" style="width:100%" data-raceIds="ladiesOrderedRacesIds">	
 			<caption>Ladies Grand Prix Current Standings</caption>				
 			<thead>
 				<tr>
@@ -69,7 +69,7 @@
 						defaultContent: ''
 					},
 					{
-						data: "results.name",
+						data: "name",
 						searchable: true,
 						sortable: true,
 						render: function(data, type, row, meta) {
@@ -82,13 +82,13 @@
 						}
 					},
 					{
-						data: "results.categoryCode"
+						data: "categoryCode"
 					},
 					{
-						data: "results.totalPoints"
+						data: "totalPoints"
 					},
 					{
-						data: "results.best8Score"
+						data: "best8Score"
 					}
 				],
 				ajax: data
@@ -108,7 +108,7 @@
 			  function(data) {		
 				mensGPData = data.results;
 				mensOrderedRacesIds = data.races;
-				createDataTable('#men-grand-prix-results-table', data, 2);
+				createDataTable('#men-grand-prix-results-table', data.results, 2);
 				
 				$('#men-grand-prix-results').show();
 			  }
@@ -119,22 +119,22 @@
 			  function(data) {		
 				ladiesGPData = data.results;
 				ladiesOrderedRacesIds = data.races;
-				createDataTable('#ladies-grand-prix-results-table', data, 3);
+				createDataTable('#ladies-grand-prix-results-table', data.results, 3);
 				
 				$('#ladies-grand-prix-results').show();
 			  }
 			);				
 		});
 		
-		function getRunnerResultDetails(data) {
+		function getRunnerResultDetails(data, raceData) {
 						
 			var table = '<table class="display"><thead><tr><th>Race</th><th>Points</th></tr></thead><tbody>';
 					
 			var rows = '';
 			
 			var eventResultsUrl = '<?php echo $eventResultsPageUrl; ?>';
-			$.each(orderedRacesIds, function(j, raceDetail){
-				$.each(runner.races, function(k, race){
+			$.each(raceData, function(j, raceDetail){
+				$.each(data.races, function(k, race){
 					if (raceDetail.id == race.id) {
 						
 						var anchor = eventResultsUrl;
@@ -159,7 +159,8 @@
 		}
 
 		$('.grandprix-table').on('click', 'td.dt-control', function (e) {
-			let tr = e.target.closest('tr');
+			let tr = e.target.closest('tr');			
+			let table = $(tr).closest('table').DataTable(); 
 			let row = table.row(tr);
 		
 			if (row.child.isShown()) {
@@ -168,7 +169,8 @@
 			}
 			else {
 				// Open this row
-				row.child(getRunnerResultDetails(row.data())).show();
+				let raceIds = $(table.node()).data('raceids');
+				row.child(getRunnerResultDetails(row.data(), raceIds)).show();
 			}
 		});
 		
