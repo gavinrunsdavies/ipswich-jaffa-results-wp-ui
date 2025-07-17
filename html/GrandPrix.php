@@ -56,9 +56,11 @@
 	</div>	
 </div>
 <script type="text/javascript">
-	jQuery(document).ready(function($) {				
+	jQuery(document).ready(function($) {	
+
+        let raceDataMap = {};
 		 
-		function createDataTable(tableId, data, sexId) {
+		function createDataTable(tableId, data) {
 				
 			$(tableId).DataTable({
 				paging: true,
@@ -118,20 +120,14 @@
 			});
 		}
 		
-		var mensGPData;
-		var ladiesGPData;
-		var mensOrderedRacesIds;
-		var ladiesOrderedRacesIds;
-		
 		$('#grand-prix-submit').click(function () {
 		
 			var year = $('#year').val();
 			$.getJSON(
 			  '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/grandprix/' + year + '/' + 2,
 			  function(data) {		
-				mensGPData = data.results;
-				mensOrderedRacesIds = data.races;
-				createDataTable('#men-grand-prix-results-table', data.results, 2);
+				raceDataMap['mensOrderedRacesIds'] = data.races;
+				createDataTable('#men-grand-prix-results-table', data.results);
 				
 				$('#men-grand-prix-results').show();
 			  }
@@ -140,9 +136,8 @@
 			$.getJSON(
 			  '<?php echo esc_url( home_url() ); ?>/wp-json/ipswich-jaffa-api/v2/results/grandprix/' + year + '/' + 3,
 			  function(data) {		
-				ladiesGPData = data.results;
-				ladiesOrderedRacesIds = data.races;
-				createDataTable('#ladies-grand-prix-results-table', data.results, 3);
+                raceDataMap['ladiesOrderedRacesIds'] = data.races;
+				createDataTable('#ladies-grand-prix-results-table', data.results);
 				
 				$('#ladies-grand-prix-results').show();
 			  }
@@ -193,40 +188,8 @@
 			else {
 				// Open this row
 				let raceIds = table.data('raceids');
-				dataTableRow.child(getRunnerResultDetails(dataTableRow.data(), raceIds)).show();
+				dataTableRow.child(getRunnerResultDetails(dataTableRow.data(), raceDataMap[raceIds];)).show();
 			}
-		});
-		
-		// $('.grandprix-table tbody td a .grand-prix-detail').click(function () {
-		// 	var nTr = this.parentNode.parentNode.parentNode;
-		// 	var sexId = $(nTr).data('sex-id');			
-				
-		// 	var runnerId = nTr.id;
-		// 	var data, orderedRacesIds;
-		
-		// 	if (sexId == 2) {
-		// 		data = mensGPData;
-		// 		orderedRacesIds = mensOrderedRacesIds;				
-		// 	} else {
-		// 		data = ladiesGPData;
-		// 		orderedRacesIds = ladiesOrderedRacesIds;
-		// 	}
-		
-		// 	var runner = findById(data, runnerId);
-		// 	if (runner == null)
-		// 		return;
-		
-		// 	var html = getResultDetailHtml(runner, orderedRacesIds);			
-			
-		// } );
-		
-		// function findById(source, id) {
-		//   for (var i = 0; i < source.length; i++) {
-		// 	if (source[i].id === id) {
-		// 	  return source[i];
-		// 	}
-		//   }
-		//   return null;
-		// }		
+		});	
 	});
 </script>
