@@ -20,11 +20,14 @@
 			<thead>
 				<tr>
 					<th></th>
+                    <th>Id</th>
 					<th>Name</th>
                     <th>Completed Races</th>
 					<th>Category</th>
 					<th>Total Points</th>
-					<th>Best 8 Points</th>		
+					<th>Best 8 Points</th>	
+                    <th></th>
+                    <th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -37,11 +40,14 @@
 			<thead>
 				<tr>
 					<th></th>
+                    <th>Id</th>
 					<th>Name</th>
                     <th>Completed Races</th>
 					<th>Category</th>
 					<th>Total Points</th>
 					<th>Best 8 Points</th>
+                    <th></th>
+                    <th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -62,7 +68,7 @@
 				autoWidth: false,
 				scrollX: false,
 				pageLength: 10,
-				order: [[ 3, "desc" ], [ 2, "desc" ]],
+				order: [[ 5, "desc" ], [ 4, "desc" ]],
 				columns: [
 					{
 						className: 'dt-control',
@@ -143,7 +149,7 @@
 			);				
 		});
 		
-		function getRunnerResultDetails(data, raceData) {
+		function getRunnerResultDetails(runnerData, raceData) {
 						
 			var table = '<table class="display"><thead><tr><th>Race</th><th>Points</th></tr></thead><tbody>';
 					
@@ -151,7 +157,7 @@
 			
 			var eventResultsUrl = '<?php echo $eventResultsPageUrl; ?>';
 			$.each(raceData, function(j, raceDetail){
-				$.each(data.races, function(k, race){
+				$.each(runnerData.races, function(k, race){
 					if (raceDetail.id == race.id) {
 						
 						var anchor = eventResultsUrl;
@@ -177,17 +183,17 @@
 
 		$('.grandprix-table').on('click', 'td.dt-control', function (e) {
 			let tr = e.target.closest('tr');			
-			let table = $(tr).closest('table').DataTable(); 
-			let row = table.row(tr);
+            let table = $(tr).closest('table'); 
+			let dataTableRow = table.DataTable().row(tr);
 		
-			if (row.child.isShown()) {
+			if (dataTableRow.child.isShown()) {
 				// This row is already open - close it
-				row.child.hide();
+				dataTableRow.child.hide();
 			}
 			else {
 				// Open this row
-				let raceIds = $(table.node()).data('raceids');
-				row.child(getRunnerResultDetails(row.data(), raceIds)).show();
+				let raceIds = table.data('raceIds');
+				dataTableRow.child(getRunnerResultDetails(dataTableRow.data(), raceIds)).show();
 			}
 		});
 		
