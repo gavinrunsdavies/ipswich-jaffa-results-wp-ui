@@ -108,7 +108,7 @@
                         visible: false
 					}
 				],
-				ajax: data
+				data: data
 			});
 		}
 		
