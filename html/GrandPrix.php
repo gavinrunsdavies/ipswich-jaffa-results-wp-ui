@@ -21,6 +21,7 @@
 				<tr>
 					<th></th>
 					<th>Name</th>
+                    <th>Completed Races</th>
 					<th>Category</th>
 					<th>Total Points</th>
 					<th>Best 8 Points</th>		
@@ -37,6 +38,7 @@
 				<tr>
 					<th></th>
 					<th>Name</th>
+                    <th>Completed Races</th>
 					<th>Category</th>
 					<th>Total Points</th>
 					<th>Best 8 Points</th>
@@ -68,6 +70,10 @@
 						data: null,
 						defaultContent: ''
 					},
+                    {
+						data: "id",
+                        visible: false
+					},
 					{
 						data: "name",
 						searchable: true,
@@ -81,6 +87,9 @@
 							return anchor;
 						}
 					},
+                    {
+						data: "numberOfRaces"
+					},
 					{
 						data: "categoryCode"
 					},
@@ -89,6 +98,14 @@
 					},
 					{
 						data: "best8Score"
+					},                    
+                    {
+						data: "averageScore",
+                        visible: false
+					},                    
+                    {
+						data: "races",
+                        visible: false
 					}
 				],
 				ajax: data
