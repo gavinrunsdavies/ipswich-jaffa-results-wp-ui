@@ -188,7 +188,7 @@
 			else {
 				// Open this row
 				let raceIds = table.data('raceids');
-				dataTableRow.child(getRunnerResultDetails(dataTableRow.data(), raceDataMap[raceIds];)).show();
+				dataTableRow.child(getRunnerResultDetails(dataTableRow.data(), raceDataMap[raceIds])).show();
 			}
 		});	
 	});
