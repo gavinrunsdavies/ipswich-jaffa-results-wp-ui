@@ -15,7 +15,7 @@
 		</form>
 	</div>
 	<div id="men-grand-prix-results" style="display:none">		
-		<table class="display grandprix-table" id="men-grand-prix-results-table" style="width:100%" data-raceIds="mensOrderedRacesIds">	
+		<table class="display grandprix-table" id="men-grand-prix-results-table" style="width:100%" data-raceids="mensOrderedRacesIds">	
 			<caption>Men's Grand Prix Current Standings</caption>				
 			<thead>
 				<tr>
@@ -35,7 +35,7 @@
 		</table>		
 	</div>
 	<div id="ladies-grand-prix-results" style="display:none" class="center-panel">
-		<table class="display grandprix-table" id="ladies-grand-prix-results-table" style="width:100%" data-raceIds="ladiesOrderedRacesIds">	
+		<table class="display grandprix-table" id="ladies-grand-prix-results-table" style="width:100%" data-raceids="ladiesOrderedRacesIds">	
 			<caption>Ladies Grand Prix Current Standings</caption>				
 			<thead>
 				<tr>
@@ -192,7 +192,7 @@
 			}
 			else {
 				// Open this row
-				let raceIds = table.data('raceIds');
+				let raceIds = table.data('raceids');
 				dataTableRow.child(getRunnerResultDetails(dataTableRow.data(), raceIds)).show();
 			}
 		});
