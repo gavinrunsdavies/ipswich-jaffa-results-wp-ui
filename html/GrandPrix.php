@@ -144,12 +144,8 @@
 			);				
 		});
 		
-		function getRunnerResultDetails(runnerData, raceData) {
-						
-			var table = '<table class="display"><thead><tr><th>Race</th><th>Points</th></tr></thead><tbody>';
-					
-			var rows = '';
-			
+		function getRunnerResultDetails(runnerData, raceData) {										
+			var list = '<ul>';			
 			var eventResultsUrl = '<?php echo $eventResultsPageUrl; ?>';
 			$.each(raceData, function(j, raceDetail){
 				$.each(runnerData.races, function(k, race){
@@ -161,19 +157,17 @@
 						} else {
 							anchor += '?raceId=' + raceDetail.id;
 						}
-						rows += '<tr>';
-						rows += '<td><a href="' + anchor + '">' + raceDetail.eventName + '</a></td>';
-						rows += '<td>' + race.points + '</td>';
-						rows += '</tr>';
+						list += '<li>';
+						list += '<a href="' + anchor + '">' + raceDetail.eventName + '</a>: ' + race.points + 'pts';
+						list += '</li>';
 						return;
 					}
 				});
 			});
 			
-			table += rows;
-			table += '</tbody></table>';
+			list += '</ul>';
 			
-			return table;
+			return list;
 		}
 
 		$('.grandprix-table').on('click', 'td.dt-control', function (e) {
