@@ -85,25 +85,11 @@ class OnThisDayWidget extends \WP_Widget
         
     private function addContent() 
   	{
-  		echo '<div id="ipswich-jaffa-on-this-day">';		
-  		echo $this->getSummary();	
-  		echo '</div>';
-  	}
-		
-	private function getSummary() 
-	{		
-		$url = esc_url( home_url() ).'/wp-json/ipswich-jaffa-api/v2/races/history';
-		$curl = curl_init($url);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		$response = curl_exec($curl);			
-		curl_close($curl);
-		$decoded = json_decode($response);
-		if (isset($decoded->response->status) && $decoded->response->status == 'ERROR') {
-			return null;
-		}
+		ob_start();
+		require_once "OnThisDay.php";
+		$content = ob_get_clean();
 
-		return $decoded;
-	} 
-
+		echo $content;
+  	}		
 } 
 ?>
