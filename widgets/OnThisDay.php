@@ -56,7 +56,7 @@
 	
 	function formatDateToMonthAndDay(offset) {
 	  const date = new Date();
-	  date.setDate(date.getDate() - offset);
+	  date.setDate(date.getDate() + offset);
 
 	  // Only include day and month (e.g., "October 23")
 	  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
