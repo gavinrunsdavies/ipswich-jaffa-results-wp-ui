@@ -11,6 +11,7 @@ Author URI: https://github.com/gavinrunsdavies/
 namespace IpswichJAFFARunningClubResults;
 
 require_once plugin_dir_path(__FILE__) . 'widgets/LatestResultsWidget.php';
+require_once plugin_dir_path(__FILE__) . 'widgets/OnThisDayWidget.php';
 require_once plugin_dir_path(__FILE__) . 'widgets/RunnerOfTheMonthWidget.php';
 require_once plugin_dir_path(__FILE__) . 'php/LatestResultsMenuItems.php';
 
@@ -59,6 +60,7 @@ class Program
 	public function registerWidgets()
 	{
 		register_widget('IpswichJAFFARunningClubResults\LatestResultsWidget');
+		register_widget('IpswichJAFFARunningClubResults\OnThisDayWidget');
 		register_widget('IpswichJAFFARunningClubResults\RunnerOfTheMonthWidget');
 	}
 
