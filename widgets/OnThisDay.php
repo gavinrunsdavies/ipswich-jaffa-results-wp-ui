@@ -1,15 +1,4 @@
   <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background: #f8f9fa;
-      color: #222;
-      padding: 2rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-
     .summary-container {
       background: #fff;
       border-radius: 1rem;
@@ -48,10 +37,6 @@
       cursor: pointer;
       transition: background-color 0.2s ease;
       font-size: 1rem;
-    }
-
-    button:hover {
-      background-color: #005b87;
     }
 
     button:disabled {
@@ -138,7 +123,7 @@
       }
 
       try {
-        const res = await fetch(`https://test.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v2/races/history?date=${dateStr}`);
+        const res = await fetch(`/wp-json/ipswich-jaffa-api/v2/races/history?date=${dateStr}`);
         if (!res.ok) throw new Error("Network error");
         const data = await res.json();
 
