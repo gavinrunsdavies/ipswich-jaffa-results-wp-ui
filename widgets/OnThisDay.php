@@ -1,25 +1,4 @@
   <style>
-    .summary-container {
-      background: #fff;
-      border-radius: 1rem;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      padding: 1.5rem;
-      max-width: 700px;
-      width: 100%;
-      transition: all 0.3s ease;
-    }
-
-    .summary-container h2 {
-      margin-bottom: 1rem;
-      font-size: 1.3rem;
-      color: #333;
-    }
-
-    .summary-content {
-      line-height: 1.6;
-      font-size: 1rem;
-    }
-
     .controls {
       display: flex;
       justify-content: space-between;
@@ -28,9 +7,7 @@
       max-width: 700px;
     }
 
-    button {
-      background-color: #0073aa;
-      color: #fff;
+    button {    
       border: none;
       border-radius: 0.5rem;
       padding: 0.6rem 1.2rem;
