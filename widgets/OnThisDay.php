@@ -28,7 +28,6 @@
     }
   </style>
   <div class="summary-container">
-    <h3>On This Day in JAFFA History</h3>
     <div id="summary" class="summary-content">Loading summary...</div>
     <div class="date-label" id="date-label"></div>
   </div>
@@ -45,6 +44,7 @@
     const nextBtn = document.getElementById("next-btn");
 
     let currentDayOffset = 0; // 0 = today, -1 = yesterday, etc.
+    const MAX_PAST_DAYS = 14;
     const CACHE_PREFIX = "ai_summary_";
     const CACHE_EXPIRY_HOURS = 24;
 
@@ -114,15 +114,20 @@
       nextBtn.disabled = offset >= 0;   // no future days
     }
 
-    prevBtn.addEventListener("click", () => {
-      currentDayOffset--;
-      fetchSummary(currentDayOffset);
-    });
-
-    nextBtn.addEventListener("click", () => {
-      currentDayOffset++;
-      fetchSummary(currentDayOffset);
-    });
+	prevBtn.addEventListener("click", () => {
+        if (currentDayOffset > -MAX_PAST_DAYS) {
+          currentDayOffset -= 1; // move to an older day
+          fetchSummary(currentDayOffset);
+        }
+	});
+	
+	// NEXT should go forward one day (towards today): increment offset
+	nextBtn.addEventListener("click", () => {
+        if (currentDayOffset < 0) {
+          currentDayOffset += 1; // move toward today
+          fetchSummary(currentDayOffset);
+        }
+	});
 
     // Load today by default
     fetchSummary(currentDayOffset);
