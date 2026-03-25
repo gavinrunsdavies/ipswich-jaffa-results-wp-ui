@@ -66,7 +66,7 @@
 							dataRow.push(getRaceLink(record));
 							dataRow.push(record.raceDescription == null ? "" : record.raceDescription);
 							dataRow.push(record.date);
-							dataRow.push(ipswichjaffarc.formatTime(record.time));
+							dataRow.push(ipswichjaffarc.secondsToTime(record.performance));
 							dataRow.push(record.position);
 							dataSet.push(dataRow);
 						});
