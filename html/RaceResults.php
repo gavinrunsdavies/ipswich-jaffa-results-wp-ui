@@ -3,7 +3,7 @@
 		display: none;
 	}
 
-	#jaffa-event-title {
+	#jaffa-event-title, #jaffa-meeting-title {
 		text-align: center;
 	}
 
@@ -119,8 +119,21 @@
 					if (data.teams?.length > 0) {
 						setTeamResults(data.teams);
 					}
-					for (var i = 0; i < data.races.length; i++) {
-						getRaceResult(data.races[i]);
+					if (data.races && data.races.length > 0) {
+						populateOtherRacesDropdown(data.races, raceId);
+					} else if (data.event && data.event.id) {
+						$.ajax(getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/' + data.event.id + '/races'))
+							.done(function(races) {
+								populateOtherRacesDropdown(races, raceId);
+							})
+							.fail(function(err) {
+								console.error('Failed to load event races for dropdown', err);
+							});
+					}
+					if (data.races && data.races.length > 0) {
+						for (var i = 0; i < data.races.length; i++) {
+							getRaceResult(data.races[i]);
+						}
 					}
 
 					if (data.volunteers?.length > 0) {
@@ -159,7 +172,7 @@
 					meetingDates += ' - ' + meeting.toDate;
 				}
 
-				var meetingTitle = '<h3>Meeting: ' + meeting.name + ' (' + meetingDates + ')</h3>';
+				var meetingTitle = '<h3 id="jaffa-meeting-title">Meeting: ' + meeting.name + ' (' + meetingDates + ')</h3>';
 				$('#jaffa-race-results').prepend(meetingTitle);
 			}
 		}
