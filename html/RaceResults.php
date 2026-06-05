@@ -119,9 +119,8 @@
 					if (data.teams?.length > 0) {
 						setTeamResults(data.teams);
 					}
-					if (data.races && data.races.length > 0) {
-						populateOtherRacesDropdown(data.races, raceId);
-					} else if (data.event && data.event.id) {
+					// Populate race dropdown from all event races
+					if (data.event && data.event.id) {
 						$.ajax(getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/' + data.event.id + '/races'))
 							.done(function(races) {
 								populateOtherRacesDropdown(races, raceId);
@@ -130,6 +129,7 @@
 								console.error('Failed to load event races for dropdown', err);
 							});
 					}
+					
 					if (data.races && data.races.length > 0) {
 						for (var i = 0; i < data.races.length; i++) {
 							getRaceResult(data.races[i]);
@@ -138,6 +138,14 @@
 
 					if (data.volunteers?.length > 0) {
 						setVolunteers(data.volunteers);
+					}
+					
+					// Display insights from the response
+					if (data.insights) {
+						$('#race-insights-panel').show();
+						showRaceInsights(data.insights.years);
+						showEventInsights(data.insights.distances);
+						showEventTopAttendees(data.insights.attendees);
 					}
 				})
 		};
@@ -467,7 +475,7 @@
 					[0, "asc"],
 					[2, "asc"]
 				],
-				ajax: getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/results/race/' + race.id)
+					data: race.results || []
 			});
 		}
 
