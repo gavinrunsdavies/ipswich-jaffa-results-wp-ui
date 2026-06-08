@@ -119,18 +119,9 @@
 					if (data.teams?.length > 0) {
 						setTeamResults(data.teams);
 					}
-					// Populate race dropdown from all event races
-					if (data.event && data.event.id) {
-						$.ajax(getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/events/' + data.event.id + '/races'))
-							.done(function(races) {
-								populateOtherRacesDropdown(races, raceId);
-							})
-							.fail(function(err) {
-								console.error('Failed to load event races for dropdown', err);
-							});
-					}
-					
-					if (data.races && data.races.length > 0) {
+				// Populate race dropdown from other races in the response
+				if (data.otherRaces && data.otherRaces.length > 0) {
+					populateOtherRacesDropdown(data.otherRaces, raceId);
 						for (var i = 0; i < data.races.length; i++) {
 							getRaceResult(data.races[i]);
 						}
