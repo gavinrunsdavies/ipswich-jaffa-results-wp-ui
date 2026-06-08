@@ -257,15 +257,19 @@
 				dataSet.push(dataRow);
 			}
 
+			var volunteerHeader  = '<h3>Volunteers</h3>';
+			var volunteerSubHeader = '<p>Thank you to the following volunteers who helped make this event possible.</p>';
+
 			var tableHtml = '<table class="display" id="jaffa-volunteers-table">';
-			tableHtml += '<caption>Volunteers</caption>';
 			tableHtml += '<thead>';
 			tableHtml += '<tr><th>Name</th><th>Role</th></tr>';
 			tableHtml += '</thead>';
 			tableHtml += '<tbody></tbody>';
 			tableHtml += '</table>';
 
-			$('#jaffa-race-results').append(tableHtml);
+			$('#jaffa-race-results').append(volunteerHeader)
+				.append(volunteerSubHeader).append(volunteerSubHeader)
+				.append(tableHtml);
 
 			$('#jaffa-volunteers-table').DataTable({
 				paging: false,
