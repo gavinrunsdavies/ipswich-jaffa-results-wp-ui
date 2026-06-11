@@ -257,7 +257,7 @@
 				dataSet.push(dataRow);
 			}
 
-			var volunteerHeader  = '<h3>Volunteers</h3>';
+			var volunteerHeader  = '<h3 id="jaffa-volunteers">Volunteers</h3>';
 			var volunteerSubHeader = '<p>Thank you to the following volunteers who helped make this event possible.</p>';
 
 			var tableHtml = '<table class="display" id="jaffa-volunteers-table">';
