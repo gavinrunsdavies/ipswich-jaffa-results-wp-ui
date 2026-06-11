@@ -268,13 +268,14 @@
 			tableHtml += '</table>';
 
 			$('#jaffa-race-results').append(volunteerHeader)
-				.append(volunteerSubHeader).append(volunteerSubHeader)
+				.append(volunteerSubHeader)
 				.append(tableHtml);
 
 			$('#jaffa-volunteers-table').DataTable({
 				paging: false,
 				searching: false,
-				data: dataSet
+				data: dataSet,
+				order: [[1, "asc"]]
 			});
 		}
 
