@@ -40,6 +40,16 @@
 		color: var(--primary-color);
 	}
 
+	p.jaffa-race-header,
+	p.jaffa-meeting-report {
+		margin: 0.75em 0 0.5em;
+	}
+
+	p.jaffa-meeting-report {
+		font-style: italic;
+		color: #444;
+	}
+
 	@media screen and (max-width: 600px) {
 		.responsive-hide-badges {
 			display: none !important;
@@ -166,19 +176,17 @@
 
 		function processMeeting(meeting) {
 			if (meeting.id != 0) { // Ignore virtual meetings
-				var meetingDates = meeting.fromDate;
-				if (meeting.fromDate != meeting.toDate) {
-					meetingDates += ' - ' + meeting.toDate;
-				}
+                var meetingHtml = '<h3 id="jaffa-meeting-title">' + meeting.subtitle + '</h3>';
 
-				var meetingTitle = '<h3 id="jaffa-meeting-title">Meeting: ' + meeting.name + ' (' + meetingDates + ')</h3>';
-				$('#jaffa-race-results').prepend(meetingTitle);
-			}
-		}
+                if (meeting.report) {
+                    meetingHtml += '<p class="jaffa-meeting-report">' + meeting.report + '</p>';
+                }
 
-		function setTeamResults(teams) {
+                $('#jaffa-race-results').prepend(meetingHtml);
+            }
+        }
 
-			var maxResults = 0;
+        function setTeamResults(teams) {
 			for (var i = 0; i < teams.length; i++) {
 				if (teams[i].results.length > maxResults) {
 					maxResults = teams[i].results.length;
@@ -279,239 +287,190 @@
 			});
 		}
 
-		function getResultsTitle(race) {
-			var title = '';
+        function getRaceResult(race) {
+            var courseTypeIdsToDisplayImprovements = [1, 3, 6];
+            var resultColumnTitle;
+            var tableName = 'jaffa-race-results-table-';
+            if (race.resultUnitTypeId == 3) {
+                resultColumnTitle = 'Distance';
+            } else {
+                resultColumnTitle = 'Time';
+            }
 
-			if (race.description) {
-				title += race.description + ', ';
-			}
+            var title = race.header || '';
 
-			title += ipswichjaffarc.formatDate(race.date);
+            if (title) {
+                $('#jaffa-race-results').append('<p class="jaffa-race-header">' + title + '</p>');
+            }
 
-			if (race.distance) {
-				title += " | " + race.distance;
-			}
+            if (race.report != null) {
+                var raceReport = '<p>' + race.report + '</p>';
+                $('#jaffa-race-results').append(raceReport);
+            }
+            var tableRow = '<tr><th data-priority="2">Position</th><th data-priority="1">Name</th><th data-priority="3">' + resultColumnTitle + '</th><th>Personal Best</th><th>Category</th><th data-priority="5">Info</th><th data-priority="4">Age Grading</th></tr>';
+            var tableHtml = '<table class="display" id="' + tableName + race.id + '">';
+            tableHtml += '<caption>' + title + '</caption>';
+            tableHtml += '<thead>';
+            tableHtml += tableRow;
+            tableHtml += '</thead>';
+            tableHtml += '</table>';
+            $('#jaffa-race-results').append(tableHtml);
 
-			if (race.courseType) {
-				title += " | " + race.courseType;
-			}
+            var table = $('#' + tableName + race.id).DataTable({
+                responsive: true,
+                paging: false,
+                searching: false,
+                serverSide: false,
+                columns: [{
+                    data: "position",
+                    name: "position",
+                    className: "jaffa-position"
+                }, {
+                    data: "runnerName",
+                    render: function(data, type, row, meta) {
+                        let html = '<a class="jaffa-name" href="' + memberResultsPageUrl + '?runner_id=' + row.runnerId + '">' + data + '</a>';
 
-			if (race.conditions) {
-				title += " | " + race.conditions;
-			}
+                        if (row.team > 0) {
+                            let tooltip = row.team == 1 ?
+                                "Part of the winning team" :
+                                "Part of the scoring team finishing in " + row.team;
 
-			if (race.venue) {
-				title += " | " + race.venue;
-			}
+                            html += ` <span class="material-symbols-outlined md-18" title="${tooltip}">workspace_premium</span>`;
+                        }
 
-			if (race.county) {
-				title += " | " + race.county;
-			}
+                        // Build badge icons based on runnerBadges
+                        let badgesHtml = `${row.runnerTotalResults} results | `;
+                        if (row.runnerBadges?.includes("track")) {
+                            badgesHtml += `<span class="material-symbols-outlined md-18" title="Completed a track race">laps</span>`;
+                        }
+                        if (row.runnerBadges?.includes("international")) {
+                            badgesHtml += `<span class="material-symbols-outlined md-18" title="Ran outside of the UK">travel_explore</span>`;
+                        }
+                        if (row.runnerBadges?.includes("cross-country")) {
+                            badgesHtml += `<span class="material-symbols-outlined md-18" title="Completed a cross-country race">landscape_2</span>`;
+                        }
+                        if (row.runnerBadges?.includes("committee")) {
+                            badgesHtml += `<span class="material-symbols-outlined md-18" title="Has been a club committee member">groups</span>`;
+                        }
+                        if (row.runnerBadges?.includes("coach")) {
+                            badgesHtml += `<span class="material-symbols-outlined md-18" title="Has been a club coach">sports</span>`;
+                        }
+                        if (row.runnerBadges?.includes("marathon")) {
+                            badgesHtml += `<span class="material-symbols-outlined md-18" title="Completed a marathon">run_circle</span>`;
+                        }
 
-			if (race.area) {
-				title += " | " + race.area;
-			}
+                        html += `<div class="jaffa-badges responsive-hide-badges">${badgesHtml}</div>`;
 
-			if (race.countryCode) {
-				title += " | " + race.countryCode;
-			}
+                        return html;
+                    }
+                }, {
+                    data: "performance",
+                    render: function(data, type, row, meta) {
+                        var result;
+                        if (race.resultUnitTypeId == 3) {
+                            result = Number(data).toLocaleString();
+                        } else {
+                            result = ipswichjaffarc.secondsToTime(row.performance);
+                        }
 
-			return title;
-		}
+                        if (row.isSeasonBest == 1 && courseTypeIdsToDisplayImprovements.includes(race.courseTypeId)) {
+                            result += '<div class="jaffa-standard">SB</div>';
+                        }
 
-		function getRaceResult(race) {
-			var courseTypeIdsToDisplayImprovements = [1, 3, 6];
-			var resultColumnTitle;
-			var tableName = 'jaffa-race-results-table-';
-			if (race.resultUnitTypeId == 3) {
-				resultColumnTitle = 'Distance';
-			} else {
-				resultColumnTitle = 'Time';
-			}
+                        return result;
+                    },
+                    name: 'performance',
+                    className: 'text-right'
+                }, {
+                    data: "isPersonalBest",
+                    visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
+                    render: function(data, type, row, meta) {
+                        if (data == 1) {
+                            var improvementHtml = '';
+                            if (row.previousPersonalBestPerformance != undefined) {
+                                if (race.resultUnitTypeId == 2) {
+                                    // Seconds
+                                    improvementHtml = getResultImprovementFormatForTime(row.previousPersonalBestPerformance, row.performance);
+                                } else if (race.resultUnitTypeId == 3) {
+                                    // Meters
+                                    improvementHtml = getResultImprovementFormatForDistance(row.previousPersonalBestPerformance, row.performance);
+                                }
+                            }
 
-			var title = getResultsTitle(race);
+                            return '<span class="material-symbols-outlined md-18">check</span>' + improvementHtml;
+                        }
+                        return '';
+                    },
+                    className: 'text-center'
+                }, {
+                    data: "categoryCode",
+                    render: function(data, type, row, meta) {
+                        if (!row.standardType)
+                            return data;
 
-			if (race.report != null) {
-				var raceReport = '<p>' + race.report + '</p>';
-				$('#jaffa-race-results').append(raceReport);
-			}
-			var tableRow = '<tr><th data-priority="2">Position</th><th data-priority="1">Name</th><th data-priority="3">' + resultColumnTitle + '</th><th>Personal Best</th><th>Category</th><th data-priority="5">Info</th><th data-priority="4">Age Grading</th></tr>';
-			var tableHtml = '<table class="display" id="' + tableName + race.id + '">';
-			tableHtml += '<caption>' + title + '</caption>';
-			tableHtml += '<thead>';
-			tableHtml += tableRow;
-			tableHtml += '</thead>';
-			tableHtml += '</table>';
-			$('#jaffa-race-results').append(tableHtml);
-
-			var table = $('#' + tableName + race.id).DataTable({
-				responsive: true,
-				paging: false,
-				searching: false,
-				serverSide: false,
-				columns: [{
-					data: "position",
-					name: "position",
-					className: "jaffa-position"
-				}, {
-					data: "runnerName",
-					render: function(data, type, row, meta) {
-						let html = '<a class="jaffa-name" href="' + memberResultsPageUrl + '?runner_id=' + row.runnerId + '">' + data + '</a>';
-
-						if (row.team > 0) {
-							let tooltip = row.team == 1 ?
-								"Part of the winning team" :
-								"Part of the scoring team finishing in " + row.team;
-
-							html += ` <span class="material-symbols-outlined md-18" title="${tooltip}">workspace_premium</span>`;
-						}
-
-						// Build badge icons based on runnerBadges
-						let badgesHtml = `${row.runnerTotalResults} results | `;
-						if (row.runnerBadges?.includes("track")) {
-							badgesHtml += `<span class="material-symbols-outlined md-18" title="Completed a track race">laps</span>`;
-						}
-						if (row.runnerBadges?.includes("international")) {
-							badgesHtml += `<span class="material-symbols-outlined md-18" title="Ran outside of the UK">travel_explore</span>`;
-						}
-						if (row.runnerBadges?.includes("cross-country")) {
-							badgesHtml += `<span class="material-symbols-outlined md-18" title="Completed a cross-country race">landscape_2</span>`;
-						}
-						if (row.runnerBadges?.includes("committee")) {
-							badgesHtml += `<span class="material-symbols-outlined md-18" title="Has been a club committee member">groups</span>`;
-						}
-						if (row.runnerBadges?.includes("coach")) {
-							badgesHtml += `<span class="material-symbols-outlined md-18" title="Has been a club coach">sports</span>`;
-						}
-						if (row.runnerBadges?.includes("marathon")) {
-							badgesHtml += `<span class="material-symbols-outlined md-18" title="Completed a marathon">run_circle</span>`;
-						}
-
-						html += `<div class="jaffa-badges responsive-hide-badges">${badgesHtml}</div>`;
-
-						return html;
-					}
-				}, {
-					data: "performance",
-					render: function(data, type, row, meta) {
-						var result;
-						if (race.resultUnitTypeId == 3) {
-							result = Number(data).toLocaleString();
-						} else {
-							result = ipswichjaffarc.secondsToTime(row.performance);
-						}
-
-						if (row.isSeasonBest == 1 && courseTypeIdsToDisplayImprovements.includes(race.courseTypeId)) {
-							result += '<div class="jaffa-standard">SB</div>';
-						}
-
-						return result;
-					},
-					name: 'performance',
-					className: 'text-right'
-				}, {
-					data: "isPersonalBest",
-					visible: courseTypeIdsToDisplayImprovements.includes(race.courseTypeId) ? true : false,
-					render: function(data, type, row, meta) {
-						if (data == 1) {
-							var improvementHtml = '';
-							if (row.previousPersonalBestPerformance != undefined) {
-								if (race.resultUnitTypeId == 2) {
-									// Seconds
-									improvementHtml = getResultImprovementFormatForTime(row.previousPersonalBestPerformance, row.performance);
-								} else if (race.resultUnitTypeId == 3) {
-									// Meters
-									improvementHtml = getResultImprovementFormatForDistance(row.previousPersonalBestPerformance, row.performance);
-								}
-							}
-
-							return '<span class="material-symbols-outlined md-18">check</span>' + improvementHtml;
-						}
-						return '';
-					},
-					className: 'text-center'
-				}, {
-					data: "categoryCode",
-					render: function(data, type, row, meta) {
-						if (!row.standardType)
-							return data;
-
-						return `
+                        return `
                                 ${data}<br>
                                 <span class="jaffa-standard">${row.standardType}</span>
                                 `;
-					}
-				}, {
-					data: "info"
-				}, {
-					data: "percentageGrading",
-					render: function(data, type, row, meta) {
-						var html = data > 0 ? data + '%' : '';
-						if (row.percentageGradingBest == 1) {
-							html += ` <span class="material-symbols-outlined md-18 jaffa-orange" title="New percenatge grading personal best">star</span>`;
-						}
+                    }
+                }, {
+                    data: "info"
+                }, {
+                    data: "percentageGrading",
+                    render: function(data, type, row, meta) {
+                        var html = data > 0 ? data + '%' : '';
+                        if (row.percentageGradingBest == 1) {
+                            html += ` <span class="material-symbols-outlined md-18 jaffa-orange" title="New percenatge grading personal best">star</span>`;
+                        }
 
-						return html;
-					},
-					name: "percentageGrading"
-				}],
-				footerCallback: function(row, data, start, end, display) {
-					// Hide column if value is all zeroes / empty
-					var api = this.api();
-					var nonEmpty = (x) => x != '' && x != undefined;
-					var nonZero = (x) => x > 0;
-					showHideColumn(api, 'performance:name', nonZero);
-					showHideColumn(api, 'percentageGrading:name', nonZero);
-					showHideColumn(api, 'position:name', nonZero);
-				},
-				processing: true,
-				autoWidth: false,
-				scrollX: false,
-				order: [
-					[0, "asc"],
-					[2, "asc"]
-				],
-					data: race.results || []
-			});
-		}
+                        return html;
+                    },
+                    name: "percentageGrading"
+                }],
+                footerCallback: function(row, data, start, end, display) {
+                    // Hide column if value is all zeroes / empty
+                    var api = this.api();
+                    var nonEmpty = (x) => x != '' && x != undefined;
+                    var nonZero = (x) => x > 0;
+                    showHideColumn(api, 'performance:name', nonZero);
+                    showHideColumn(api, 'percentageGrading:name', nonZero);
+                    showHideColumn(api, 'position:name', nonZero);
+                },
+                processing: true,
+                autoWidth: false,
+                scrollX: false,
+                order: [
+                    [0, "asc"],
+                    [2, "asc"]
+                ],
+                data: race.results || []
+            });
+        }
 
-		function showHideColumn(api, columnName, expression) {
-			var visible = api
-				.column(columnName, {
-					page: 'current'
-				})
-				.data()
-				.toArray()
-				.some(expression);
+        function getResultImprovementFormatForTime(previousTimeInSeconds, newTimeInSeconds) {
 
-			$(api.column(columnName).visible(visible));
-		}
+            var secondsImprovment = parseFloat(previousTimeInSeconds) - parseFloat(newTimeInSeconds);
+            var improvement = [];
 
-		function getResultImprovementFormatForTime(previousTimeInSeconds, newTimeInSeconds) {
+            if (secondsImprovment > 60) {
+                improvement.push(Math.floor(secondsImprovment / 60));
+                improvement.push(Math.round(((secondsImprovment % 60) + Number.EPSILON) * 100) / 100);
+            } else {
+                improvement.push(Math.round((secondsImprovment + Number.EPSILON) * 100) / 100);
+            }
 
-			var secondsImprovment = parseFloat(previousTimeInSeconds) - parseFloat(newTimeInSeconds);
-			var improvement = [];
+            var improvementHtml = '<span class="jaffa-pb-improvement"> -';
+            if (improvement.length > 1) {
+                improvementHtml += improvement[0] + '\'' + improvement[1] + '\'\'';
+            } else if (improvement.length > 0) {
+                improvementHtml += improvement[0] + '\'\'';
+            }
+            improvementHtml += '</span>';
 
-			if (secondsImprovment > 60) {
-				improvement.push(Math.floor(secondsImprovment / 60));
-				improvement.push(Math.round(((secondsImprovment % 60) + Number.EPSILON) * 100) / 100);
-			} else {
-				improvement.push(Math.round((secondsImprovment + Number.EPSILON) * 100) / 100);
-			}
+            return improvementHtml;
+        }
 
-			var improvementHtml = '<span class="jaffa-pb-improvement"> -';
-			if (improvement.length > 1) {
-				improvementHtml += improvement[0] + '\'' + improvement[1] + '\'\'';
-			} else if (improvement.length > 0) {
-				improvementHtml += improvement[0] + '\'\'';
-			}
-			improvementHtml += '</span>';
-
-			return improvementHtml;
-		}
-
-		function getResultImprovementFormatForDistance(previousTimeInMeters, newTimeInMeters) {
-
+        function getResultImprovementFormatForDistance(previousTimeInMeters, newTimeInMeters) {
 			var metersImprovment = parseFloat(newTimeInMeters) - parseFloat(previousTimeInMeters);
 			metersImprovment = Math.round((metersImprovment + Number.EPSILON) * 100) / 100;
 
