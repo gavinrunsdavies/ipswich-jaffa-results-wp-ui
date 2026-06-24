@@ -447,6 +447,18 @@
             });
         }
 
+		function showHideColumn(api, columnName, expression) {
+			var visible = api
+				.column(columnName, {
+					page: 'current'
+				})
+				.data()
+				.toArray()
+				.some(expression);
+
+			$(api.column(columnName).visible(visible));
+		}
+
         function getResultImprovementFormatForTime(previousTimeInSeconds, newTimeInSeconds) {
 
             var secondsImprovment = parseFloat(previousTimeInSeconds) - parseFloat(newTimeInSeconds);
