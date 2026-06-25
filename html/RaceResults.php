@@ -299,12 +299,8 @@
 
             var title = race.header || '';
 
-            if (title) {
-                $('#jaffa-race-results').append('<p class="jaffa-race-header">' + title + '</p>');
-            }
-
             if (race.report != null) {
-                var raceReport = '<p>' + race.report + '</p>';
+                var raceReport = '<div class="jaffa-race-report">' + race.report + '</div>';
                 $('#jaffa-race-results').append(raceReport);
             }
             var tableRow = '<tr><th data-priority="2">Position</th><th data-priority="1">Name</th><th data-priority="3">' + resultColumnTitle + '</th><th>Personal Best</th><th>Category</th><th data-priority="5">Info</th><th data-priority="4">Age Grading</th></tr>';
