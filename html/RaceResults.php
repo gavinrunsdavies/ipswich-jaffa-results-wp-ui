@@ -154,20 +154,8 @@
 			return dates[0];
 		}
 
-		function formatDisplayDate(dateValue) {
-			var parts = String(dateValue).split('-');
-			var formattedDate = dateValue;
-			if (parts.length === 3) {
-				var parsedDate = new Date(Date.UTC(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10)));
-				formattedDate = parsedDate.toLocaleDateString('en-GB', {
-					day: 'numeric',
-					month: 'long',
-					year: 'numeric'
-				});
-			}
-
-			return formattedDate;
-		}
+		function formatDisplayDate(date) {
+			
 			if (!date) {
 				return '';
 			}
