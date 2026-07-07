@@ -79,6 +79,7 @@
 </style>
 <div class="section">
 	<h2 id="jaffa-event-title"></h2>
+	<h3 id="jaffa-race-date" style="display: none; text-align: center;"></h3>
 	<div id="jaffa-race-results">
 	</div>
 	<div id="race-insights-panel" style="margin: 3em 0; display: none; text-align: center">
@@ -121,10 +122,64 @@
 			$('#jaffa-event-title').html(name);
 		}
 
+		function setMeetingDate(meeting) {
+			var dateElement = $('#jaffa-race-date');
+
+			if (!meeting || (!meeting.fromDate && !meeting.toDate)) {
+				dateElement.hide().empty();
+				return;
+			}
+
+			var formattedDate = formatMeetingDateRange(meeting);
+			dateElement.html(formattedDate).show();
+		}
+
+		function formatMeetingDateRange(meeting) {
+			var dates = [];
+			if (meeting.fromDate) {
+				dates.push(formatDisplayDate(meeting.fromDate));
+			}
+			if (meeting.toDate && meeting.toDate !== meeting.fromDate) {
+				dates.push(formatDisplayDate(meeting.toDate));
+			}
+
+			if (dates.length === 0) {
+				return '';
+			}
+
+			if (dates.length === 2) {
+				return dates.join(' – ');
+			}
+
+			return dates[0];
+		}
+
+		function formatDisplayDate(date) {
+			
+			if (!date) {
+				return '';
+			}
+
+			var parts = String(date).split('-');
+			var formattedDate = date;
+
+			if (parts.length === 3) {
+				var parsedDate = new Date(Date.UTC(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10)));
+				formattedDate = parsedDate.toLocaleDateString('en-GB', {
+					day: 'numeric',
+					month: 'long',
+					year: 'numeric'
+				});
+			}
+
+			return formattedDate;
+		}
+
 		function loadRaceResultsPage(raceId) {
 			$.ajax(getAjaxRequest('/wp-json/ipswich-jaffa-api/v2/races/' + raceId + '/results-page'))
 				.done(function(data) {
 					setEventName(data.event.name);
+					setMeetingDate(data.meeting);
 					processMeeting(data.meeting);
 					if (data.teams?.length > 0) {
 						setTeamResults(data.teams);
