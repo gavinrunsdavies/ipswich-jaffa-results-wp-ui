@@ -200,36 +200,35 @@
     jQuery(document).ready(function($) {
 
         var _allDistances;
+        var _insightsByDistance = {};
 
         const seniorDistanceIds = [14, 1, 2, 3, 4, 5, 7, 8];
         const juniorDistanceIds = [10, 11, 12, 21, 13, 14, 1, 2];
 
-        $.when(
-            $.getJSON('<?php echo esc_url(home_url()); ?>/wp-json/ipswich-jaffa-api/v2/runners/<?php echo $_GET['runner_id']; ?>'),
-            $.getJSON('<?php echo esc_url(home_url()); ?>/wp-json/ipswich-jaffa-api/v2/distances'),
-            $.getJSON('<?php echo esc_url(home_url()); ?>/wp-json/ipswich-jaffa-api/v2/results/runner/<?php echo $_GET['runner_id']; ?>')
-        ).then(function(runnerData, distancesData, resultsData) {
-            // Each item is an array: [data, statusText, jqXHR]
-            var runner = runnerData[0];
-            var distances = distancesData[0];
-            var results = resultsData[0];
+        $.getJSON('<?php echo esc_url(home_url()); ?>/wp-json/ipswich-jaffa-api/v2/runners/<?php echo $_GET['runner_id']; ?>/profile')
+            .done(function(profileData) {
+                var runner = profileData.runner;
+                var distances = profileData.distances;
+                var results = profileData.results;
+                var insightsByDistance = profileData.insightsByDistance || {};
 
-            _allDistances = distances;
+                _allDistances = distances;
+                _insightsByDistance = insightsByDistance;
 
-            // UI population
-            $('.runnerName').text(runner.name);
-            $('.runnerAgeCategory').text(runner.ageCategory);
-            $('.runnerGender').text(runner.sex);
-            populateCertificatesTable(runner.name, runner.certificates);
-            createResultsDataTable(results);
+                // UI population
+                $('.runnerName').text(runner.name);
+                $('.runnerAgeCategory').text(runner.ageCategory);
+                $('.runnerGender').text(runner.sex);
+                populateCertificatesTable(runner.name, runner.certificates);
+                createResultsDataTable(results);
 
-            // Determine distances based on age
-            var seniorDataOnly = runner.ageAtLastRace >= 16;
-            const distanceIds = seniorDataOnly ? seniorDistanceIds : juniorDistanceIds;
+                // Determine distances based on age
+                var seniorDataOnly = runner.ageAtLastRace >= 16;
+                const distanceIds = seniorDataOnly ? seniorDistanceIds : juniorDistanceIds;
 
-            populateRankingsTable(runner.rankings);
-            processResults(results, distanceIds, seniorDataOnly);
-        });
+                populateRankingsTable(runner.rankings);
+                processResults(results, distanceIds, seniorDataOnly);
+            });
 
         async function processResults(data, distanceIds, seniorDataOnly) {
             // Get PBs by year. Data returned sorted by date (descending)
@@ -903,41 +902,51 @@
         }
 
         function setInsightsRaceDistanceChartData(chart, distanceId) {
+            var distanceKey = distanceId.toString();
+
+            if (_insightsByDistance && _insightsByDistance[distanceKey] !== undefined) {
+                applyInsightsRaceDistanceChartData(chart, _insightsByDistance[distanceKey]);
+                return;
+            }
 
             $.getJSON('<?php echo esc_url(home_url()); ?>/wp-json/ipswich-jaffa-api/v2/results/runner/<?php echo $_GET['runner_id']; ?>/insights/distance/' + distanceId,
                 function(data) {
-                    am4core.array.each(data.raceTimes, function(a) {
-                        var timeBand = Number(a["timeBand"]);
-                        var fastest = Math.floor(timeToMinutes(data.fastest));
-                        if (timeBand == fastest) {
-                            a.colour = am4core.color("#E88112");
-                            a.hideBullet = false;
-                            a.bulletText = "Fastest\n[bold]" + data.fastest + "[/]";
-                            a.bulletColour = am4core.color("#E88112");
-                            return;
-                        }
-
-                        var mean = Math.floor(timeToMinutes(data.mean));
-                        if (timeBand == mean) {
-                            a.colour = am4core.color("#E88112");
-                            a.hideBullet = false;
-                            a.bulletText = "Average\n[bold]" + data.mean + "[/]";
-                            a.bulletColour = am4core.color("#E88112");
-                            return;
-                        }
-
-                        var slowest = Math.floor(timeToMinutes(data.slowest));
-                        if (timeBand == slowest) {
-                            a.colour = am4core.color("#E88112");
-                            a.hideBullet = false;
-                            a.bulletText = "Slowest\n[bold]" + data.slowest + "[/]";
-                            a.bulletColour = am4core.color("#E88112");
-                            return;
-                        }
-                    });
-
-                    chart.data = data.raceTimes;
+                    applyInsightsRaceDistanceChartData(chart, data);
                 });
+        }
+
+        function applyInsightsRaceDistanceChartData(chart, data) {
+            am4core.array.each(data.raceTimes, function(a) {
+                var timeBand = Number(a["timeBand"]);
+                var fastest = Math.floor(timeToMinutes(data.fastest));
+                if (timeBand == fastest) {
+                    a.colour = am4core.color("#E88112");
+                    a.hideBullet = false;
+                    a.bulletText = "Fastest\n[bold]" + data.fastest + "[/]";
+                    a.bulletColour = am4core.color("#E88112");
+                    return;
+                }
+
+                var mean = Math.floor(timeToMinutes(data.mean));
+                if (timeBand == mean) {
+                    a.colour = am4core.color("#E88112");
+                    a.hideBullet = false;
+                    a.bulletText = "Average\n[bold]" + data.mean + "[/]";
+                    a.bulletColour = am4core.color("#E88112");
+                    return;
+                }
+
+                var slowest = Math.floor(timeToMinutes(data.slowest));
+                if (timeBand == slowest) {
+                    a.colour = am4core.color("#E88112");
+                    a.hideBullet = false;
+                    a.bulletText = "Slowest\n[bold]" + data.slowest + "[/]";
+                    a.bulletColour = am4core.color("#E88112");
+                    return;
+                }
+            });
+
+            chart.data = data.raceTimes;
         }
 
         function createInsightsRaceDistanceChart() {
