@@ -237,7 +237,7 @@
             var raceDistanceCount = [];
             var courseTypeCount = [];
             var otherRaceDistanceCount = 0;
-            var validCourseTypeIds = ["1", "3", "6", "8"];
+            var validCourseTypeIds = [1, 3, 6, 8];
             var percentageGradingData = [];
 
             $.each(data, function(i, result) {
