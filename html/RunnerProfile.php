@@ -249,24 +249,22 @@
                         seasonalBest[resultYear] = [];
                         seasonalBest[resultYear][result.distanceId] = result;
                     } else {
-                        if (seasonalBest[resultYear][result.distanceId] === undefined || (result.result < seasonalBest[resultYear][result.distanceId].result ||
-                                (result.result == seasonalBest[resultYear][result.distanceId].result && result.date < seasonalBest[resultYear][result.distanceId].date))) {
+                        if (seasonalBest[resultYear][result.distanceId] === undefined || (result.performance < seasonalBest[resultYear][result.distanceId].performance ||
+                                (result.performance == seasonalBest[resultYear][result.distanceId].performance && result.date < seasonalBest[resultYear][result.distanceId].date))) {
                             seasonalBest[resultYear][result.distanceId] = result;
                         }
                     }
                 }
 
-                if (result.isPersonalBest == 1) {
-                    if (personalBest[result.distanceId] === undefined || personalBest[result.distanceId].result > result.result) {
+                if (result.isPersonalBest === true) {
+                    if (personalBest[result.distanceId] === undefined || personalBest[result.distanceId].performance > result.performance) {
                         personalBest[result.distanceId] = result;
                     }
                 }
 
-                var distanceId = result.distanceId;
-                if (distanceId == null)
+                var distanceId = Number(result.distanceId);
+                if (Number.isNaN(distanceId))
                     distanceId = 0;
-                else
-                    distanceId = parseInt(distanceId);
 
                 if (distanceIds.indexOf(distanceId) == -1 && distanceId != 0) {
                     otherRaceDistanceCount++;
@@ -327,8 +325,8 @@
             var headers = '<tr>';
             var rows = '<tr>';
             $.each(rankings, function(j, ranking) {
-                headers += '<th>' + getDistance(parseInt(ranking.distanceId, 10)).text + '</th>';
-                rows += '<td><strong>' + ranking.rank + '</strong><br/><small>' + ranking.event + ', ' + ranking.date + ', ' + ipswichjaffarc.formatTime(ranking.result) + '</small></td>';
+                headers += '<th>' + getDistance(Number(ranking.distanceId)).text + '</th>';
+                rows += '<td><strong>' + ranking.rank + '</strong><br/><small>' + ranking.event + ', ' + ranking.date + ', ' + formatPerformance(ranking.performance, Number(ranking.distanceId)) + '</small></td>';
             });
             headers += '</tr>';
             rows += '</tr>';
@@ -363,9 +361,9 @@
                         if (data[year] !== undefined) {
                             if (data[year][distanceId] !== undefined) {
                                 if (distanceId == distanceId2) {
-                                    rows += '<td class="success"><strong>' + ipswichjaffarc.formatTime(data[year][distanceId].result) + '</strong></td>';
+                                    rows += '<td class="success"><strong>' + formatPerformance(data[year][distanceId].performance, distanceId) + '</strong></td>';
                                 } else {
-                                    rows += '<td>' + ipswichjaffarc.formatTime(getPredictedTime(distanceId, data[year][distanceId].result, distanceId2)) + '</td>';
+                                    rows += '<td>' + formatPerformance(getPredictedTime(distanceId, data[year][distanceId].performance, distanceId2), distanceId2) + '</td>';
                                 }
                             } else {
                                 rows += '<td></td>';
@@ -409,9 +407,9 @@
                     $.each(distanceIds, function(k2, distanceId2) {
                         if (data[distanceId] !== undefined) {
                             if (distanceId == distanceId2) {
-                                rows += '<td class="success"><strong>' + ipswichjaffarc.formatTime(data[distanceId].result) + '</strong></td>';
+                                rows += '<td class="success"><strong>' + formatPerformance(data[distanceId].performance, distanceId) + '</strong></td>';
                             } else {
-                                rows += '<td>' + ipswichjaffarc.formatTime(getPredictedTime(distanceId, data[distanceId].result, distanceId2)) + '</td>';
+                                rows += '<td>' + formatPerformance(getPredictedTime(distanceId, data[distanceId].performance, distanceId2), distanceId2) + '</td>';
                             }
                         } else {
                             rows += '<td></td>';
@@ -441,9 +439,9 @@
             $.each(data, function(_, item) {
                 if (item.distanceId !== null &&
                     item.distanceId !== undefined &&
-                    item.distanceId != "0" &&
-                    item.performance != "0.000") {
-                    const id = item.distanceId.toString();
+                    item.distanceId !== 0 &&
+                    Number(item.performance) > 0) {
+                    const id = Number(item.distanceId).toString();
                     counts[id] = (counts[id] || 0) + 1;
                 }
             });
@@ -452,7 +450,7 @@
             const top8Ids = Object.entries(counts)
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, 8)
-                .map(entry => parseInt(entry[0], 10));
+                .map(entry => Number(entry[0]));
 
             // Get distances and sort by miles
             const distanceData = await Promise.all(
@@ -503,7 +501,7 @@
 
                 $.each(runnerDistanceIds, function(k, distance) {
                     if (data[year][distance.id] !== undefined) {
-                        rows += '<td>' + ipswichjaffarc.formatTime(data[year][distance.id].time) + '</td>';
+                        rows += '<td>' + formatPerformance(data[year][distance.id].performance, distance.id) + '</td>';
                     } else {
                         rows += '<td></td>';
                     }
@@ -616,6 +614,20 @@
             return 0;
         }
 
+        function formatPerformance(performance, distanceId) {
+            var value = Number(performance);
+            if (!Number.isFinite(value) || value === 0) {
+                return '';
+            }
+
+            var distance = getDistance(distanceId);
+            if (distance != null && distance.resultUnitTypeName !== undefined && /met/.test(distance.resultUnitTypeName.toLowerCase())) {
+                return value.toFixed(2);
+            }
+
+            return ipswichjaffarc.secondsToTime(value);
+        }
+
         function getStandardCertificatesUrl(name, cert) {
 
             return '<?php echo plugins_url('php/standards/printcertificate.php', dirname(__FILE__)); ?>' +
@@ -627,23 +639,15 @@
                 '&filepath=<? echo plugin_dir_path(dirname(__FILE__)); ?>php/standards/';
         }
 
-        function getPredictedTime(actualDistanceId, actualTime, targetDistanceId) {
+        function getPredictedTime(actualDistanceId, actualPerformance, targetDistanceId) {
 
             var actualDistance = getDistance(actualDistanceId);
             var targetDistance = getDistance(targetDistanceId);
-            var actualTotalMinutes = timeToMinutes(actualTime);
+            var actualTotalMinutes = Number(actualPerformance) / 60;
 
             var targetTotalMinutes = actualTotalMinutes * (Math.pow((targetDistance.miles / actualDistance.miles), 1.06));
 
-            var hours = Math.floor(targetTotalMinutes / 60).toString().padStart(2, '0');
-
-            var minutes = Math.floor(targetTotalMinutes % 60).toString().padStart(2, '0');
-
-            var seconds = Math.floor(((targetTotalMinutes % 60) - minutes) * 60).toString().padStart(2, '0');
-
-            var targetTime = hours + ':' + minutes + ':' + seconds;
-
-            return targetTime;
+            return ipswichjaffarc.secondsToTime(targetTotalMinutes * 60);
         }
 
         function createResultsDataTable(data) {
@@ -682,9 +686,9 @@
                         }
                     },
                     {
-                        data: "result",
+                        data: "performance",
                         render: function(data, type, row, meta) {
-                            return data != '00:00:00' ? ipswichjaffarc.formatTime(data) : '';
+                            return formatPerformance(data, row.distanceId);
                         },
                         className: 'text-right'
                     },
