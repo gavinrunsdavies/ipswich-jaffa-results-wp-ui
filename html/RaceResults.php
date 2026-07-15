@@ -50,6 +50,13 @@
 		color: #444;
 	}
 
+	img.jaffa-meeting-image {
+		display: block;
+		margin: 0 auto 1em;
+		max-width: 100%;
+		height: auto;
+	}
+
 	@media screen and (max-width: 600px) {
 		.responsive-hide-badges {
 			display: none !important;
@@ -80,6 +87,7 @@
 <div class="section">
 	<h2 id="jaffa-event-title"></h2>
 	<h3 id="jaffa-race-subtitle" style="display: none; text-align: center;"></h3>
+	<div id="jaffa-meeting-info"></div>
 	<div id="jaffa-race-results">
 	</div>
 	<div id="race-insights-panel" style="margin: 3em 0; display: none; text-align: center">
@@ -188,8 +196,14 @@
 		}
 
 		function processMeeting(meeting) {
+			var meetingInfo = $('#jaffa-meeting-info');
+			meetingInfo.empty();
+
 			if (meeting.id != 0 && meeting.report) { // Ignore virtual meetings
-                $('#jaffa-race-results').prepend('<p class="jaffa-meeting-report">' + meeting.report + '</p>');
+                meetingInfo.append('<p class="jaffa-meeting-report">' + meeting.report + '</p>');
+            }
+			if (meeting.image) {
+                meetingInfo.append('<img class="jaffa-meeting-image" src="' + meeting.image + '" alt="' + meeting.subtitle + '"/>');
             }
         }
 
