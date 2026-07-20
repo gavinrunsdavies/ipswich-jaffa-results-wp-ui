@@ -363,7 +363,7 @@
                                 if (distanceId == distanceId2) {
                                     rows += '<td class="success"><strong>' + formatPerformance(data[year][distanceId].performance, distanceId) + '</strong></td>';
                                 } else {
-                                    rows += '<td>' + formatPerformance(getPredictedTime(distanceId, data[year][distanceId].performance, distanceId2), distanceId2) + '</td>';
+                                    rows += '<td>' + getPredictedTime(distanceId, data[year][distanceId].performance, distanceId2) + '</td>';
                                 }
                             } else {
                                 rows += '<td></td>';
@@ -409,7 +409,7 @@
                             if (distanceId == distanceId2) {
                                 rows += '<td class="success"><strong>' + formatPerformance(data[distanceId].performance, distanceId) + '</strong></td>';
                             } else {
-                                rows += '<td>' + formatPerformance(getPredictedTime(distanceId, data[distanceId].performance, distanceId2), distanceId2) + '</td>';
+                                rows += '<td>' + getPredictedTime(distanceId, data[distanceId].performance, distanceId2) + '</td>';
                             }
                         } else {
                             rows += '<td></td>';
@@ -643,11 +643,10 @@
 
             var actualDistance = getDistance(actualDistanceId);
             var targetDistance = getDistance(targetDistanceId);
-            var actualTotalMinutes = Number(actualPerformance) / 60;
 
-            var targetTotalMinutes = actualTotalMinutes * (Math.pow((targetDistance.miles / actualDistance.miles), 1.06));
+            var targetPerformance = Math.floor(Number(actualPerformance) * Math.pow((targetDistance.miles / actualDistance.miles), 1.06));
 
-            return ipswichjaffarc.secondsToTime(targetTotalMinutes * 60);
+            return formatPerformance(targetPerformance, targetDistanceId);
         }
 
         function createResultsDataTable(data) {
