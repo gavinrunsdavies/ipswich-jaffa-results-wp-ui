@@ -643,11 +643,10 @@
 
             var actualDistance = getDistance(actualDistanceId);
             var targetDistance = getDistance(targetDistanceId);
-            var actualTotalMinutes = Number(actualPerformance) / 60;
 
-            var targetTotalMinutes = actualTotalMinutes * (Math.pow((targetDistance.miles / actualDistance.miles), 1.06));
+            var targetPerformance = actualPerformance * (Math.pow((targetDistance.miles / actualDistance.miles), 1.06));
 
-            return formatPerformance(targetTotalMinutes * 60, targetDistanceId);
+            return formatPerformance(targetPerformance, targetDistanceId);
         }
 
         function createResultsDataTable(data) {
