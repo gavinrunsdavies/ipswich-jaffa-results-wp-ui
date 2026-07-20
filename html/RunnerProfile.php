@@ -644,7 +644,7 @@
             var actualDistance = getDistance(actualDistanceId);
             var targetDistance = getDistance(targetDistanceId);
 
-            var targetPerformance = actualPerformance * (Math.pow((targetDistance.miles / actualDistance.miles), 1.06));
+            var targetPerformance = Math.floor(Number(actualPerformance) * Math.pow((targetDistance.miles / actualDistance.miles), 1.06));
 
             return formatPerformance(targetPerformance, targetDistanceId);
         }
