@@ -647,7 +647,7 @@
 
             var targetTotalMinutes = actualTotalMinutes * (Math.pow((targetDistance.miles / actualDistance.miles), 1.06));
 
-            return ipswichjaffarc.secondsToTime(targetTotalMinutes * 60);
+            return formatPerformance(targetTotalMinutes * 60, targetDistanceId);
         }
 
         function createResultsDataTable(data) {
