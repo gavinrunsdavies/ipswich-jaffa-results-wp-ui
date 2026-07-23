@@ -57,6 +57,54 @@
     <h5 class="runnerAgeCategory"></h5>
     <h4><a href="#age-grading-chart">Age Grading Performances</a> | <a href="#certificates-panel">Certificates</a> | <a href="#insights-distance-panel">Runner Insights</a> | <span id="member-ranking-table-label"><a href="#member-ranking-table">Club rankings</a> | </span><a href="#member-race-count-table">Race distance breakdown</a> | <a href="#member-race-and-course-summary">Race & course summary</a> | <span class="seniors-only"><a href="#member-race-predictions-current">Race predictions</a> | </span><a href="#member-seasonal-best-results-table">Best known performances</a> | <a href="#member-results-table">All Results</a></h4>
 </div>
+<div class="section">
+    <table class="display responsive nowrap" id="member-results-table">
+        <caption>All race results for <span class="runnerName"></span></caption>
+        <thead>
+            <tr>
+                <th>Race Id</th>
+                <th data-priority="1">Race</th>
+                <th data-priority="3">Date</th>
+                <th data-priority="2">Position</th>
+                <th data-priority="2">Result</th>
+                <th data-priority="6">Personal Best</th>
+                <th data-priority="7">Standard</th>
+                <th data-priority="8">Info</th>
+                <th data-priority="5">Age Grading</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div class="to-top">
+        <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    </div> 
+</div>
+<div class="section">
+    <table class="display responsive nowrap" id="member-ranking-table">
+        <caption>Club rankings for <span class="runnerName"></span></caption>
+        <thead>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <p style="font-size: smaller">The above Ipswich JAFFA Running Club rankings show where <span class="runnerName"></span> ranks among other Ipswich JAFFA members (past and present). Ranking category: <span class="runnerGender"></span>.</p>
+    <div class="to-top">
+        <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    </div> 
+</div>
+<div class="section">
+    <table class="display responsive nowrap" id="member-seasonal-best-results-table">
+        <caption>The best known performances for <span class="runnerName"></span></caption>
+        <thead>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div class="to-top">
+        <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    </div> 
+</div>
 <div class="section center-panel">
     <h3>Age Grading Performances</h3>
     <div id="age-grading-chart" style="height: 350px;"></div>
@@ -91,19 +139,6 @@
     <div class="to-top">
         <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
     </div>    
-</div>
-<div class="section">
-    <table class="display responsive nowrap" id="member-ranking-table">
-        <caption>Club rankings for <span class="runnerName"></span></caption>
-        <thead>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-    <p style="font-size: smaller">The above Ipswich JAFFA Running Club rankings show where <span class="runnerName"></span> ranks among other Ipswich JAFFA members (past and present). Ranking category: <span class="runnerGender"></span>.</p>
-    <div class="to-top">
-        <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
-    </div> 
 </div>
 <div class="section">
     <table class="display responsive nowrap" id="member-race-count-table">
@@ -152,41 +187,6 @@
         </tbody>
     </table>
     <p style="font-size: smaller">The above race predictions are based on the known performances and calculated using the formula: T2 = T1 x (D2/D1)^1.06, where D1 is known distance, D2 is target distance, T1 is result for distance D1 and T2 is predicted time for target distance D2. Read predictions in columns not rows. Entries in bold show the achieved time (T1).</p>
-    <div class="to-top">
-        <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
-    </div> 
-</div>
-<div class="section">
-    <table class="display responsive nowrap" id="member-seasonal-best-results-table">
-        <caption>The best known performances for <span class="runnerName"></span></caption>
-        <thead>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-    <div class="to-top">
-        <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
-    </div> 
-</div>
-<div class="section">
-    <table class="display responsive nowrap" id="member-results-table">
-        <caption>All race results for <span class="runnerName"></span></caption>
-        <thead>
-            <tr>
-                <th>Race Id</th>
-                <th data-priority="1">Race</th>
-                <th data-priority="3">Date</th>
-                <th data-priority="2">Position</th>
-                <th data-priority="2">Result</th>
-                <th data-priority="6">Personal Best</th>
-                <th data-priority="7">Standard</th>
-                <th data-priority="8">Info</th>
-                <th data-priority="5">Age Grading</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
     <div class="to-top">
         <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
     </div> 
