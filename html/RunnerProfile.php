@@ -532,7 +532,7 @@
                 rows += '<tr>';
                 rows += '<td><a href="' + getStandardCertificatesUrl(name, cert) + '" target="_blank">' + cert.name + '</a></td>';
                 rows += '<td>' + cert.distance + '</td>';
-                rows += '<td>' + cert.event + ', on ' + cert.date + '. Time ' + ipswichjaffarc.formatTime(cert.result) + '</td>';
+                rows += '<td>' + cert.event + ', on ' + cert.date + '. Time ' + ipswichjaffarc.secondsToTime(Number(cert.performance)) + '</td>';
                 rows += '</tr>';
             });
 
@@ -635,7 +635,7 @@
                 '&standard=' + cert.name +
                 '&event=' + cert.event +
                 '&date=' + cert.date +
-                '&time=' + ipswichjaffarc.formatTime(cert.result) +
+                '&time=' + ipswichjaffarc.secondsToTime(Number(cert.performance)) +
                 '&filepath=<? echo plugin_dir_path(dirname(__FILE__)); ?>php/standards/';
         }
 
