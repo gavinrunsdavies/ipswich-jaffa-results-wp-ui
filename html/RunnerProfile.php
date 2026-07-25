@@ -55,7 +55,7 @@
 <div class="section center-panel">
     <h2>My Results: <span class="runnerName"></span></h2>
     <h5 class="runnerAgeCategory"></h5>
-    <h4><a href="#member-results-table">All Results</a> | <a href="#member-ranking-table">Club rankings</a> | <a href="#member-seasonal-best-results-table">Best known performances</a> | <a href="#age-grading-chart">Age Grading Performances</a> | <a href="#certificates-panel">Certificates</a> | <a href="#insights-distance-panel">Runner Insights</a> | <a href="#member-race-count-table">Race distance breakdown</a> | <a href="#member-race-and-course-summary">Race & course summary</a> | <span class="seniors-only"><a href="#member-race-predictions-current">Race predictions</a> | </span></h4>
+    <h4><a href="#member-results-table">All Results</a> | <span id="member-ranking-panel-label"><a href="#member-ranking-panel">Club rankings</a> | </span><a href="#member-seasonal-best-results-table">Best known performances</a> | <a href="#age-grading-chart">Age Grading Performances</a> | <a href="#certificates-panel">Certificates</a> | <a href="#insights-distance-panel">Runner Insights</a> | <a href="#member-race-count-table">Race distance breakdown</a> | <a href="#member-race-and-course-summary">Race & course summary</a> | <span class="seniors-only"><a href="#member-race-predictions-current">Race predictions</a></span></h4>
 </div>
 <div class="section">
     <table class="display responsive nowrap" id="member-results-table">
@@ -80,7 +80,7 @@
         <a href="#top">Top <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
     </div> 
 </div>
-<div class="section">
+<div class="section" id="member-ranking-panel">
     <table class="display responsive nowrap" id="member-ranking-table">
         <caption>Club rankings for <span class="runnerName"></span></caption>
         <thead>
@@ -315,6 +315,8 @@
         function populateRankingsTable(rankings) {
             var tableId = '#member-ranking-table';
             if (rankings === null || rankings.length == 0) {
+                $('#member-ranking-panel').hide();
+                $('#member-ranking-panel-label').hide();
                 $(tableId).hide();
                 return;
             }
