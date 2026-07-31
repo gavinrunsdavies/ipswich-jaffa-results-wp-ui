@@ -52,11 +52,11 @@
       max-width: 400px;
     }
 
-    /* Subtle highlighted cell for all-time best */
+    /* Subtle highlighted cell for all-time best (toned orange based on primary #e88112) */
     #member-seasonal-best-results-table td.success {
-        background-color: #e9f7ea;
+        background-color: rgba(232,129,18,0.12); /* subtle orange tint */
         font-weight: 600;
-        color: #0b3d0b;
+        color: #7a3a00; /* darker orange/brown for contrast */
     }
     #member-seasonal-best-results-table td.success strong {
         color: inherit;
