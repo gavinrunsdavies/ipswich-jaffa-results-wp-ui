@@ -51,6 +51,16 @@
       white-space: normal;
       max-width: 400px;
     }
+
+    /* Subtle highlighted cell for all-time best */
+    #member-seasonal-best-results-table td.success {
+        background-color: #e9f7ea;
+        font-weight: 600;
+        color: #0b3d0b;
+    }
+    #member-seasonal-best-results-table td.success strong {
+        color: inherit;
+    }
 </style>
 <div class="section center-panel">
     <h2>My Results: <span class="runnerName"></span></h2>
@@ -288,7 +298,7 @@
 
             var runnerDistanceIds = await getTopDistances(data);
             populateRaceCountTable(raceDistanceCount, otherRaceDistanceCount, runnerDistanceIds);
-            populateSeasonalBestTable(seasonalBest, runnerDistanceIds);
+            populateSeasonalBestTable(seasonalBest, runnerDistanceIds, personalBest);
             createRaceDistancePieChart(raceDistanceCount, otherRaceDistanceCount, runnerDistanceIds);
             createCourseTypePieChart(courseTypeCount);
             createPercentageGradingChart(percentageGradingData.reverse());
@@ -478,7 +488,7 @@
                 }));
         }
 
-        function populateSeasonalBestTable(data, runnerDistanceIds) {
+        function populateSeasonalBestTable(data, runnerDistanceIds, personalBest) {
             var tableId = '#member-seasonal-best-results-table'
             var tableBody = $(tableId + ' tbody');
             var tableHead = $(tableId + ' thead');
@@ -492,6 +502,21 @@
             tableHead.append(headers);
 
             var rows = '';
+
+            // Add overall best (all-time) row using personalBest values, emphasized
+            if (personalBest) {
+                rows += '<tr>';
+                rows += '<td><strong>All-time Best</strong></td>';
+                $.each(runnerDistanceIds, function(k, distance) {
+                    var pb = personalBest[distance.id];
+                    if (pb !== undefined) {
+                        rows += '<td class="success"><strong>' + formatPerformance(pb.performance, distance.id) + '</strong></td>';
+                    } else {
+                        rows += '<td></td>';
+                    }
+                });
+                rows += '</tr>';
+            }
 
             for (var i = data.length - 1; i > 0; i--) {
                 var year = i;
